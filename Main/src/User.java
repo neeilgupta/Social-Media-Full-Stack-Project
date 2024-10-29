@@ -1,17 +1,22 @@
 public class User {
 
     public static void main(String[] args) {
-        Thread SUoL = new Thread(new OptionSignUpOrLogin());
-        Thread SignUp = new Thread(new SignUp());
-        Thread Login = new Thread(new Login());
+        OptionSignUpOrLogin osul = new OptionSignUpOrLogin();
+        Thread SUoL = new Thread(osul);
+        Thread signUp = new Thread(new SignUp());
+        Thread login = new Thread(new Login());
         SUoL.start();
-        OptionSignUpOrLogin osul  = new OptionSignUpOrLogin();
+        try {
+            SUoL.join();
+        } catch (InterruptedException ie) {
+            throw new RuntimeException(ie);
+        }
         if (osul.isSignUpButtonClicked()) {
-            SUoL.interrupt();
-            SignUp.start();
+            System.out.println("Starting SignUp thread...");
+            signUp.start();
         } else if (osul.isLoginButtonClicked()) {
-            SUoL.interrupt();
-
+            System.out.println("Starting Login thread...");
+            login.start();
         }
     }
 }

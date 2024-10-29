@@ -8,9 +8,18 @@ public class SignUp implements Runnable {
 
     @Override
     public void run() {
+        JFrame frame = new JFrame("Sign Up");
         JPanel panel = new JPanel();
         panel.add(new JLabel("Please enter your username:"));
         userName = JOptionPane.showInputDialog(panel, "Please enter your username:");
+        panel.setBounds(130, 100, 100, 40);
+
+        frame.setSize(400, 500);
+        frame.setLayout(null);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        System.out.println("Your username is " + userName);
     }
 
     public int getUserID() {
