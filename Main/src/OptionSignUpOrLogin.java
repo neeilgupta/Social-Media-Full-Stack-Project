@@ -1,5 +1,6 @@
+package Main.src;
+
 import javax.swing.*;
-import java.awt.event.*;
 
 public class OptionSignUpOrLogin implements Runnable {
     private boolean signUpButtonClicked = false;

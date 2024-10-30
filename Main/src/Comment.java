@@ -1,12 +1,21 @@
+package Main.src;
+
 import java.time.LocalDateTime;
 
 public class Comment {
     private int ID;
     private String content;
-    private User user;
+    private int userID;
     private LocalDateTime dateTime;
+    private int likes;
 
-    public Comment(){}
+    public Comment(int ID, String content, int UserID){
+        this.ID = ID;
+        this.content = content;
+        this.userID = UserID;
+        this.dateTime = LocalDateTime.now();
+        this.likes = 0;
+    }
     public int getID(){
         return ID;
     }
@@ -19,17 +28,26 @@ public class Comment {
     public void setContent(String content){
         this.content = content;
     }
-    public User getUser(){
-        return user;
+    public int getUserID(){
+        return userID;
     }
-    public void setUser(User user){
-        this.user = user;
+    public void setUser(int userID){
+        this.userID = userID;
     }
     public LocalDateTime getDateTime(){
         return dateTime;
     }
     public void setDateTime(LocalDateTime dateTime){
         this.dateTime = dateTime;
+    }
+    public int getLikes(){
+        return likes;
+    }
+    public void addLike(){
+        likes++;
+    }
+    public void dislike(){
+        likes--;
     }
 
 }

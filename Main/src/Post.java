@@ -45,7 +45,7 @@ public class Post {
         this.comments = comments;
     }
     public ArrayList<User> getLikes(){
-        return likes;
+        return likes
     }
     public void setLikes(ArrayList<User> likes){
         this.likes = likes;
