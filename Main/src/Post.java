@@ -1,12 +1,13 @@
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class Post {
     private int ID;
     private String content;
-    private User user;
+    private Main user;
     private LocalDateTime dateTime;
     private ArrayList<Comment> comments;
-    private ArrayList<User> likes;
+    private ArrayList<Main> likes;
 
     public Post(){
 
@@ -23,10 +24,10 @@ public class Post {
     public void setContent(String content){
         this.content = content;
     }
-    public User getUser(){
+    public Main getUser(){
         return user;
     }
-    public void setUser(User user){
+    public void setUser(Main user){
         this.user = user;
     }
 
@@ -44,10 +45,10 @@ public class Post {
     public void setComments(ArrayList<Comment> comments){
         this.comments = comments;
     }
-    public ArrayList<User> getLikes(){
+    public ArrayList<Main> getLikes(){
         return likes;
     }
-    public void setLikes(ArrayList<User> likes){
+    public void setLikes(ArrayList<Main> likes){
         this.likes = likes;
     }
 
