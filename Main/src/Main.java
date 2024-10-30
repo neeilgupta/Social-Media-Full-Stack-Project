@@ -1,4 +1,3 @@
-package Main.src;
 
 public class Main {
 
