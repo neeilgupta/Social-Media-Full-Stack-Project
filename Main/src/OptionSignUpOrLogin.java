@@ -11,9 +11,10 @@ public class OptionSignUpOrLogin implements Runnable {
         JFrame frame = new JFrame("Please sign up or login");
         JButton signUp = new JButton("Sign up");
         JButton login = new JButton("Login");
+        frame.setLocation(500, 200);
 
-        signUp.setBounds(130, 100, 100, 40);
-        login.setBounds(130, 300, 100, 40);
+        signUp.setBounds(150, 100, 100, 40);
+        login.setBounds(150, 300, 100, 40);
 
         signUp.addActionListener(_ -> {
             signUpButtonClicked = true;
