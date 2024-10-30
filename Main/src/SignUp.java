@@ -58,17 +58,17 @@ public class SignUp implements Runnable {
         button.setLocation(panel.getX() - 100, panel.getY() - 100);
         panel.add(button);
         JPasswordField passwordField = new JPasswordField(32);
-        passwordField.setEchoChar('*');
+        passwordField.setEchoChar('\0');
         panel.add(new JScrollPane(passwordField));
-        String[] generatedPassword = {""};
+        StringBuilder generatedPassword = new StringBuilder(30);
         button.addActionListener(e -> {
             String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-_=+/?.>,<`~[{]}:;";
-            for (int i = 0; i < 30 ; i++) {
+            for (int i = 0; i < 30; i++) {
                 int random = new Random().nextInt(chars.length());
-                generatedPassword[i] += chars.charAt(random);
-                passwordField.setText(generatedPassword[i]);
+                generatedPassword.append(chars.charAt(random)); // Append each character to build the password
             }
-            //work in progress
+
+            passwordField.setText(generatedPassword.toString()); // Set the generated password once
         });
 
 
@@ -90,7 +90,7 @@ public class SignUp implements Runnable {
                 break;
             }
         }
-        JOptionPane.showMessageDialog(panel, "Password set successfully " + password);
+        JOptionPane.showMessageDialog(panel, "Password set successfully to " + password);
         panel.removeAll();
         frame.remove(panel);
         frame.dispose();
