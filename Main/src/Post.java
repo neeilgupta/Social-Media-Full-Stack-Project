@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -8,6 +9,8 @@ public class Post implements PostInterface {
     private LocalDateTime dateTime;
     private ArrayList<Comment> comments;
     private ArrayList<Main> likes;
+    private ArrayList<Main> dislikes;
+
 
     public Post(){
 
@@ -59,6 +62,14 @@ public class Post implements PostInterface {
     @Override
     public void setLikes(ArrayList<Main> likes){
         this.likes = likes;
+    }
+    @Override
+    public ArrayList<Main> getDislikes() {
+        return dislikes;
+    }
+    @Override
+    public void setDislikes(ArrayList<Main> dislikes) {
+        this.dislikes = dislikes;
     }
 
 }
