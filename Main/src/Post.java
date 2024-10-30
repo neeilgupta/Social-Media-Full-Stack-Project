@@ -1,15 +1,27 @@
+package Main.src;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 public class Post {
     private int ID;
     private String content;
-    private User user;
+    private int userID;
     private LocalDateTime dateTime;
     private ArrayList<Comment> comments;
-    private ArrayList<User> likes;
+    private int likes;
+    private static int currentID;
 
-    public Post(){
-
+    public Post(int userID, String content){
+        this.userID = userID;
+        synchronized (this){
+            this.ID = currentID;
+            currentID++;
+        }
+        this.content = content;
+        this.dateTime = LocalDateTime.now();
+        this.likes = 0;
+        this.comments = new ArrayList<Comment>();
     }
     public int getID(){
         return ID;
@@ -23,11 +35,11 @@ public class Post {
     public void setContent(String content){
         this.content = content;
     }
-    public User getUser(){
-        return user;
+    public int getUserID(){
+        return userID;
     }
-    public void setUser(User user){
-        this.user = user;
+    public void setUserID(int userID){
+        this.userID = userID;
     }
 
     public LocalDateTime getDateTime(){
@@ -44,11 +56,27 @@ public class Post {
     public void setComments(ArrayList<Comment> comments){
         this.comments = comments;
     }
-    public ArrayList<User> getLikes(){
-        return likes
+    public int getLikes(){
+        return likes;
     }
-    public void setLikes(ArrayList<User> likes){
-        this.likes = likes;
+    public void addLike(){
+        this.likes++;
+    }
+    public void dislike(){
+        this.likes--;
+    }
+
+    public boolean deleteComment(int userID, int commentID){
+        if (userID != this.userID) {
+            return false;
+        }
+        for (Comment comment : this.comments){
+            if (comment.getID() == commentID){
+                comments.remove(comment);
+                return true;
+            }
+        }
+        return false;
     }
 
 }
