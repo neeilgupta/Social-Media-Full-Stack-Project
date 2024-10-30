@@ -12,8 +12,8 @@ public interface PostInterface {
     void setDateTime(LocalDateTime dateTime);
     ArrayList<Comment> getComments();
     void setComments(ArrayList<Comment> comments);
-    ArrayList<Main> getLikes();
-    void setLikes(ArrayList<Main> likes);
-    ArrayList<Main> getDislikes();
-    void setDislikes(ArrayList<Main> likes);
+    ArrayList<User> getLikes();
+    void setLikes(ArrayList<User> likes);
+    ArrayList<User> getDislikes();
+    void setDislikes(ArrayList<User> likes);
 }
