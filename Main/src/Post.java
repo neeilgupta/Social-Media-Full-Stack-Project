@@ -8,8 +8,8 @@ public class Post implements PostInterface {
     private Main user;
     private LocalDateTime dateTime;
     private ArrayList<Comment> comments;
-    private ArrayList<Main> likes;
-    private ArrayList<Main> dislikes;
+    private ArrayList<User> likes;
+    private ArrayList<User> dislikes;
 
 
     public Post(){
@@ -56,19 +56,19 @@ public class Post implements PostInterface {
         this.comments = comments;
     }
     @Override
-    public ArrayList<Main> getLikes(){
+    public ArrayList<User> getLikes(){
         return likes;
     }
     @Override
-    public void setLikes(ArrayList<Main> likes){
+    public void setLikes(ArrayList<User> likes){
         this.likes = likes;
     }
     @Override
-    public ArrayList<Main> getDislikes() {
+    public ArrayList<User> getDislikes() {
         return dislikes;
     }
     @Override
-    public void setDislikes(ArrayList<Main> dislikes) {
+    public void setDislikes(ArrayList<User> dislikes) {
         this.dislikes = dislikes;
     }
 
