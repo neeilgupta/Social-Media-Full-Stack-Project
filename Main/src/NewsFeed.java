@@ -54,5 +54,28 @@ public class NewsFeed {
         return true;
     }
 
+    public void likePost(Post post, User user) {
+        boolean alreadyLiked = false;
+        for (User likedUser : post.getLikes())
+        if (likedUser.getUserID() == user.getUserID()) {
+            alreadyLiked = true;
+            break;
+        }
+        if (!alreadyLiked) {
+            post.getLikes().add(user);
+        }
+    }
+    public void dislikePost(Post post, User user) {
+        boolean alreadyDisliked = false;
+        for (User dislikedUser : post.getDislikes()) {
+            if (dislikedUser.getUserID() == user.getUserID()) {
+                alreadyDisliked = true;
+                break;
+            }
+        }
+        if (!alreadyDisiked) {
+            post.getDislikes().add(user);
+        }
+}
 
 }
