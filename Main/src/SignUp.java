@@ -12,21 +12,20 @@ public class SignUp implements Runnable {
     private String password;
     public boolean usernameTaken; // Doesn't save usernames as of yet
     private static Set<String> usernames = new HashSet<>();
-    private int textOutput;
 
 
     @Override
     public void run() {
-
-//        JFrame frame = new JFrame("Sign Up");
+        JFrame frame = new JFrame("Sign Up");
         JPanel panel = new JPanel();
-
+        frame.add(panel);
+        frame.setResizable(true);
 
         panel.add(new JLabel("Please enter your email address:"));
         while (true) {
             email = JOptionPane.showInputDialog(panel, "Please enter your email address:");
             if (!email.chars().allMatch(c -> (c >= 48 && c <= 57) || (c >= 64 && c <= 90) || (c >= 45 && c <= 46) ||
-                    (c >= 97 && c <= 122) )) {
+                    (c >= 97 && c <= 122))) {
                 JOptionPane.showMessageDialog(panel, "Not a valid email address");
             } else if (!email.contains("@") || !email.contains(".")) {
                 JOptionPane.showMessageDialog(panel, "Not a valid email address");
@@ -34,34 +33,38 @@ public class SignUp implements Runnable {
                 break;
             }
         }
+        panel.removeAll();
 
 //        String verificationCode = String.valueOf(new Random().nextInt(10000)); for later, for fun ;)
 
         panel.add(new JLabel("Please create a new password:"));
+        frame.add(panel);
         JButton button = new JButton("Autogenerate new password");
         panel.setSize(500, 500);
-        button.setBounds(100,100,100,100);
+        button.setLocation(panel.getX() - 100, panel.getY() - 100);
         panel.add(button);
+        JPasswordField passwordField = new JPasswordField(32);
+        passwordField.setEchoChar('*');
+        panel.add(new JScrollPane(passwordField));
+
+
+        int result;
         while (true) {
-
-            JPasswordField passwordField = new JPasswordField();
-            // come back to this, too tired now FIX LATER.
-            // For now, Make sure password is hidden, and create autogenerate button
-            button.addActionListener(_ -> {
-                JTextArea textArea = new JTextArea();
-                panel.add(new JScrollPane(passwordField));
-                passwordField.setEchoChar('*');
-            });
-
-
-            password = JOptionPane.showInputDialog(panel, "Please enter your password;");
-            if (password.length() < 8) {
-                JOptionPane.showMessageDialog(panel, "Password must be at least 8 characters");
-            } else if (password.length() > 32) {
-                JOptionPane.showMessageDialog(panel, "Password must be at most 32 characters");
-            } else {
-                break;
-            }
+            result = JOptionPane.showConfirmDialog(null, panel, "Create Password",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (result == JOptionPane.OK_OPTION) {
+                char[] passwordChars = passwordField.getPassword();
+                password = new String(passwordChars);
+                if (password.length() < 8) {
+                    JOptionPane.showMessageDialog(panel, "Password must be at least 8 characters");
+                } else if (password.length() > 32) {
+                    JOptionPane.showMessageDialog(panel, "Password must be at most 32 characters");
+                } else {
+                    break;
+                }
+            } else if (result == JOptionPane.CANCEL_OPTION) {
+                frame.dispose();
+            };
         }
 
         panel.add(new JLabel("Please enter your username:"));
@@ -73,7 +76,7 @@ public class SignUp implements Runnable {
                 JOptionPane.showMessageDialog(panel,
                         "Make sure username is longer than 3 characters and shorter than 16 characters");
             } else if (!username.chars().allMatch(c -> (c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c == 95) ||
-                    (c >= 97 && c <= 122) )) {
+                    (c >= 97 && c <= 122))) {
                 JOptionPane.showMessageDialog(panel,
                         "Make sure to include only letters, digits, or underscores");
             } else if (usernameTaken) {
@@ -85,11 +88,11 @@ public class SignUp implements Runnable {
         }
 
         JOptionPane.showMessageDialog(panel, "Perfect! Your username is " + username);
-//        panel.setBounds(130, 100, 100, 40);
-//        frame.setSize(400, 500);
-//        frame.setLayout(null);
-//        frame.setVisible(true);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        panel.setBounds(130, 100, 100, 40);
+        frame.setSize(400, 500);
+        frame.setLayout(null);
+        frame.setVisible(true);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
     public int getUserID() {

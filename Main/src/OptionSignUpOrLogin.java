@@ -6,9 +6,11 @@ public class OptionSignUpOrLogin implements Runnable {
     private boolean loginButtonClicked = false;
     private boolean exit = false;
 
+
     @Override
     public void run() {
         JFrame frame = new JFrame("Please sign up or login");
+        frame.setResizable(true);
         JButton signUp = new JButton("Sign up");
         JButton login = new JButton("Login");
         frame.setLocation(500, 200);
