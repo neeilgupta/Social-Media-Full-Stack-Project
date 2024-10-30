@@ -1,4 +1,4 @@
-public class User {
+public class Main {
 
     public static void main(String[] args) {
         OptionSignUpOrLogin osul = new OptionSignUpOrLogin();
