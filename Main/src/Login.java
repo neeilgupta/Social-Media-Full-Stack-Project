@@ -1,4 +1,3 @@
-package Main.src;
 
 public class Login implements Runnable {
     SignUp login = new SignUp();
