@@ -12,10 +12,10 @@ public class User {
             throw new RuntimeException(ie);
         }
         if (osul.isSignUpButtonClicked()) {
-            System.out.println("Starting SignUp thread...");
+            System.out.println("Starting SignUp thread..."); //delete later
             signUp.start();
         } else if (osul.isLoginButtonClicked()) {
-            System.out.println("Starting Login thread...");
+            System.out.println("Starting Login thread..."); // delete later
             login.start();
         }
     }
