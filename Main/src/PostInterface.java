@@ -14,4 +14,6 @@ public interface PostInterface {
     void setComments(ArrayList<Comment> comments);
     ArrayList<Main> getLikes();
     void setLikes(ArrayList<Main> likes);
+    ArrayList<Main> getDislikes();
+    void setDislikes(ArrayList<Main> likes);
 }
