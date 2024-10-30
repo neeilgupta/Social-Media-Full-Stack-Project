@@ -73,7 +73,7 @@ public class NewsFeed {
                 break;
             }
         }
-        if (!alreadyDisiked) {
+        if (!alreadyDisliked) {
             post.getDislikes().add(user);
         }
 }
