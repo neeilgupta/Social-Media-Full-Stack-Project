@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -11,39 +10,46 @@ public class SignUp implements Runnable {
     private String displayName;
     private String password;
     private boolean validEmailEndings;
+    public boolean emailTaken;
     public boolean usernameTaken; // Doesn't save usernames as of yet
     private static Set<String> usernames = new HashSet<>();
+    private static Set<String> emails = new HashSet<>();
     private int result;
 
+//    public SignUp(String email, String password, String username, String displayName, int userID ) {
+//        this.email = email;
+//        this.password = password;
+//        this.username = username;
+//        this.displayName = displayName;
+//        this.userID = userID;
+//    }
 
     @Override
-    public void run() {
+    public void run() throws NullPointerException {
         JFrame frame = new JFrame("Sign Up");
         JPanel panel = new JPanel();
         frame.add(panel);
         frame.setResizable(true);
 
         while (true) {
-//            result = JOptionPane.showConfirmDialog(null, panel, "Please enter a valid email address",
-//                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-//            email = JOptionPane.showInputDialog(panel, "Please enter your email address:");
             if (result == JOptionPane.OK_OPTION) {
                 email = JOptionPane.showInputDialog(frame, "Enter your email address");
+                emailTaken = emails.contains(email);
                 if (email == null) {
-                    throw new NullPointerException();
-                }
-                if (email.length() < 6) {
+                    System.exit(0);
+                } else if (email.length() < 6) {
                     JOptionPane.showMessageDialog(panel, "Not a valid email address");
-                }
-                if (!email.chars().allMatch(c -> (c >= 48 && c <= 57) || (c >= 64 && c <= 90) || (c >= 45 && c <= 46) ||
+                } else if (!email.chars().allMatch(c -> (c >= 48 && c <= 57) || (c >= 64 && c <= 90) || (c >= 45 && c <= 46) ||
                         (c >= 97 && c <= 122))) {
                     JOptionPane.showMessageDialog(panel, "Not a valid email address");
                 } else if (!email.contains("@") || !email.contains(".")) {
                     JOptionPane.showMessageDialog(panel, "Not a valid email address");
+                } else if (emailTaken) {
+                    JOptionPane.showMessageDialog(panel, "This email is already being used. Please exit and log-in");
                 } else {
                     break;
                 }
-            } else if (result == JOptionPane.CANCEL_OPTION) {
+            } else {
                 System.exit(0);
             }
         }
@@ -51,11 +57,9 @@ public class SignUp implements Runnable {
         frame.remove(panel);
 //        String verificationCode = String.valueOf(new Random().nextInt(10000)); for later, for fun ;)
 
-        panel.add(new JLabel("Please create a new password:"));
+        panel.add(new JLabel(email + ":\nPlease create a new password"));
         frame.add(panel);
-        JButton button = new JButton("Autogenerate new password");
-        panel.setSize(500, 500);
-        button.setLocation(panel.getX() - 100, panel.getY() - 100);
+        JButton button = new JButton("Autogenerate password");
         panel.add(button);
         JPasswordField passwordField = new JPasswordField(32);
         passwordField.setEchoChar('\0');
@@ -67,7 +71,6 @@ public class SignUp implements Runnable {
                 int random = new Random().nextInt(chars.length());
                 generatedPassword.append(chars.charAt(random)); // Append each character to build the password
             }
-
             passwordField.setText(generatedPassword.toString()); // Set the generated password once
         });
 
@@ -77,7 +80,9 @@ public class SignUp implements Runnable {
                     JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (result == JOptionPane.OK_OPTION) {
                 password = new String(passwordField.getPassword());
-                if (password.length() < 8) {
+                if (password == null) {
+                    System.exit(0);
+                } else if (password.length() < 8) {
                     JOptionPane.showMessageDialog(panel, "Password must be at least 8 characters");
                 } else if (password.length() > 32) {
                     JOptionPane.showMessageDialog(panel, "Password must be at most 32 characters");
@@ -85,9 +90,7 @@ public class SignUp implements Runnable {
                     break;
                 }
             } else {
-                frame.dispose();
                 System.exit(0);
-                break;
             }
         }
         JOptionPane.showMessageDialog(panel, "Password set successfully to " + password);
@@ -96,32 +99,71 @@ public class SignUp implements Runnable {
         frame.dispose();
 
         panel.add(new JLabel("Please enter your username:"));
+        frame.add(panel);
         while (true) {
-            username = JOptionPane.showInputDialog(panel, "Please enter your username:");
             usernameTaken = usernames.contains(username);
-
-            if (username == null || username.length() < 3 || username.length() > 16) {
-                JOptionPane.showMessageDialog(panel,
-                        "Make sure username is longer than 3 characters and shorter than 16 characters");
-            } else if (!username.chars().allMatch(c -> (c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c == 95) ||
-                    (c >= 97 && c <= 122))) {
-                JOptionPane.showMessageDialog(panel,
-                        "Make sure to include only letters, digits, or underscores");
-            } else if (usernameTaken) {
-                JOptionPane.showMessageDialog(panel, "Username taken");
+            result = JOptionPane.showConfirmDialog(null, panel, "Create Username",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (result == JOptionPane.OK_OPTION) {
+                username = JOptionPane.showInputDialog(panel, "Please enter your username:");
+                if (username == null) {
+                    System.exit(0);
+                } else if (username.length() < 3 || username.length() > 16) {
+                    JOptionPane.showMessageDialog(panel,
+                            "Make sure username is longer than 3 characters and shorter than 16 characters");
+                } else if (!username.chars().allMatch(c -> (c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c == 95) ||
+                        (c >= 97 && c <= 122))) {
+                    JOptionPane.showMessageDialog(panel,
+                            "Make sure to include only letters, digits, or underscores");
+                } else if (usernameTaken) {
+                    JOptionPane.showMessageDialog(panel, "Username taken");
+                } else {
+                    usernames.add(username);
+                    break;
+                }
             } else {
-                usernames.add(username);
-                break;
+                System.exit(0);
+            }
+        }
+        JOptionPane.showMessageDialog(panel, "Perfect! Your username is " + username);
+        panel.removeAll();
+        frame.remove(panel);
+        frame.dispose();
+
+        panel.add(new JLabel("Please enter your display name:"));
+        frame.add(panel);
+
+        while (true) {
+            displayName = JOptionPane.showInputDialog(panel, "Please enter your display name:");
+            result = JOptionPane.showConfirmDialog(null, panel, "Create your display name",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+            if (result == JOptionPane.OK_OPTION) {
+                if (displayName == null) {
+                    System.exit(0);
+                } else if (displayName.isEmpty() || username.length() >= 40) {
+                    JOptionPane.showMessageDialog(panel,
+                            "Make sure username is not empty and shorter than 40 characters");
+                } else {
+                    break;
+                }
+            } else {
+                System.exit(0);
             }
         }
 
-        JOptionPane.showMessageDialog(panel, "Perfect! Your username is " + username);
+
+        emails.add(email);
         panel.setBounds(130, 100, 100, 40);
         frame.setSize(400, 500);
         frame.setLayout(null);
         frame.setVisible(true);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
+
+
+//    public int makeUserID() {
+//        return (int) (Math.random() * 1000000000);
+//    }
 
     public int getUserID() {
         return userID;

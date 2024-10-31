@@ -1,4 +1,3 @@
-// work on this class together
 
 public class Main {
     public static void main(String[] args) {
