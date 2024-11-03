@@ -12,15 +12,24 @@ public class Post implements PostInterface {
     private ArrayList<User> dislikes;
 
 
-    public Post(int ID, String content, User user, LocalDateTime dateTime, ArrayList<Comment> comments, ArrayList<User> likes, ArrayList<User> dislikes){
-        this.ID = ID;
+    public Post(int postID, String content, User user, LocalDateTime dateTime, int likeCount, int dislikeCount){
+        this.ID = postID;
         this.content = content;
         this.user = user;
         this.dateTime = dateTime;
-        this.comments = comments;
-        this.likes = likes;
-        this.dislikes = dislikes;
+        this.comments = new ArrayList<>();
+        this.likes = new ArrayList<>();
+        this.dislikes = new ArrayList<>();
+
+        for (int i = 0; i < likeCount; i++) { //created dummy users to match likes
+            likes.add(new User(i + 100, "Liker" + (i + 1)));
+        }
+
+        for (int j = 0; j < dislikeCount; j++) { //creates dummy Users to match dislikes
+            dislikes.add(new User(j + 200, "Disliker" + (j + 1)));
+        }
     }
+
     @Override
     public int getID(){
         return ID;
@@ -79,7 +88,7 @@ public class Post implements PostInterface {
     }
 
     public String toString() {
-        String postDisplay = "Post ID: " + this.getID() + ", Likes: " + this.getLikes().size() + ", Timestamp: " + this.getDateTime();
+        String postDisplay = "Post ID: " + this.getID() + ", Likes: " + this.getLikes().size() + ", Dislikes: " + this.getDislikes().size() + ", Timestamp: " + this.getDateTime();
         return postDisplay;
     }
 

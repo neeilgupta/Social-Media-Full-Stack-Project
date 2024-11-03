@@ -29,9 +29,9 @@ public class NewsFeed {
         int i = 0;
         while (i < userFeed.size()) {
             // Check the number of likes
-            if (post.getLikes().size() > userFeed.get(i).getLikes().size()) {
+            if (post.getLikes().size()-post.getDislikes().size() > userFeed.get(i).getLikes().size()-userFeed.get(i).getDislikes().size()) {
                 break; // The new post has more likes, so insert it here
-            } else if (post.getLikes().size() == userFeed.get(i).getLikes().size()) {
+            } else if (post.getLikes().size()-post.getDislikes().size() == userFeed.get(i).getLikes().size()-userFeed.get(i).getDislikes().size()) {
                 // If likes are the same, compare the timestamps
                 if (post.getDateTime().isAfter(userFeed.get(i).getDateTime())) {
                     break; // The new post is newer, so insert it here
