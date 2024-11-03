@@ -5,15 +5,21 @@ import java.util.ArrayList;
 public class Post implements PostInterface {
     private int ID;
     private String content;
-    private Main user;
+    private User user;
     private LocalDateTime dateTime;
     private ArrayList<Comment> comments;
     private ArrayList<User> likes;
     private ArrayList<User> dislikes;
 
 
-    public Post(){
-
+    public Post(int ID, String content, User user, LocalDateTime dateTime, ArrayList<Comment> comments, ArrayList<User> likes, ArrayList<User> dislikes){
+        this.ID = ID;
+        this.content = content;
+        this.user = user;
+        this.dateTime = dateTime;
+        this.comments = comments;
+        this.likes = likes;
+        this.dislikes = dislikes;
     }
     @Override
     public int getID(){
@@ -32,11 +38,11 @@ public class Post implements PostInterface {
         this.content = content;
     }
     @Override
-    public Main getUser(){
+    public User getUser(){
         return user;
     }
     @Override
-    public void setUser(Main user){
+    public void setUser(User user){
         this.user = user;
     }
     @Override
@@ -70,6 +76,11 @@ public class Post implements PostInterface {
     @Override
     public void setDislikes(ArrayList<User> dislikes) {
         this.dislikes = dislikes;
+    }
+
+    public String toString() {
+        String postDisplay = "Post ID: " + this.getID() + ", Likes: " + this.getLikes().size() + ", Timestamp: " + this.getDateTime();
+        return postDisplay;
     }
 
 }
