@@ -164,7 +164,7 @@ public class SignUp implements Runnable {
 
         try {
             File f = new File("UserInfo.txt");
-            FileOutputStream fos = new FileOutputStream(f, true); // Set to append mode
+            FileOutputStream fos = new FileOutputStream(f, true);
             PrintWriter pw = new PrintWriter(new OutputStreamWriter(fos), true);
 
             pw.write(String.format("%d,%s,%s,%s,%s", userID, email, username, displayName, password));
