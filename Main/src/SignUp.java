@@ -4,6 +4,18 @@ import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
 // made by Hossein
+
+/**
+ * Social media
+ * <p>
+ * Creating a way for users to sign up
+ * <p>
+ * Hossein Hatami
+ *
+ * @version November 3rd, 2024
+ *
+ */
+
 public class SignUp implements Runnable {
     private int userID;
     private String email = "";

@@ -1,3 +1,15 @@
+/**
+ * Social media
+ * <p>
+ * Creating a way for users to log in
+ * <p>
+ * Hossein Hatami
+ *
+ * @version November 3rd, 2024
+ *
+ */
+
+
 public class Login implements Runnable {
     private String email;
     private String password;

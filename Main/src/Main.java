@@ -1,4 +1,14 @@
 
+/**
+ * Social media project
+ * <p>
+ * Main method, runs eveything
+ * <p>
+ * Hossein Hatami
+ *
+ * @version November 3rd, 2024
+ *
+ */
 
 
 public class Main {
