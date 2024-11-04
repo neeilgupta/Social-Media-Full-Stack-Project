@@ -160,7 +160,7 @@ public class SignUp implements Runnable {
         }
 
         userID = (int) (Math.random() * 1000000000);
-
+        //
 
         try {
             File f = new File("UserInfo.txt");
