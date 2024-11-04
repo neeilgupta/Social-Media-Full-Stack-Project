@@ -1,8 +1,15 @@
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.io.*;
+import java.io.Serializable;
 
-public class Post implements PostInterface {
+//Includes constructors for creating a post, post fields, and all getter and setter methods
+//Plus a few extra methods as needed
+//Emerson
+
+public class Post implements PostInterface, Serializable {
     private int ID;
     private String content;
     private User user;
@@ -10,26 +17,22 @@ public class Post implements PostInterface {
     private ArrayList<Comment> comments;
     private ArrayList<User> likes;
     private ArrayList<User> dislikes;
+    private static int idIndex = 1;
 
+    BufferedWriter bfr;
 
-    public Post(int postID, String content, User user, LocalDateTime dateTime, int likeCount, int dislikeCount){
-        this.ID = postID;
+    //creates a post with specified user and content, automatically assigns other variables
+    public Post(String content, User user){
+        this.ID = idIndex++;
         this.content = content;
         this.user = user;
-        this.dateTime = dateTime;
+        this.dateTime = LocalDateTime.now();
         this.comments = new ArrayList<>();
         this.likes = new ArrayList<>();
         this.dislikes = new ArrayList<>();
-
-        for (int i = 0; i < likeCount; i++) { //created dummy users to match likes
-            likes.add(new User(i + 100, "Liker" + (i + 1)));
-        }
-
-        for (int j = 0; j < dislikeCount; j++) { //creates dummy Users to match dislikes
-            dislikes.add(new User(j + 200, "Disliker" + (j + 1)));
-        }
     }
 
+    //getter and setter methods
     @Override
     public int getID(){
         return ID;
@@ -87,9 +90,14 @@ public class Post implements PostInterface {
         this.dislikes = dislikes;
     }
 
-    public String toString() {
-        String postDisplay = "Post ID: " + this.getID() + ", Likes: " + this.getLikes().size() + ", Dislikes: " + this.getDislikes().size() + ", Timestamp: " + this.getDateTime();
-        return postDisplay;
+    //to string method, in case it is needed
+    public String toString(){
+        String result = ID + ",";
+        result += content + ",";
+        result += user.toString() + ",";
+        result += dateTime.toString() + ",";
+
+        return result;
     }
 
 }

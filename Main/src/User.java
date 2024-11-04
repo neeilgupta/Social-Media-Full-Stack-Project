@@ -1,6 +1,7 @@
 //Made by both Neeil and Sameer to be utilized for saving in databases and newsfeed
 import java.util.*;
 public class User extends Main {
+    private static User currentUser;
     //Neeil's instance variables
     private int userID;
     private String username;
@@ -28,6 +29,10 @@ public class User extends Main {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
     }
 //Sameer methods and constructers:
     public User(String username, String password) {
