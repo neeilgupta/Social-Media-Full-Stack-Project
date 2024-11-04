@@ -11,12 +11,12 @@ public class NewsFeed {
     }
 
     // Retrieves a feed for the user, filtering by followers and sorted by likes and timestamp
-    public List<Post> getFeedForUser(int userID) {
+    public List<Post> getFeedForUser(User user) {
         List<Post> userFeed = new ArrayList<>();
 
         // Stores posts from user and people they follow
         for (Post post : posts) {
-            if (post.getID() == userID || isFollowing(userID, post.getID())) {
+            if (post.getUser() == user || isFollowing(user, post.getUser())) {
                 insertInOrder(userFeed, post);
             }
         }
@@ -49,17 +49,20 @@ public class NewsFeed {
     }
 
     // Helper method to check if a user follows another user
-    private boolean isFollowing(int userID, int followedUserID) {
-        return true;
+    private boolean isFollowing(User user, User postUser) {
+        if(user.getFollowers().contains(postUser)) {
+            return true;
+        }
+        return false;
     }
 
     public void likePost(Post post, User user) {
         boolean alreadyLiked = false;
         for (User likedUser : post.getLikes())
-        if (likedUser.getUserID() == user.getUserID()) {
-            alreadyLiked = true;
-            break;
-        }
+            if (likedUser.getUserID() == user.getUserID()) {
+                alreadyLiked = true;
+                break;
+            }
         if (!alreadyLiked) {
             post.getLikes().add(user);
         }
@@ -75,6 +78,6 @@ public class NewsFeed {
         if (!alreadyDisliked) {
             post.getDislikes().add(user);
         }
-}
+    }
 
 }

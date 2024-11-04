@@ -1,3 +1,4 @@
+
 //Made by both Neeil and Sameer to be utilized for saving in databases and newsfeed
 import java.util.*;
 public class User extends Main {
@@ -5,11 +6,11 @@ public class User extends Main {
     //Neeil's instance variables
     private int userID;
     private String username;
-//Sameer's instance variables
+    //Sameer's instance variables
     private List<User> followers;
     private List<User> blockedUsers;
     private String email = "";
-//Neeil's methods and constructers
+    //Neeil's methods and constructers
     public User(int userID, String username) {
         this.userID = userID;
         this.username = username;
@@ -63,7 +64,7 @@ public class User extends Main {
     public static User getCurrentUser() {
         return currentUser;
     }
-//Sameer methods and constructers:
+    //Sameer methods and constructers:
     public User(String username, String password) {
         // Properties:
         this.followers = new ArrayList<>();
@@ -103,7 +104,11 @@ public class User extends Main {
 
 
     public Collection<User> getFollowers() { //Additions by Sameer for Junit
+        if (followers == null) {
+            followers = new ArrayList<>();
+        }
         return followers;
+
     }
 
     public Collection<User>getBlockedUsers() { //Additions by Sameer for Junit
