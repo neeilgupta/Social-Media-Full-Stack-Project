@@ -1,8 +1,9 @@
 import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.io.Serializable;
 
-public class Post implements PostInterface {
+public class Post implements PostInterface, Serializable{
     private int ID;
     private String content;
     private User user;
@@ -10,24 +11,17 @@ public class Post implements PostInterface {
     private ArrayList<Comment> comments;
     private ArrayList<User> likes;
     private ArrayList<User> dislikes;
+    private static int currentID = 1;
 
 
-    public Post(int postID, String content, User user, LocalDateTime dateTime, int likeCount, int dislikeCount){
-        this.ID = postID;
+    public Post(String content, User user){
+        this.ID = currentID++;
         this.content = content;
         this.user = user;
-        this.dateTime = dateTime;
+        this.dateTime = LocalDateTime.now();
         this.comments = new ArrayList<>();
         this.likes = new ArrayList<>();
         this.dislikes = new ArrayList<>();
-
-        for (int i = 0; i < likeCount; i++) { //created dummy users to match likes
-            likes.add(new User(i + 100, "Liker" + (i + 1)));
-        }
-
-        for (int j = 0; j < dislikeCount; j++) { //creates dummy Users to match dislikes
-            dislikes.add(new User(j + 200, "Disliker" + (j + 1)));
-        }
     }
 
     @Override
@@ -88,7 +82,7 @@ public class Post implements PostInterface {
     }
 
     public String toString() {
-        String postDisplay = "Post ID: " + this.getID() + ", Likes: " + this.getLikes().size() + ", Dislikes: " + this.getDislikes().size() + ", Timestamp: " + this.getDateTime();
+        String postDisplay = this.getID() + "," + this.getContent() + "," + this.getLikes().size() + "," + this.getDislikes().size() + "," + this.getUser() + "," + this.getDateTime();
         return postDisplay;
     }
 

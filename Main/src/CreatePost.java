@@ -3,6 +3,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.util.Scanner;
 
 //Creates a post and adds it to the file that stores post information
 //Emerson
@@ -10,14 +11,17 @@ import java.io.ObjectOutputStream;
 public class CreatePost implements Runnable{
     //runs the GUI for creating a post and adds it to a database of posts
     public void run(){
-        JFrame frame = new JFrame("Make a Post");
-        JPanel panel = new JPanel();
-        frame.add(panel);
-        frame.setResizable(true);
-        panel.add(new JLabel("Post content"));
-        String content = JOptionPane.showInputDialog(panel, "What would you like to say?");
-        panel.setBounds(130, 100, 100, 40);
+        //JFrame frame = new JFrame("Make a Post");
+        //JPanel panel = new JPanel();
+        //frame.add(panel);
+        //frame.setResizable(true);
+        //panel.add(new JLabel("Post content"));
+        //String content = JOptionPane.showInputDialog(panel, "What would you like to say?");
+        //panel.setBounds(130, 100, 100, 40);
+        Scanner scanner = new Scanner(System.in);
         User user = User.getCurrentUser();
+        System.out.println("What would you like your post to say?");
+        String content = scanner.nextLine();
 
         String postFile = "posts.ser";
 
