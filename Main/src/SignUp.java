@@ -161,6 +161,7 @@ public class SignUp implements Runnable {
 
         userID = (int) (Math.random() * 1000000000);
 
+
         try {
             File f = new File("UserInfo.txt");
             FileOutputStream fos = new FileOutputStream(f, true); // Set to append mode
@@ -194,6 +195,7 @@ public class SignUp implements Runnable {
                     return true;
                 }
             }
+            bfr.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -216,6 +218,7 @@ public class SignUp implements Runnable {
                     return true;
                 }
             }
+            bfr.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
