@@ -160,14 +160,16 @@ public class SignUp implements Runnable {
         }
 
         userID = (int) (Math.random() * 1000000000);
+        //
 
         try {
             File f = new File("UserInfo.txt");
-            FileOutputStream fos = new FileOutputStream(f);
+            FileOutputStream fos = new FileOutputStream(f, true);
             PrintWriter pw = new PrintWriter(new OutputStreamWriter(fos), true);
 
             pw.write(String.format("%d,%s,%s,%s,%s", userID, email, username, displayName, password));
             pw.println();
+            pw.flush();
             pw.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -193,6 +195,7 @@ public class SignUp implements Runnable {
                     return true;
                 }
             }
+            bfr.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -215,6 +218,7 @@ public class SignUp implements Runnable {
                     return true;
                 }
             }
+            bfr.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
