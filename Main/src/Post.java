@@ -1,3 +1,4 @@
+import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -49,12 +50,6 @@ public class Post implements PostInterface {
     public User getUser(){
         return user;
     }
-
-    @Override
-    public void setUser(Main user) {
-
-    }
-
     @Override
     public void setUser(User user){
         this.user = user;

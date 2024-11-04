@@ -6,11 +6,8 @@ public interface PostInterface {
     void setID(int ID);
     String getContent();
     void setContent(String content);
-    Main getUser();
-    void setUser(Main user);
-
+    User getUser();
     void setUser(User user);
-
     LocalDateTime getDateTime();
     void setDateTime(LocalDateTime dateTime);
     ArrayList<Comment> getComments();

@@ -11,12 +11,18 @@ public class NewsFeedTest {
         User user1 = new User(1, "User1");
         User user2 = new User(2, "User2");
         User user3 = new User(3, "User3");
+        User user4 = new User(4, "User4");
 
-        Post post1 = new Post(101, "Post 1 Content", user1, LocalDateTime.of(2024, 11, 1, 12, 30), 120, 60);
-        Post post2 = new Post(102, "Post 2 Content", user2, LocalDateTime.of(2024, 11, 2, 14, 0), 75, 5);
-        Post post3 = new Post(103, "Post 3 Content", user3, LocalDateTime.of(2024, 11, 2, 10, 0), 120, 20);
-        Post post4 = new Post(104, "Post 4 Content", user1, LocalDateTime.of(2024, 10, 31, 9, 0), 200, 30);
-        Post post5 = new Post(105, "Post 5 Content", user2, LocalDateTime.of(2024, 11, 1, 8, 45), 50, 0);
+        Post post1 = new Post("Post 1 Content", user1);
+        Post post2 = new Post("Post 2 Content", user2);
+        Post post3 = new Post("Post 3 Content", user3);
+        Post post4 = new Post("Post 4 Content", user1);
+        Post post5 = new Post("Post 5 Content", user2);
+
+        post1.setLikes(new ArrayList<User>(){{add(user1);add(user2);add(user3);}});
+        post2.setLikes(new ArrayList<User>(){{add(user1);add(user2);}});
+        post3.setLikes(new ArrayList<User>(){{add(user1);add(user2);add(user3);add(user4);}});
+
 
         newsFeed.addPost(post1);
         newsFeed.addPost(post2);
