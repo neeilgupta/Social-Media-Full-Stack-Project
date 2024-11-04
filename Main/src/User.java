@@ -78,6 +78,7 @@ public class User extends Main {
         }
     }
 
+
     // Method unfollow(otherUser: User)
     public void unfollow(User otherUser) {
         // If otherUser is in followers

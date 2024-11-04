@@ -11,12 +11,12 @@ public class NewsFeed {
     }
 
     // Retrieves a feed for the user, filtering by followers and sorted by likes and timestamp
-    public List<Post> getFeedForUser(int userID) {
+    public List<Post> getFeedForUser(int userID, User user) {
         List<Post> userFeed = new ArrayList<>();
 
         // Stores posts from user and people they follow
         for (Post post : posts) {
-            if (post.getID() == userID || isFollowing(userID, post.getID())) {
+            if (post.getID() == userID || isFollowing(user, post.getUser())) {
                 insertInOrder(userFeed, post);
             }
         }
@@ -48,10 +48,8 @@ public class NewsFeed {
         posts.add(post);
     }
 
-    // Helper method to check if a user follows another user
-    private boolean isFollowing(int userID, int followedUserID) {
-        // Idk if I should implement this method here because this is the newsfeed but I just had it return true;
-        return true;
+    public boolean isFollowing(User user, User otherUser) {
+        return user.getFollowers().contains(otherUser);
     }
 
     public void likePost(Post post, User user) {
