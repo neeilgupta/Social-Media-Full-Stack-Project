@@ -29,9 +29,9 @@ public class NewsFeed {
         int i = 0;
         while (i < userFeed.size()) {
             // Check the number of likes
-            if (post.getLikes().size() > userFeed.get(i).getLikes().size()) {
+            if (post.getLikes().size()-post.getDislikes().size() > userFeed.get(i).getLikes().size()-userFeed.get(i).getDislikes().size()) {
                 break; // The new post has more likes, so insert it here
-            } else if (post.getLikes().size() == userFeed.get(i).getLikes().size()) {
+            } else if (post.getLikes().size()-post.getDislikes().size() == userFeed.get(i).getLikes().size()-userFeed.get(i).getDislikes().size()) {
                 // If likes are the same, compare the timestamps
                 if (post.getDateTime().isAfter(userFeed.get(i).getDateTime())) {
                     break; // The new post is newer, so insert it here
@@ -54,5 +54,28 @@ public class NewsFeed {
         return true;
     }
 
+    public void likePost(Post post, User user) {
+        boolean alreadyLiked = false;
+        for (User likedUser : post.getLikes())
+        if (likedUser.getUserID() == user.getUserID()) {
+            alreadyLiked = true;
+            break;
+        }
+        if (!alreadyLiked) {
+            post.getLikes().add(user);
+        }
+    }
+    public void dislikePost(Post post, User user) {
+        boolean alreadyDisliked = false;
+        for (User dislikedUser : post.getDislikes()) {
+            if (dislikedUser.getUserID() == user.getUserID()) {
+                alreadyDisliked = true;
+                break;
+            }
+        }
+        if (!alreadyDisliked) {
+            post.getDislikes().add(user);
+        }
+}
 
 }

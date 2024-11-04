@@ -5,16 +5,31 @@ import java.util.ArrayList;
 public class Post implements PostInterface {
     private int ID;
     private String content;
-    private Main user;
+    private User user;
     private LocalDateTime dateTime;
     private ArrayList<Comment> comments;
-    private ArrayList<Main> likes;
-    private ArrayList<Main> dislikes;
+    private ArrayList<User> likes;
+    private ArrayList<User> dislikes;
 
 
-    public Post(){
+    public Post(int postID, String content, User user, LocalDateTime dateTime, int likeCount, int dislikeCount){
+        this.ID = postID;
+        this.content = content;
+        this.user = user;
+        this.dateTime = dateTime;
+        this.comments = new ArrayList<>();
+        this.likes = new ArrayList<>();
+        this.dislikes = new ArrayList<>();
 
+        for (int i = 0; i < likeCount; i++) { //created dummy users to match likes
+            likes.add(new User(i + 100, "Liker" + (i + 1)));
+        }
+
+        for (int j = 0; j < dislikeCount; j++) { //creates dummy Users to match dislikes
+            dislikes.add(new User(j + 200, "Disliker" + (j + 1)));
+        }
     }
+
     @Override
     public int getID(){
         return ID;
@@ -32,11 +47,11 @@ public class Post implements PostInterface {
         this.content = content;
     }
     @Override
-    public Main getUser(){
+    public User getUser(){
         return user;
     }
     @Override
-    public void setUser(Main user){
+    public void setUser(User user){
         this.user = user;
     }
     @Override
@@ -56,20 +71,25 @@ public class Post implements PostInterface {
         this.comments = comments;
     }
     @Override
-    public ArrayList<Main> getLikes(){
+    public ArrayList<User> getLikes(){
         return likes;
     }
     @Override
-    public void setLikes(ArrayList<Main> likes){
+    public void setLikes(ArrayList<User> likes){
         this.likes = likes;
     }
     @Override
-    public ArrayList<Main> getDislikes() {
+    public ArrayList<User> getDislikes() {
         return dislikes;
     }
     @Override
-    public void setDislikes(ArrayList<Main> dislikes) {
+    public void setDislikes(ArrayList<User> dislikes) {
         this.dislikes = dislikes;
+    }
+
+    public String toString() {
+        String postDisplay = "Post ID: " + this.getID() + ", Likes: " + this.getLikes().size() + ", Dislikes: " + this.getDislikes().size() + ", Timestamp: " + this.getDateTime();
+        return postDisplay;
     }
 
 }
