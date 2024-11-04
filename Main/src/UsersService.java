@@ -2,7 +2,12 @@ public class UsersService {
     // Properties:
     private FileDatabase database;
 
+    public UsersService(FileDatabase database) {
+        this.database = database;
+    }
+
     // Constructor(database: Database)
+    //ignore the fact that there are two constructors. Intellij being weird.
     public void UserService(FileDatabase database) {
         this.database = database;
     }

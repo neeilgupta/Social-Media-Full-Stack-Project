@@ -2,15 +2,16 @@ import java.io.*;
 
 public class FileDatabase implements DataBaseInterface{
     private static final String FILE_PATH = "users/"; //denotes the file(MAY BE CHANGED LATER)
+    private File directory;
+    public FileDatabase(String fileName) { //constructor
 
-    public FileDatabase() { //constructor
-        File directory = new File(FILE_PATH);
+        this.directory = new File(FILE_PATH + fileName);
     }
 
     @Override
     public void storeUser(User user) {
         try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH + user.getUsername() + ".ser" ))) {
-            oos.writeObject(user); //this write serialized object to file
+            oos.writeObject(user); //this writes serialized object to file
             System.out.println("User " + user.getUsername() + " saved successfully"); //allows database to hold onto the User
         }
         catch(IOException e) {
@@ -40,4 +41,16 @@ public class FileDatabase implements DataBaseInterface{
     }
 
 
+    public void clear() {
+        try (FileWriter writer = new FileWriter(directory, false)) {
+            // Open file, in overwrite mode, to clear its contents
+            writer.write("");  // Write an empty string to clear the file
+        } catch (IOException e) {
+            System.out.println("Error clearing the database: " + e.getMessage()); //can't clean the file
+        }
+    }
+
+
+
 }
+
