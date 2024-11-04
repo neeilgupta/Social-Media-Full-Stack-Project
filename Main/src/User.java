@@ -101,4 +101,11 @@ public class User extends Main {
     }
 
 
+    public Collection<User> getFollowers() { //Additions by Sameer for Junit
+        return followers;
+    }
+
+    public Collection<User>getBlockedUsers() { //Additions by Sameer for Junit
+        return blockedUsers;
+    }
 }
