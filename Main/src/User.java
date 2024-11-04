@@ -1,6 +1,7 @@
 //Made by both Neeil and Sameer to be utilized for saving in databases and newsfeed
 import java.util.*;
 public class User extends Main {
+    private static User currentUser;
     //Neeil's instance variables
     private int userID;
     private String username;
@@ -13,6 +14,35 @@ public class User extends Main {
         this.userID = userID;
         this.username = username;
     }
+
+    // JOptionPane.showMessageDialog(panel, "Perfect! Your username is " + username);
+    //        panel.removeAll();
+    //        frame.remove(panel);
+    //        frame.dispose();
+    //
+    //        panel.add(new JLabel("Please enter your display name:"));
+    //        frame.add(panel);
+    //
+    //        while (true) {
+    //            displayName = JOptionPane.showInputDialog(panel, "Please enter your display name:");
+    //            result = JOptionPane.showConfirmDialog(null, panel, "Create your display name",
+    //                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+    //            if (result == JOptionPane.OK_OPTION) {
+    //                if (displayName == null) {
+    //                    System.exit(0);
+    //                } else if (displayName.isEmpty() || username.length() >= 40) {
+    //                    JOptionPane.showMessageDialog(panel,
+    //                            "Make sure username is not empty and shorter than 40 characters");
+    //                } else {
+    //                    break;
+    //                }
+    //            } else {
+    //                System.exit(0);
+    //            }
+    //        }
+    //
+    //
+    //        emails.add(email);
 
     public int getUserID() {
         return userID;
@@ -28,6 +58,10 @@ public class User extends Main {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public static User getCurrentUser() {
+        return currentUser;
     }
 //Sameer methods and constructers:
     public User(String username, String password) {
@@ -65,4 +99,6 @@ public class User extends Main {
         // If otherUser is in blockedUsers
         blockedUsers.remove(otherUser);
     }
+
+
 }
