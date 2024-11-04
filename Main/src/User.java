@@ -16,6 +16,7 @@ public class User extends Main {
     //Neeil's instance variables
     private int userID;
     private String username;
+    private ArrayList<Post> hiddenPosts;
     //Sameer's instance variables
     private List<User> followers;
     private List<User> blockedUsers;
@@ -24,6 +25,7 @@ public class User extends Main {
     public User(int userID, String username) {
         this.userID = userID;
         this.username = username;
+        this.hiddenPosts = new ArrayList<>();
     }
 
     // JOptionPane.showMessageDialog(panel, "Perfect! Your username is " + username);
@@ -74,11 +76,26 @@ public class User extends Main {
     public static User getCurrentUser() {
         return currentUser;
     }
+
+    public ArrayList<Post> getHiddenPosts() {
+        return hiddenPosts;
+    }
+
+    public void hidePost(Post post) {
+        if (!hiddenPosts.contains(post)) {
+            hiddenPosts.add(post);
+        }
+    }
+
+    public void unhidePost(Post post) {
+        hiddenPosts.remove(post);
+    }
     //Sameer methods and constructers:
     public User(String username, String password) {
         // Properties:
         this.followers = new ArrayList<>();
         this.blockedUsers = new ArrayList<>();
+        this.hiddenPosts = new ArrayList<>();
     }
 
     // Method follow(otherUser: User)

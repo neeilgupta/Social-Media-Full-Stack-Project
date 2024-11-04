@@ -4,7 +4,8 @@ import java.util.List;
 /**
  * The NewsFeed class represents a social media feed for users.
  * It stores posts, retrieves a feed for a specific user filtered by followers,
- * and supports liking and disliking posts.
+ * and supports liking,disliking, and hiding posts. It also allows for liking,
+ * disliking, and adding comments
  *
  * Created by Neeil Gupta
  * Date: Nov 3, 2024
@@ -25,8 +26,9 @@ public class NewsFeed {
 
         // Stores posts from user and people they follow
         for (Post post : posts) {
-            if (post.getUser() == user || isFollowing(user, post.getUser())) {
-                insertInOrder(userFeed, post);
+            // Check if the post is from the user or someone they follow
+            if ((post.getUser() == user || isFollowing(user, post.getUser())) && !user.getHiddenPosts().contains(post)) {
+                insertInOrder(userFeed, post); // Only insert posts that are not hidden
             }
         }
 
@@ -86,6 +88,20 @@ public class NewsFeed {
         }
         if (!alreadyDisliked) {
             post.getDislikes().add(user);
+        }
+    }
+
+    public void addComment(Post post, Comment comment) {
+        post.getComments().add(comment);
+    }
+
+    public void likeComment(Post post, Comment comment, User user) {
+        if (post.getComments().contains(comment)) {
+            if (!comment.getLikes().contains(user)) {
+                comment.getLikes().add(user); // Add user to likes
+            }
+        } else {
+            System.out.println("Comment does not belong to this post.");
         }
     }
 
