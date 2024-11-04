@@ -1,5 +1,3 @@
-package Main.src;
-
 import javax.swing.*;
 
 public class CreatePost implements Runnable{

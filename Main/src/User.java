@@ -14,6 +14,35 @@ public class User extends Main {
         this.username = username;
     }
 
+    // JOptionPane.showMessageDialog(panel, "Perfect! Your username is " + username);
+    //        panel.removeAll();
+    //        frame.remove(panel);
+    //        frame.dispose();
+    //
+    //        panel.add(new JLabel("Please enter your display name:"));
+    //        frame.add(panel);
+    //
+    //        while (true) {
+    //            displayName = JOptionPane.showInputDialog(panel, "Please enter your display name:");
+    //            result = JOptionPane.showConfirmDialog(null, panel, "Create your display name",
+    //                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+    //            if (result == JOptionPane.OK_OPTION) {
+    //                if (displayName == null) {
+    //                    System.exit(0);
+    //                } else if (displayName.isEmpty() || username.length() >= 40) {
+    //                    JOptionPane.showMessageDialog(panel,
+    //                            "Make sure username is not empty and shorter than 40 characters");
+    //                } else {
+    //                    break;
+    //                }
+    //            } else {
+    //                System.exit(0);
+    //            }
+    //        }
+    //
+    //
+    //        emails.add(email);
+
     public int getUserID() {
         return userID;
     }
@@ -65,4 +94,6 @@ public class User extends Main {
         // If otherUser is in blockedUsers
         blockedUsers.remove(otherUser);
     }
+
+
 }
