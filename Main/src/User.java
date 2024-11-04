@@ -1,6 +1,16 @@
 
 //Made by both Neeil and Sameer to be utilized for saving in databases and newsfeed
 import java.util.*;
+
+/**
+ * The User class represents a user in the application, with functionalities
+ * for managing followers, blocked users, and user information.
+ * This class is used in the NewsFeed and for database storage purposes.
+ *
+ * Created by Neeil Gupta and Sameer Dadoo
+ * Date: November 3, 2024
+ */
+
 public class User extends Main {
     private static User currentUser;
     //Neeil's instance variables

@@ -1,6 +1,15 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The NewsFeed class represents a social media feed for users.
+ * It stores posts, retrieves a feed for a specific user filtered by followers,
+ * and supports liking and disliking posts.
+ *
+ * Created by Neeil Gupta
+ * Date: Nov 3, 2024
+ */
+
 public class NewsFeed {
     // List to store posts
     private ArrayList<Post> posts;

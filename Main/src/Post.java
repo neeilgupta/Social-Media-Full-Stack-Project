@@ -2,7 +2,14 @@ import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.io.Serializable;
-
+/**
+ * The Post class represents a post in the social media application.
+ * Each post has an ID, content, associated user, timestamp, and lists for comments, likes, and dislikes.
+ * Implements PostInterface and Serializable for database storage and retrieval.
+ *
+ * Created by Neeil G. and Emerson
+ * Date: November 3, 2024
+ */
 public class Post implements PostInterface, Serializable{
     private int ID;
     private String content;

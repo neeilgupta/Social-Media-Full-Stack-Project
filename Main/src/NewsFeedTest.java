@@ -5,6 +5,14 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The NewsFeedTest class tests the functionality of the NewsFeed class,
+ * ensuring correct behavior for adding posts, liking, disliking, and ordering the feed.
+ *
+ * Created by Neeil Gupta
+ * Date: November 3, 2024
+ */
+
 public class NewsFeedTest {
     private NewsFeed newsFeed;
     private User user1;
