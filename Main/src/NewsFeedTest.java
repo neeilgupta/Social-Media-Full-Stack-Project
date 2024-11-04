@@ -16,7 +16,6 @@ public class NewsFeedTest {
     @BeforeEach
     public void setUp() {
         newsFeed = new NewsFeed();
-
         user1 = new User(1, "User1");
         user2 = new User(2, "User2");
         user3 = new User(3, "User3");
