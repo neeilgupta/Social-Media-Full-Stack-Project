@@ -1,4 +1,4 @@
-public interface DataBaseInterface {
+public interface UserDataBaseInterface {
     //void connect(); //connection to the database
     //void closeConnection(); //closes connection to the database
     void storeUser(User user); //Save user information in the database

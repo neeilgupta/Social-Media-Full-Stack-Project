@@ -86,4 +86,28 @@ public class Post implements PostInterface, Serializable{
         return postDisplay;
     }
 
+    public void likePost(User user) {
+        boolean alreadyLiked = false;
+        for (User likedUser : this.getLikes())
+            if (likedUser.getUserID() == user.getUserID()) {
+                alreadyLiked = true;
+                break;
+            }
+        if (!alreadyLiked) {
+            this.getLikes().add(user);
+        }
+    }
+    public void dislikePost(User user) {
+        boolean alreadyDisliked = false;
+        for (User dislikedUser : this.getDislikes()) {
+            if (dislikedUser.getUserID() == user.getUserID()) {
+                alreadyDisliked = true;
+                break;
+            }
+        }
+        if (!alreadyDisliked) {
+            this.getDislikes().add(user);
+        }
+    }
+
 }

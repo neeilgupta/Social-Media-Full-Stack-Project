@@ -1,9 +1,9 @@
 import java.io.*;
 
-public class FileDatabase implements DataBaseInterface{
+public class UserFileDatabase implements UserDataBaseInterface{
     private static final String FILE_PATH = "users/"; //denotes the file(MAY BE CHANGED LATER)
     private File directory;
-    public FileDatabase(String fileName) { //constructor
+    public UserFileDatabase(String fileName) { //constructor
 
         this.directory = new File(FILE_PATH + fileName);
     }
@@ -49,7 +49,6 @@ public class FileDatabase implements DataBaseInterface{
             System.out.println("Error clearing the database: " + e.getMessage()); //can't clean the file
         }
     }
-
 
 
 }
