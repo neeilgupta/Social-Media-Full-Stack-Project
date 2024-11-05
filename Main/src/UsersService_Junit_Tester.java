@@ -6,13 +6,13 @@ import java.io.IOException;
 
 class UsersService_Junit_Tester {
 
-    private FileDatabase database;
-    private UsersService userService;
+    private FileDatabase database; //Firebase object
+    private UsersService userService; //User service object
 
     @BeforeEach
     void setUp() throws IOException {
         // Initialize the FileDatabase and UserService
-        database = new FileDatabase("test_database.txt"); // Assuming a test file
+        database = new FileDatabase("UserInfo.txt"); // Assuming a test file
         userService = new UsersService(database);
 
         // Clear any existing data in the test database file
@@ -27,24 +27,24 @@ class UsersService_Junit_Tester {
 
     @Test
     void testAddUser() {
-        userService.addUser("john_doe", "password123");
+        userService.addUser("Sameer_Dadoo", "password");
 
         // Check that the user was added to the file database
-        User storedUser = database.retrieveUser("john_doe");
-        assertNotNull(storedUser);
-        assertEquals("john_doe", storedUser.getUsername());
+        User storedUser = database.retrieveUser("Sameer_Dadoo");
+        assertNotNull(storedUser); //This parameter most not be null
+        assertEquals("Sameer_Dadoo", storedUser.getUsername());
     }
 
     @Test
     void testSearchUser() {
-        User user = new User("john_doe", "password123");
+        User user = new User("Sameer_Dadoo", "password");
         database.storeUser(user);
 
-        User retrievedUser = userService.searchUser("john_doe");
+        User retrievedUser = userService.searchUser("Sameer_Dadoo");
 
         // Verify that the retrieved user is correct
-        assertNotNull(retrievedUser);
-        assertEquals("john_doe", retrievedUser.getUsername());
+        assertNotNull(retrievedUser);//This parameter must not be null
+        assertEquals("Sameer_Dadoo", retrievedUser.getUsername());
     }
 
     @Test
@@ -60,14 +60,14 @@ class UsersService_Junit_Tester {
 
     @Test
     void testUnfollowUser() {
-        User john = new User("john_doe", "password123");
-        User jane = new User("jane_doe", "password456");
+        User sam = new User("sam_doe", "password123");
+        User sammy = new User("sammy_doe", "password456");
 
-        john.follow(jane);
-        john.unfollow(jane);
+        sam.follow(sammy);
+        sam.unfollow(sammy);
 
         // Assert that Jane is no longer in John's followers list
-        assertFalse(john.getFollowers().contains(jane));
+        assertFalse(sam.getFollowers().contains(sammy));
     }
 
     @Test
@@ -102,7 +102,7 @@ class UsersService_Junit_Tester {
         User viewedUser = userService.viewUser("john_doe");
 
         // Verify that the viewed user matches the expected user
-        assertNotNull(viewedUser);
+        assertNotNull(viewedUser); //This parameter must not be null
         assertEquals("john_doe", viewedUser.getUsername());
     }
 
