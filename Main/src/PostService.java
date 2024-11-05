@@ -1,15 +1,16 @@
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class PostService {
+public class PostService implements Serializable {
     private PostFileDatabase database;
 
     public PostService(PostFileDatabase database) {
         this.database = database;
     }
 
-    public void addPost(String content, User user) {
+    public void addPost(int ID, String content, User user) {
         // Create new User object
-        Post post = new Post(content, user);
+        Post post = new Post(ID, content, user);
         // Store the User object in the database
         database.storePost(post);
 

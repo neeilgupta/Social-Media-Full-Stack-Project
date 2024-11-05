@@ -18,11 +18,10 @@ public class Post implements PostInterface, Serializable{
     private ArrayList<Comment> comments;
     private ArrayList<User> likes;
     private ArrayList<User> dislikes;
-    private static int currentID = 1;
 
 
-    public Post(String content, User user){
-        this.ID = currentID++;
+    public Post(int ID, String content, User user){
+        this.ID = ID;
         this.content = content;
         this.user = user;
         this.dateTime = LocalDateTime.now();

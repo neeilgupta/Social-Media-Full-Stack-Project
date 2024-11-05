@@ -29,9 +29,9 @@ public class NewsFeedTest {
         user2 = new User(2, "User2");
         user3 = new User(3, "User3");
 
-        post1 = new Post("First post content", user1);
-        post2 = new Post("Second post content", user2);
-        post3 = new Post("Third post content", user3);
+        post1 = new Post(1,"First post content", user1);
+        post2 = new Post(2,"Second post content", user2);
+        post3 = new Post(3,"Third post content", user3);
 
         newsFeed.addPost(post1);
         newsFeed.addPost(post2);
@@ -40,7 +40,7 @@ public class NewsFeedTest {
 
     @Test
     public void testAddPost() {
-        Post newPost = new Post("New post content", user1);
+        Post newPost = new Post(4,"New post content", user1);
         newsFeed.addPost(newPost);
 
         // Check if the post is added correctly
@@ -71,8 +71,8 @@ public class NewsFeedTest {
         User user2 = new User(2, "User2");
         User user3 = new User(3, "User3");
 
-        Post post1 = new Post("Post 1 Content", user1);
-        Post post2 = new Post("Post 2 Content", user1);
+        Post post1 = new Post(4,"Post 1 Content", user1);
+        Post post2 = new Post(5,"Post 2 Content", user1);
 
         // Adding posts to the feed
         newsFeed.addPost(post1);
@@ -103,7 +103,7 @@ public class NewsFeedTest {
 
     @Test
     public void testFeedOrderByTimestamp() {
-        Post post4 = new Post("Newest post content", user1);
+        Post post4 = new Post(6,"Newest post content", user1);
         newsFeed.addPost(post4);
 
         List<Post> userFeed = newsFeed.getFeedForUser(user1);

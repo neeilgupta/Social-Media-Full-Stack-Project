@@ -25,36 +25,36 @@ class Posts_Junit_Test {
 
     @Test
     void testAddPost() {
-        postService.addPost("this is the first post", new User(123, "user1"));
+        postService.addPost(15,"this is the first post", new User(123, "user1"));
 
         // Check that the user was added to the file database
-        Post storedPost = database.retrievePost(1);
+        Post storedPost = database.retrievePost(15);
         assertNotNull(storedPost);
-        assertEquals("john_doe", storedPost.getID());
+        assertEquals(15, storedPost.getID());
     }
 
     @Test
     void testSearchPost() {
-        Post post = new Post("this is the second post", new User(234, "user2"));
+        Post post = new Post(10,"this is the second post", new User(234, "user2"));
         database.storePost(post);
 
-        Post retrievedPost = postService.searchPost(2);
+        Post retrievedPost = postService.searchPost(10);
 
         // Verify that the retrieved user is correct
         assertNotNull(retrievedPost);
-        assertEquals("john_doe", retrievedPost.getID());
+        assertEquals(10, retrievedPost.getID());
     }
 
 
     @Test
     void testViewPost() {
-        Post post = new Post("this is the third post", new User(345, "user3"));
+        Post post = new Post(64, "this is the third post", new User(345, "user3"));
         database.storePost(post);
 
-        Post viewedPost = postService.viewPost(3);
+        Post viewedPost = postService.viewPost(64);
 
-        // Verify that the viewed user matches the expected user
+        // Verify that the viewed post matches the expected post
         assertNotNull(viewedPost);
-        assertEquals("john_doe", viewedPost.getID());
+        assertEquals(64, viewedPost.getID());
     }
 }

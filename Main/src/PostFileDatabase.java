@@ -1,20 +1,20 @@
 import java.io.*;
 
-public class PostFileDatabase implements PostDataBaseInterface{
+public class PostFileDatabase implements PostDataBaseInterface, Serializable{
     private static final String FILE_PATH = "posts/"; //denotes the file(MAY BE CHANGED LATER)
-    private File directory;
+    private final File directory;
     public PostFileDatabase(String fileName) throws IOException { //constructor
         this.directory = new File(FILE_PATH + fileName);
     }
 
     @Override
     public void storePost(Post post) {
-        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH + post.getID() + ".ser" ))) {
-            oos.writeObject(post); //this writes serialized object to file
-            System.out.println("User " + post.getID() + " saved successfully"); //allows database to hold onto the User
+        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH + post.getID() + ".ser"))) {
+            oos.writeObject(post); //this writes serialized object to post
+            System.out.println("Post " + post.getID() + " saved successfully"); //allows database to hold onto the User
         }
         catch(IOException e) {
-            System.out.println("An error occurred while saving user");
+            System.out.println("An error occurred while saving post");
             e.printStackTrace();
         }
     }
@@ -24,10 +24,10 @@ public class PostFileDatabase implements PostDataBaseInterface{
         try (ObjectInputStream ois = new ObjectInputStream(
                 new FileInputStream(FILE_PATH + postID + ".ser"))) {
             Post post = (Post) ois.readObject();
-            System.out.println("User " + postID + " retrieved successfully.");
+            System.out.println("Post " + postID + " retrieved successfully.");
             return post;
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("An error occurred while saving user");
+            System.out.println("An error occurred while saving post");
             e.printStackTrace();
             return null;
         }
@@ -35,7 +35,7 @@ public class PostFileDatabase implements PostDataBaseInterface{
 
     @Override
     public void updatePost(Post post) {
-        // To update a user, overwrite the file with the new updated user object
+        // To update a post, overwrite the file with the new updated post object
         storePost(post);
     }
 

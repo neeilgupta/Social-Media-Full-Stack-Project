@@ -3,9 +3,10 @@ import java.io.*;
 public class UserFileDatabase implements UserDataBaseInterface{
     private static final String FILE_PATH = "users/"; //denotes the file(MAY BE CHANGED LATER)
     private File directory;
-    public UserFileDatabase(String fileName) { //constructor
+    public UserFileDatabase(String fileName) throws IOException { //constructor
 
         this.directory = new File(FILE_PATH + fileName);
+        directory.createNewFile();
     }
 
     @Override

@@ -1,5 +1,6 @@
 
 //Made by both Neeil and Sameer to be utilized for saving in databases and newsfeed
+import java.io.Serializable;
 import java.util.*;
 
 /**
@@ -11,7 +12,7 @@ import java.util.*;
  * Date: November 3, 2024
  */
 
-public class User extends Main {
+public class User extends Main implements Serializable {
     private static User currentUser;
     //Neeil's instance variables
     private int userID;
