@@ -3,7 +3,7 @@
  *
  * Class that search, follows, unfollows, blocks, and unblocks users 
  *
- * Emerson Barrett
+ * Sameer Dadoo
  *
  * @version November 4th, 2024
  *
