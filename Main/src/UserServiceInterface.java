@@ -1,3 +1,13 @@
+/**
+ * UserService Interface
+ *
+ * Interface for the UsersServie class 
+ *
+ * Sameer Dadoo
+ *
+ * @version November 4th, 2024
+ *
+ */
 public interface UserServiceInterface {
         // Method to add a user
         void addUser(String username, String password);
