@@ -1,3 +1,13 @@
+/**
+ * Junit tester
+ *
+ * Testers that test the UserService class
+ *
+ * Sameer Dadoo
+ *
+ * @version November 4th, 2024
+ *
+ */
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.AfterEach;
