@@ -97,9 +97,12 @@ public class NewsFeed {
 
     public void likeComment(Post post, Comment comment, User user) {
         if (post.getComments().contains(comment)) {
-            comment.addLike(user);
+            if (!comment.getLikes().contains(user)) {
+                comment.getLikes().add(user);
+            } else {
+                System.out.println("User has already liked this comment.");
             }
-        else {
+        } else {
             System.out.println("Comment does not belong to this post.");
         }
     }
