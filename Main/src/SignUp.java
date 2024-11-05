@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.io.*;
-import java.util.HashSet;
 import java.util.Random;
-import java.util.Set;
-// made by Hossein
 
 /**
  * Social media
@@ -262,4 +259,6 @@ public class SignUp implements Runnable {
         this.password = password;
     }
 
+    public void setEmail(String mail) {
+    }
 }
