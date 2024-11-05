@@ -28,7 +28,7 @@ class Comments_Junit_Test {
         commentService.addComment(15,"this is the first comment",
                 new User(123, "user1"), new Post(98, "this is a post",
                         new User (876, "user2")));
-=
+
         // Check that the user was added to the file database
         Comment storedComment = database.retrieveComment(15);
         assertNotNull(storedComment);
