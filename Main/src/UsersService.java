@@ -1,3 +1,13 @@
+/**
+ * UserService class
+ *
+ * Class that search, follows, unfollows, blocks, and unblocks users 
+ *
+ * Emerson Barrett
+ *
+ * @version November 4th, 2024
+ *
+ */
 public class UsersService implements UserServiceInterface {
     // Properties:
     private UserFileDatabase database;
