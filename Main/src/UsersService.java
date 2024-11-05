@@ -1,4 +1,4 @@
-public class UsersService {
+public class UsersService implements UserServiceInterface {
     // Properties:
     private UserFileDatabase database;
 
@@ -12,7 +12,7 @@ public class UsersService {
         this.database = database;
     }
 
-    // Method addUser(username: String, password: String)
+   @Override
     public void addUser(String username, String password) {
         // Create new User object
         User user = new User(username, password);
@@ -20,19 +20,19 @@ public class UsersService {
         database.storeUser(user);
     }
 
-    // Method searchUser(username: String): User
+    @Override
     public User searchUser(String username) {
         // Retrieve and return a User object by username from the database
         return database.retrieveUser(username);
     }
 
-    // Method viewUser(username: String): User
+    @Override
     public User viewUser(String username) {
         // Retrieve and return User details by username from the database
         return database.retrieveUser(username);
     }
 
-    // Method addFollower(currentUser: User, otherUser: User)
+    @Override
     public void addFollower(User currentUser, User otherUser) {
         // Call currentUser.follow(otherUser)
         currentUser.follow(otherUser);
@@ -40,7 +40,7 @@ public class UsersService {
         database.updateUser(currentUser);
     }
 
-    // Method removeFollower(currentUser: User, otherUser: User)
+    @Override
     public void removeFollower(User currentUser, User otherUser) {
         // Call currentUser.unfollow(otherUser)
         currentUser.unfollow(otherUser);
@@ -48,7 +48,7 @@ public class UsersService {
         database.updateUser(currentUser);
     }
 
-    // Method blockUser(currentUser: User, otherUser: User)
+    @Override
     public void blockUser(User currentUser, User otherUser) {
         // Call currentUser.block(otherUser)
         currentUser.block(otherUser);
@@ -56,7 +56,7 @@ public class UsersService {
         database.updateUser(currentUser);
     }
 
-    // Method unblockUser(currentUser: User, otherUser: User)
+    @Override
     public void unblockUser(User currentUser, User otherUser) {
         // Call currentUser.unblock(otherUser)
         currentUser.unblock(otherUser);
