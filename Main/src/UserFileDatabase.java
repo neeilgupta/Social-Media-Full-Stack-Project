@@ -1,3 +1,13 @@
+/**
+ * UserFile DataBase
+ *
+ * Class that creates a database of files for each File object
+ *
+ * Sameer Dadoo
+ *
+ * @version November 4th, 2024
+ *
+ */
 import java.io.*;
 
 public class UserFileDatabase implements UserDataBaseInterface{
