@@ -3,14 +3,15 @@ import java.time.LocalDateTime;
 public class Comment {
     private int ID;
     private String content;
-    private int userID;
+    private User user;
     private LocalDateTime dateTime;
     private int likes;
+    private static int idIndex = 1;
 
-    public Comment(int ID, String content, int UserID){
-        this.ID = ID;
+    public Comment(String content, User user, Post post){
+        this.ID = idIndex++;
         this.content = content;
-        this.userID = UserID;
+        this.user = user;
         this.dateTime = LocalDateTime.now();
         this.likes = 0;
     }
@@ -26,11 +27,11 @@ public class Comment {
     public void setContent(String content){
         this.content = content;
     }
-    public int getUserID(){
-        return userID;
+    public User getUserID(){
+        return user;
     }
-    public void setUser(int userID){
-        this.userID = userID;
+    public void setUser(User user){
+        this.user = user;
     }
     public LocalDateTime getDateTime(){
         return dateTime;

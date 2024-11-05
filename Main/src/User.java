@@ -1,18 +1,31 @@
+
 //Made by both Neeil and Sameer to be utilized for saving in databases and newsfeed
 import java.util.*;
+
+/**
+ * The User class represents a user in the application, with functionalities
+ * for managing followers, blocked users, and user information.
+ * This class is used in the NewsFeed and for database storage purposes.
+ *
+ * Created by Neeil Gupta and Sameer Dadoo
+ * Date: November 3, 2024
+ */
+
 public class User extends Main {
     private static User currentUser;
     //Neeil's instance variables
     private int userID;
     private String username;
-//Sameer's instance variables
+    private ArrayList<Post> hiddenPosts;
+    //Sameer's instance variables
     private List<User> followers;
     private List<User> blockedUsers;
     private String email = "";
-//Neeil's methods and constructers
+    //Neeil's methods and constructers
     public User(int userID, String username) {
         this.userID = userID;
         this.username = username;
+        this.hiddenPosts = new ArrayList<>();
     }
 
     // JOptionPane.showMessageDialog(panel, "Perfect! Your username is " + username);
@@ -63,11 +76,26 @@ public class User extends Main {
     public static User getCurrentUser() {
         return currentUser;
     }
-//Sameer methods and constructers:
+
+    public ArrayList<Post> getHiddenPosts() {
+        return hiddenPosts;
+    }
+
+    public void hidePost(Post post) {
+        if (!hiddenPosts.contains(post)) {
+            hiddenPosts.add(post);
+        }
+    }
+
+    public void unhidePost(Post post) {
+        hiddenPosts.remove(post);
+    }
+    //Sameer methods and constructers:
     public User(String username, String password) {
         // Properties:
         this.followers = new ArrayList<>();
         this.blockedUsers = new ArrayList<>();
+        this.hiddenPosts = new ArrayList<>();
     }
 
     // Method follow(otherUser: User)
@@ -77,6 +105,7 @@ public class User extends Main {
             followers.add(otherUser);
         }
     }
+
 
     // Method unfollow(otherUser: User)
     public void unfollow(User otherUser) {
@@ -102,7 +131,11 @@ public class User extends Main {
 
 
     public Collection<User> getFollowers() { //Additions by Sameer for Junit
+        if (followers == null) {
+            followers = new ArrayList<>();
+        }
         return followers;
+
     }
 
     public Collection<User>getBlockedUsers() { //Additions by Sameer for Junit

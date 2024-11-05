@@ -1,6 +1,16 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The NewsFeed class represents a social media feed for users.
+ * It stores posts, retrieves a feed for a specific user filtered by followers,
+ * and supports liking,disliking, and hiding posts. It also allows for liking,
+ * disliking, and adding comments
+ *
+ * Created by Neeil Gupta
+ * Date: Nov 3, 2024
+ */
+
 public class NewsFeed {
     // List to store posts
     private ArrayList<Post> posts;
@@ -11,13 +21,14 @@ public class NewsFeed {
     }
 
     // Retrieves a feed for the user, filtering by followers and sorted by likes and timestamp
-    public List<Post> getFeedForUser(int userID) {
+    public List<Post> getFeedForUser(User user) {
         List<Post> userFeed = new ArrayList<>();
 
         // Stores posts from user and people they follow
         for (Post post : posts) {
-            if (post.getID() == userID || isFollowing(userID, post.getID())) {
-                insertInOrder(userFeed, post);
+            // Check if the post is from the user or someone they follow
+            if ((post.getUser() == user || isFollowing(user, post.getUser())) && !user.getHiddenPosts().contains(post)) {
+                insertInOrder(userFeed, post); // Only insert posts that are not hidden
             }
         }
 
@@ -49,18 +60,20 @@ public class NewsFeed {
     }
 
     // Helper method to check if a user follows another user
-    private boolean isFollowing(int userID, int followedUserID) {
-        // Idk if I should implement this method here because this is the newsfeed but I just had it return true;
-        return true;
+    private boolean isFollowing(User user, User postUser) {
+        if(user.getFollowers().contains(postUser)) {
+            return true;
+        }
+        return false;
     }
 
     public void likePost(Post post, User user) {
         boolean alreadyLiked = false;
         for (User likedUser : post.getLikes())
-        if (likedUser.getUserID() == user.getUserID()) {
-            alreadyLiked = true;
-            break;
-        }
+            if (likedUser.getUserID() == user.getUserID()) {
+                alreadyLiked = true;
+                break;
+            }
         if (!alreadyLiked) {
             post.getLikes().add(user);
         }
@@ -76,6 +89,19 @@ public class NewsFeed {
         if (!alreadyDisliked) {
             post.getDislikes().add(user);
         }
-}
+    }
+
+    public void addComment(Post post, Comment comment) {
+        post.getComments().add(comment);
+    }
+
+    public void likeComment(Post post, Comment comment, User user) {
+        if (post.getComments().contains(comment)) {
+            comment.addLike();
+            }
+        else {
+            System.out.println("Comment does not belong to this post.");
+        }
+    }
 
 }

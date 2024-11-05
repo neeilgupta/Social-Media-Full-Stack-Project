@@ -1,8 +1,17 @@
+
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * The NewsFeedTest class tests the functionality of the NewsFeed class,
+ * ensuring correct behavior for adding posts, liking, disliking, and ordering the feed.
+ *
+ * Created by Neeil Gupta
+ * Date: November 3, 2024
+ */
 
 public class NewsFeedTest {
     private NewsFeed newsFeed;
@@ -35,7 +44,7 @@ public class NewsFeedTest {
         newsFeed.addPost(newPost);
 
         // Check if the post is added correctly
-        List<Post> userFeed = newsFeed.getFeedForUser(user1.getUserID());
+        List<Post> userFeed = newsFeed.getFeedForUser(user1);
         assertTrue(userFeed.contains(newPost), "New post should be in the user's feed");
     }
 
@@ -57,15 +66,39 @@ public class NewsFeedTest {
 
     @Test
     public void testFeedOrderByLikes() {
+        // Setup - creating users and posts
+        User user1 = new User(1, "User1");
+        User user2 = new User(2, "User2");
+        User user3 = new User(3, "User3");
+
+        Post post1 = new Post("Post 1 Content", user1);
+        Post post2 = new Post("Post 2 Content", user1);
+
+        // Adding posts to the feed
+        newsFeed.addPost(post1);
+        newsFeed.addPost(post2);
+
+        // Like post1 twice and post2 once
         newsFeed.likePost(post1, user1);
         newsFeed.likePost(post1, user2);
         newsFeed.likePost(post2, user1);
 
-        List<Post> userFeed = newsFeed.getFeedForUser(user1.getUserID());
+        // Get user feed for user1
+        List<Post> userFeed = newsFeed.getFeedForUser(user1);
 
-        // Check that post1 appears before post2 in the feed due to more likes
-        assertEquals(post1, userFeed.get(0), "Post1 should appear first in the feed");
-        assertEquals(post2, userFeed.get(1), "Post2 should appear second in the feed");
+        // Debugging output
+        System.out.println("User feed size: " + userFeed.size());
+        for (Post post : userFeed) {
+            System.out.println("Post in feed: " + post.getContent());
+        }
+
+        // Assertions to check feed order
+        assertTrue(userFeed.size() >= 2, "User feed should have at least 2 posts for this test");
+
+        if (userFeed.size() >= 2) {
+            assertEquals(post1, userFeed.get(0), "Post1 should appear first in the feed due to more likes");
+            assertEquals(post2, userFeed.get(1), "Post2 should appear second in the feed");
+        }
     }
 
     @Test
@@ -73,7 +106,7 @@ public class NewsFeedTest {
         Post post4 = new Post("Newest post content", user1);
         newsFeed.addPost(post4);
 
-        List<Post> userFeed = newsFeed.getFeedForUser(user1.getUserID());
+        List<Post> userFeed = newsFeed.getFeedForUser(user1);
 
         // Check that the newest post appears first if likes are equal
         assertEquals(post4, userFeed.get(0), "Newest post should appear first in the feed");
