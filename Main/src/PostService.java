@@ -27,15 +27,11 @@ public class PostService implements Serializable {
     }
 
     public void likePost(Post currentPost, User currentUser) {
-        // Call currentUser.block(otherUser)
         currentPost.likePost(currentUser);
-        // Update blocked list in the database
         database.updatePost(currentPost);
     }
     public void dislikePost(Post currentPost, User currentUser) {
-        // Call currentUser.block(otherUser)
         currentPost.dislikePost(currentUser);
-        // Update blocked list in the database
         database.updatePost(currentPost);
     }
     public void addComment(Post currentPost, User currentUser, Comment comment) {

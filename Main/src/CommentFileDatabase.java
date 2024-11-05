@@ -1,7 +1,18 @@
 import java.io.*;
 
+/**
+ * Comment Database
+ *
+ * Class that creates a database of files for each comment object
+ *
+ * Emerson Barrett
+ *
+ * @version November 4th, 2024
+ *
+ */
+
 public class CommentFileDatabase implements CommentDataBaseInterface, Serializable{
-    private static final String FILE_PATH = "comments/"; //denotes the file(MAY BE CHANGED LATER)
+    private static final String FILE_PATH = "comments/"; //denotes the file
     private final File directory;
     public CommentFileDatabase(String fileName) throws IOException { //constructor
         this.directory = new File(FILE_PATH + fileName);
@@ -10,8 +21,8 @@ public class CommentFileDatabase implements CommentDataBaseInterface, Serializab
     @Override
     public void storeComment(Comment comment) {
         try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_PATH + comment.getID() + ".ser"))) {
-            oos.writeObject(comment); //this writes serialized object to post
-            System.out.println("User " + comment.getID() + " saved successfully"); //allows database to hold onto the User
+            oos.writeObject(comment); //this writes serialized object to comment
+            System.out.println("User " + comment.getID() + " saved successfully"); //allows database to hold onto the comment
         }
         catch(IOException e) {
             System.out.println("An error occurred while saving user");
@@ -35,7 +46,7 @@ public class CommentFileDatabase implements CommentDataBaseInterface, Serializab
 
     @Override
     public void updateComment(Comment comment) {
-        // To update a post, overwrite the file with the new updated post object
+        // To update a comment, overwrite the file with the new updated comment object
         storeComment(comment);
     }
 

@@ -1,5 +1,8 @@
 
 //Made by both Neeil and Sameer to be utilized for saving in databases and newsfeed
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.*;
 
@@ -31,7 +34,7 @@ public class User extends Main implements Serializable {
 
     //This reads from the Userinfo.txt file
     public User(String fileName) {
-
+        String lineInstance = "";
         try(BufferedReader br = new BufferedReader(new FileReader(fileName)))
         {
              String line = " ";

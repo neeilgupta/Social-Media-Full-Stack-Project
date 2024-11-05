@@ -1,6 +1,19 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Comment Service
+ *
+ * Class that takes the methods of the Comment class
+ * and converts them into methods compatible with the comment file database class
+ *
+ * Emerson Barrett
+ *
+ * @version November 4th, 2024
+ *
+ */
+
+
 public class CommentService implements Serializable {
     private CommentFileDatabase database;
 
@@ -9,29 +22,29 @@ public class CommentService implements Serializable {
     }
 
     public void addComment(int ID, String content, User user, Post post) {
-        // Create new User object
+        // Create new comment object
         Comment comment = new Comment(ID, content, user, post);
-        // Store the User object in the database
+        // Store the comment object in the database
         database.storeComment(comment);
 
     }
 
     public Comment searchComment(int commentID) {
-        // Retrieve and return a User object by username from the database
+        // Retrieve and return a comment object by commentID from the database
         return database.retrieveComment(commentID);
     }
 
     public Comment viewComment(int commentID) {
-        // Retrieve and return User details by username from the database
+        // Retrieve and return comment details by commentID from the database
         return database.retrieveComment(commentID);
     }
 
-    public void likeComment(Comment currentComment, User currentUser) {
-        currentComment.addLike(currentUser);
+    public void likeComment(Comment currentComment, User currentUser, Post currentPost) {
+        currentComment.addLike(currentUser, currentPost);
         database.updateComment(currentComment);
     }
-    public void dislikeComment(Comment currentComment, User currentUser) {
-        currentComment.dislike(currentUser);
+    public void dislikeComment(Comment currentComment, User currentUser, Post currentPost) {
+        currentComment.dislike(currentUser, currentPost);
         database.updateComment(currentComment);
     }
 

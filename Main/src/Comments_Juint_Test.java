@@ -4,6 +4,17 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
+/**
+ * Comment Junit Tester
+ *
+ * Junit tester that tests the methods of the comment class and comment service class
+ *
+ * Emerson Barrett
+ *
+ * @version November 4th, 2024
+ *
+ */
+
 class Comments_Junit_Test {
 
     private CommentFileDatabase database;
@@ -29,7 +40,7 @@ class Comments_Junit_Test {
                 new User(123, "user1"), new Post(98, "this is a post",
                         new User (876, "user2")));
 
-        // Check that the user was added to the file database
+        // Check that the comment was added to the file database
         Comment storedComment = database.retrieveComment(15);
         assertNotNull(storedComment);
         assertEquals(15, storedComment.getID());
@@ -45,7 +56,7 @@ class Comments_Junit_Test {
 
         Comment retrievedComment = commentService.searchComment(10);
 
-        // Verify that the retrieved user is correct
+        // Verify that the retrieved comment is correct
         assertNotNull(retrievedComment);
         assertEquals(10, retrievedComment.getID());
     }
@@ -61,7 +72,7 @@ class Comments_Junit_Test {
 
         Comment viewedComment = commentService.viewComment(64);
 
-        // Verify that the viewed post matches the expected post
+        // Verify that the viewed comment matches the expected comment
         assertNotNull(viewedComment);
         assertEquals(64, viewedComment.getID());
     }

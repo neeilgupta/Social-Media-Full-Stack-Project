@@ -2,6 +2,17 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+/**
+ * Comment
+ *
+ * Class that creates a comment object assigned to a certain post and user
+ *
+ * Emerson Barrett
+ *
+ * @version November 4th, 2024
+ *
+ */
+
 public class Comment implements Serializable {
     private int ID;
     private String content;
@@ -20,6 +31,7 @@ public class Comment implements Serializable {
         this.likes = new ArrayList<>();
         this.post = post;
     }
+    //getter and setter methods
     public int getID(){
         return ID;
     }
@@ -56,10 +68,10 @@ public class Comment implements Serializable {
     public void setDislikes(ArrayList<User> dislikes){
         this.dislikes = dislikes;
     }
-    public void addLike(User user){
+    public void addLike(User user, Post post){
         this.likes.add(user);
     }
-    public void dislike(User user){
+    public void dislike(User user, Post post){
         this.likes.add(user);
     }
 
