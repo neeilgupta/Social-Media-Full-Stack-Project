@@ -6,13 +6,13 @@ import java.io.IOException;
 
 class UsersService_Junit_Tester {
 
-    private FileDatabase database;
+    private UserFileDatabase database;
     private UsersService userService;
 
     @BeforeEach
     void setUp() throws IOException {
         // Initialize the FileDatabase and UserService
-        database = new FileDatabase("test_database.txt"); // Assuming a test file
+        database = new UserFileDatabase("test_database.txt"); // Assuming a test file
         userService = new UsersService(database);
 
         // Clear any existing data in the test database file
