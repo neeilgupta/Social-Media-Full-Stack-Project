@@ -1,3 +1,13 @@
+/**
+ * UserDatabase interface 
+ *
+ * Interface that creates the methods for the UserDataBase 
+ *
+ * Sameer Daddoo
+ *
+ * @version November 2nd, 2024
+ *
+ */
 public interface UserDataBaseInterface {
     //void connect(); //connection to the database
     //void closeConnection(); //closes connection to the database
