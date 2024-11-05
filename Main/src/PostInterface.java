@@ -1,13 +1,16 @@
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 /**
- * The PostInterface defines the methods required for a Post object,
- * including getters and setters for ID, content, user, timestamp, comments,
- * likes, and dislikes.
+ * Post Interface
  *
- * Created by Neeil G.
- * Date: November 3, 2024
+ * Interface for the post class
+ *
+ * Neeil G.
+ *
+ * @version November 4th, 2024
+ *
  */
+
 public interface PostInterface {
     int getID();
     void setID(int ID);

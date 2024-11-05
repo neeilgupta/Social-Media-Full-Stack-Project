@@ -1,3 +1,15 @@
+/**
+ * Post Database
+ *
+ * Class that creates a database of files that store information about each post
+ *
+ * Emerson Barrett
+ *
+ * @version November 4th, 2024
+ *
+ */
+
+
 import java.io.*;
 
 public class PostFileDatabase implements PostDataBaseInterface, Serializable{

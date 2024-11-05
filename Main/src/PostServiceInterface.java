@@ -1,5 +1,17 @@
 import java.util.ArrayList;
 
+/**
+ * Post Service Interface
+ *
+ * Interface for the post service class
+ *
+ * Emerson Barrett
+ *
+ * @version November 4th, 2024
+ *
+ */
+
+
 public interface PostServiceInterface {
     public void addPost(int ID, String content, User user);
 

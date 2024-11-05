@@ -1,6 +1,19 @@
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Post Service
+ *
+ * A class that converts methods of the post class into methods that work with the post interface
+ * to create and manipulate post files
+ *
+ * Emerson Barrett
+ *
+ * @version November 4th, 2024
+ *
+ */
+
+
 public class PostService implements Serializable {
     private PostFileDatabase database;
 

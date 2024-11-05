@@ -4,6 +4,18 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import java.io.IOException;
 
+/**
+ * Posts Junit Test
+ *
+ * Junit test class that tests the different methods of the post service class to ensure proper functionality
+ *
+ * Emerson Barrett
+ *
+ * @version November 4th, 2024
+ *
+ */
+
+
 class Posts_Junit_Test {
 
     private PostFileDatabase database;

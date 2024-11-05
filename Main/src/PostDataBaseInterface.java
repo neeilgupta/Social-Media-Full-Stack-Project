@@ -1,3 +1,15 @@
+/**
+ * Post Database Interface
+ *
+ * Interface for the post database class
+ *
+ * Emerson Barrett
+ *
+ * @version November 4th, 2024
+ *
+ */
+
+
 public interface PostDataBaseInterface {
     //void connect(); //connection to the database
     //void closeConnection(); //closes connection to the database
