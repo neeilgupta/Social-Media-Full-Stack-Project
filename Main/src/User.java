@@ -28,6 +28,27 @@ public class User extends Main {
         this.hiddenPosts = new ArrayList<>();
     }
 
+    //This reads from the Userinfo.txt file
+    public User(String fileName) {
+
+        try(BufferedReader br = new BufferedReader(new FileReader(fileName)))
+        {
+             String line = " ";
+             lineInstance = "";
+             while((line = br.readLine()) != null) {
+                 lineInstance += line;
+             }
+        }
+        catch(IOException e) {
+            e.printStackTrace();
+        };
+        assert lineInstance != null;
+        String[] lineInstances = lineInstance.split(",");
+        this.userID = Integer.parseInt(lineInstances[0]);
+        this.email = lineInstances[1];
+        this.username = lineInstances[2];
+    }
+
     // JOptionPane.showMessageDialog(panel, "Perfect! Your username is " + username);
     //        panel.removeAll();
     //        frame.remove(panel);
