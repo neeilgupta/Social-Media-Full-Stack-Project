@@ -41,7 +41,7 @@ public class User extends Main {
         }
         catch(IOException e) {
             e.printStackTrace();
-        };
+        }
         assert lineInstance != null;
         String[] lineInstances = lineInstance.split(",");
         this.userID = Integer.parseInt(lineInstances[0]);
