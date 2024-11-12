@@ -1,3 +1,5 @@
+import javax.swing.*;
+
 /**
  * Social media
  * <p>
@@ -11,11 +13,11 @@
 
 
 public class Login implements Runnable {
-    private String email;
-    private String password;
-    private String username;
-    private String displayName;
-    private int userID;
+//    private String email;
+//    private String password;
+//    private String username;
+//    private String displayName;
+//    private int userID;
 
 //    public Login(String email, String password, String username, String displayName, int userID) {
 //        this.email = email;
@@ -27,6 +29,8 @@ public class Login implements Runnable {
 
     @Override
     public void run() {
+        JFrame frame = new JFrame("Login");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
     }
 }

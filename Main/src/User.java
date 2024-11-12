@@ -15,7 +15,7 @@ import java.util.*;
  * Date: November 3, 2024
  */
 
-public class User extends Main implements Serializable {
+public class User extends Client implements Serializable { //changed extension from Main to Client - Hossein
     private static User currentUser;
     //Neeil's instance variables
     private int userID;

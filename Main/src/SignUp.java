@@ -13,13 +13,13 @@ import java.util.Random;
  *
  */
 
-public class SignUp implements Runnable {
+public class SignUp implements Runnable, Serializable {
     private int userID;
-    private String email = "";
+//    private String email = "";
     private String username;
     private String displayName;
     private String password;
-    private boolean validEmailEndings;
+//    private boolean validEmailEndings;
     private int result;
 
 //    public SignUp(String email, String password, String username, String displayName, int userID ) {
@@ -34,26 +34,27 @@ public class SignUp implements Runnable {
     @Override
     public void run() throws NullPointerException {
         JFrame frame = new JFrame("Sign Up");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JPanel panel = new JPanel();
         frame.add(panel);
         frame.setResizable(true);
 
-
-
         while (true) {
+            result = JOptionPane.showConfirmDialog(null, panel, "Create Username",
+                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
             if (result == JOptionPane.OK_OPTION) {
-                email = JOptionPane.showInputDialog(frame, "Enter your email address");
-                if (email == null) {
+                username = JOptionPane.showInputDialog(null, "Please enter your username:");
+                if (username == null) {
                     return;
-                } else if (email.length() < 6) {
-                    JOptionPane.showMessageDialog(panel, "Not a valid email address");
-                } else if (!email.chars().allMatch(c -> (c >= 48 && c <= 57) || (c >= 64 && c <= 90) || (c >= 45 && c <= 46) ||
+                } else if (username.length() < 3 || username.length() > 16) {
+                    JOptionPane.showMessageDialog(panel,
+                            "Make sure username is longer than 3 characters and shorter than 16 characters");
+                } else if (!username.chars().allMatch(c -> (c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c == 95) ||
                         (c >= 97 && c <= 122))) {
-                    JOptionPane.showMessageDialog(panel, "Not a valid email address");
-                } else if (!email.contains("@") || !email.contains(".")) {
-                    JOptionPane.showMessageDialog(panel, "Not a valid email address");
-                } else if (this.isEmailTaken()) {
-                    JOptionPane.showMessageDialog(panel, "This email is already being used. Please exit and log-in");
+                    JOptionPane.showMessageDialog(panel,
+                            "Make sure to include only letters, digits, or underscores");
+                } else if (this.isUsernameTaken()) {
+                    JOptionPane.showMessageDialog(panel, "Username taken");
                 } else {
                     break;
                 }
@@ -61,11 +62,36 @@ public class SignUp implements Runnable {
                 return;
             }
         }
+        JOptionPane.showMessageDialog(panel, "Perfect! Your username is " + username);
         panel.removeAll();
         frame.remove(panel);
-//        String verificationCode = String.valueOf(new Random().nextInt(10000)); for later, for fun ;)
+        frame.dispose();
 
-        panel.add(new JLabel(email + ":\nPlease create a new password"));
+//        while (true) {
+//            if (result == JOptionPane.OK_OPTION) {
+//                email = JOptionPane.showInputDialog(frame, "Enter your email address");
+//                if (email == null) {
+//                    return;
+//                } else if (email.length() < 6) {
+//                    JOptionPane.showMessageDialog(panel, "Not a valid email address");
+//                } else if (!email.chars().allMatch(c -> (c >= 48 && c <= 57) || (c >= 64 && c <= 90) || (c >= 45 && c <= 46) ||
+//                        (c >= 97 && c <= 122))) {
+//                    JOptionPane.showMessageDialog(panel, "Not a valid email address");
+//                } else if (!email.contains("@") || !email.contains(".")) {
+//                    JOptionPane.showMessageDialog(panel, "Not a valid email address");
+//                } else if (this.isEmailTaken()) {
+//                    JOptionPane.showMessageDialog(panel, "This email is already being used. Please exit and log-in");
+//                } else {
+//                    break;
+//                }
+//            } else {
+//                return;
+//            }
+//        }
+        panel.removeAll();
+        frame.remove(panel);
+
+        panel.add(new JLabel("Please create a new password"));
         frame.add(panel);
         JButton button = new JButton("Autogenerate password");
         panel.add(button);
@@ -107,33 +133,6 @@ public class SignUp implements Runnable {
 //        frame.dispose();
 
 
-        while (true) {
-            result = JOptionPane.showConfirmDialog(null, panel, "Create Username",
-                    JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
-            if (result == JOptionPane.OK_OPTION) {
-                username = JOptionPane.showInputDialog(null, "Please enter your username:");
-                if (username == null) {
-                    return;
-                } else if (username.length() < 3 || username.length() > 16) {
-                    JOptionPane.showMessageDialog(panel,
-                            "Make sure username is longer than 3 characters and shorter than 16 characters");
-                } else if (!username.chars().allMatch(c -> (c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c == 95) ||
-                        (c >= 97 && c <= 122))) {
-                    JOptionPane.showMessageDialog(panel,
-                            "Make sure to include only letters, digits, or underscores");
-                } else if (this.isUsernameTaken()) {
-                    JOptionPane.showMessageDialog(panel, "Username taken");
-                } else {
-                    break;
-                }
-            } else {
-                return;
-            }
-        }
-        JOptionPane.showMessageDialog(panel, "Perfect! Your username is " + username);
-        panel.removeAll();
-        frame.remove(panel);
-        frame.dispose();
 
 //        panel.add(new JLabel("Please enter your display name:"));
 //        frame.add(panel);
@@ -156,15 +155,24 @@ public class SignUp implements Runnable {
             }
         }
 
-        userID = (int) (Math.random() * 1000000000);
-        //
+        int lineCount = 1;
+        try (BufferedReader bfr = new BufferedReader(new FileReader("UserInfo.txt"))) {
+            while ((bfr.readLine()) != null) {
+                lineCount++;
+            }
+            userID = lineCount;
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         try {
             File f = new File("UserInfo.txt");
             FileOutputStream fos = new FileOutputStream(f, true);
             PrintWriter pw = new PrintWriter(new OutputStreamWriter(fos), true);
 
-            pw.write(String.format("%d,%s,%s,%s,%s", userID, email, username, displayName, password));
+            pw.write(String.format("%d,%s,%s,%s,%s", userID, username, displayName, password));
             pw.println();
             pw.flush();
             pw.close();
@@ -177,31 +185,30 @@ public class SignUp implements Runnable {
         frame.setLayout(null);
         frame.setVisible(true);
         frame.dispose();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public boolean isEmailTaken() {
-        try {
-            File f = new File("UserInfo.txt");
-            FileReader fr = new FileReader(f);
-            BufferedReader bfr = new BufferedReader(fr);
-            String line;
-
-            while ((line = bfr.readLine()) != null) {
-                if (line.contains(email)) {
-                    return true;
-                }
-            }
-            bfr.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
+//    public boolean isEmailTaken() {
+//        try {
+//            File f = new File("UserInfo.txt");
+//            FileReader fr = new FileReader(f);
+//            BufferedReader bfr = new BufferedReader(fr);
+//            String line;
+//
+//            while ((line = bfr.readLine()) != null) {
+//                if (line.contains(email)) {
+//                    return true;
+//                }
+//            }
+//            bfr.close();
+//        } catch (FileNotFoundException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        } catch (NullPointerException e) {
+//            e.printStackTrace();
+//        }
+//        return false;
+//    }
 
     public boolean isUsernameTaken() {
         try {
@@ -259,6 +266,6 @@ public class SignUp implements Runnable {
         this.password = password;
     }
 
-    public void setEmail(String mail) {
-    }
+//    public void setEmail(String mail) {
+//    }
 }
