@@ -28,11 +28,11 @@ public class Server {
                     new BufferedInputStream(socket.getInputStream())
             );
             String line = "";
-            while (!line.equals("###")){
+            while (!line.equals("###") && in.available() > 0) {
                 try {
                     line = in.readUTF();
                     String[] userComponents = line.split(",");
-                    UsersService.addUser(userComponents[0], userComponents[1], userComponents[2], userComponents[3]);
+                    //UsersService.addUser(userComponents[0], userComponents[1], userComponents[2], userComponents[3]);
 
                     System.out.println(line);
                 } catch (IOException e){
