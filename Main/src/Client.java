@@ -16,12 +16,16 @@ import java.util.Random;
  * @version November 3rd, 2024
  */
 
-public class Client implements Runnable {
+public class Client extends Thread implements Runnable {
     private int userID;
     private String username;
     private String displayName;
     private String password;
     private int result;
+    private User thisUser;
+
+    private Socket clientSocket;
+    private DataOutputStream out;
 
     private JButton signUpButton;
     private JButton loginButton;
@@ -32,6 +36,16 @@ public class Client implements Runnable {
     private JFrame mainFrame = new JFrame("Welcome");
 
     private Client client;
+
+    public Client(){
+        try{
+            clientSocket = new Socket("localhost", 4141);
+            out = new DataOutputStream(clientSocket.getOutputStream());
+            this.start();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 
     ActionListener actionListener = new ActionListener() {
         @Override
@@ -63,6 +77,7 @@ public class Client implements Runnable {
     }
 
     public void signUpPage() {
+
         JFrame frame = new JFrame("Sign Up");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300); // Set a more compact size for better UI
@@ -83,7 +98,6 @@ public class Client implements Runnable {
         gbc.gridx = 1;
         usernameField = new JTextField(16); // Limit the column size for a cleaner look
         panel.add(usernameField, gbc);
-        username = usernameField.getText();
 
         // Display Name Label and Field
         gbc.gridx = 0;
@@ -93,7 +107,6 @@ public class Client implements Runnable {
         gbc.gridx = 1;
         displayNameField = new JTextField(16);
         panel.add(displayNameField, gbc);
-        displayName = displayNameField.getText();
 
         // Password Label and Field
         gbc.gridx = 0;
@@ -102,9 +115,7 @@ public class Client implements Runnable {
 
         gbc.gridx = 1;
         passwordField = new JPasswordField(16);
-        passwordField.setEchoChar('*');
         panel.add(passwordField, gbc);
-        password = passwordField.getPassword().toString();
 
         // Autogenerate Password Button
         gbc.gridx = 0;
@@ -118,17 +129,29 @@ public class Client implements Runnable {
         // Add Confirm Button at the Bottom
         gbc.gridy = 4;
         JButton confirmSignUp = new JButton("Confirm Sign Up");
-        confirmSignUp.addActionListener(_ -> {
-            System.out.println("Signing up: " + usernameField.getText());
-            frame.dispose(); // Close the sign-up frame after confirming
+        confirmSignUp.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Signing up: " + usernameField.getText());
+                username = usernameField.getText();
+                displayName = displayNameField.getText();
+                password = passwordField.getText();
+                userID = User.numUsers++;
+                frame.dispose(); // Close the sign-up frame after confirming
+                String createUserLine = userID + "," + username + "," + password + "," + displayName;
+                while (!createUserLine.equals("###")) {
+                    try {
+                        out.writeUTF(createUserLine);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
+            }
         });
         panel.add(confirmSignUp, gbc);
 
         frame.add(panel);
         frame.setVisible(true);
-
-
-
     }
 
 
@@ -167,11 +190,6 @@ public class Client implements Runnable {
         panel.add(loginButton);
         loginButton.addActionListener(actionListener);
 
-        if (validUsername(username) && validPassword(password)) {
-            mainFrame.dispose();
-            //link to homepage
-        }
-
 
 //        content.add(panel, BorderLayout.CENTER);
         mainFrame.add(panel);
@@ -180,52 +198,6 @@ public class Client implements Runnable {
 //        mainFrame.pack();
         mainFrame.setVisible(true);
     }
-
-    public boolean validPassword(String password) {
-
-    }
-
-    public boolean validUsername(String username) {
-//        if (username == null) {
-//            return false;
-        if (username.length() < 3 || username.length() > 16) {
-            JOptionPane.showMessageDialog(mainFrame,
-                    "Make sure username is longer than 3 characters and shorter than 16 characters");
-            return false;
-        } else if (!username.chars().allMatch(c -> (c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c == 95) ||
-                (c >= 97 && c <= 122))) {
-            JOptionPane.showMessageDialog(mainFrame,
-                    "Make sure to include only letters, digits, or underscores");
-            return false;
-        } else if (this.isUsernameTaken()) {
-            JOptionPane.showMessageDialog(mainFrame, "Username taken");
-            return false;
-        } else {
-            return true;
-        }
-    }
-
-    private boolean isUsernameTaken() {
-        try (Socket socket = new Socket("localhost", 4141)) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-
-            writer.write(username);
-            writer.flush();
-
-            BufferedReader bfr = new BufferedReader(new FileReader("UserInfo.txt"));
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                if (line.split(",")[0].equals(username)) {
-                    return true;
-                }
-            }
-            return false;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
 }
 
 
@@ -238,7 +210,7 @@ public class Client implements Runnable {
 //                SUoL.join();
 //        } catch (InterruptedException ie) {
 //        throw new RuntimeException(ie);
-//        }
+// m      }
 //                if (osul.isSignUpButtonClicked()) {
 //        System.out.println("Starting SignUp thread..."); //delete later
 //            signUp.start();

@@ -14,9 +14,24 @@ import java.net.*;
 
 
 public class Server {
-    public static void main(String[] args) throws IOException{
-        ServerSocket serverSocket = new ServerSocket(4141);
+    private Socket socket;
+    private ServerSocket serverSocket;
+    private DataInputStream in;
+    private static final int PORT = 4141;
 
+    public Server(){
+        try{
+            serverSocket = new ServerSocket(PORT);
+            socket = serverSocket.accept();
+            in = new DataInputStream(
+                    new BufferedInputStream(socket.getInputStream())
+            );
+            String line = "";
+            while (!line.equals("###")){
+                try {
+                    line = in.readUTF();
+                    String[] userComponents = line.split(",");
+                    UsersService.addUser(userComponents[0], userComponents[1], userComponents[2], userComponents[3]);
 
         while (true){
             Socket clientSocket = serverSocket.accept();
@@ -29,6 +44,12 @@ public class Server {
             //use existing login and sign up method processing
 
             clientSocket.close();
+        } catch (IOException e){
+            e.printStackTrace();
         }
+    }
+
+    public static void main(String[] args) {
+        new Server();
     }
 }
