@@ -16,12 +16,16 @@ import java.util.Random;
  * @version November 3rd, 2024
  */
 
-public class Client implements Runnable {
+public class Client extends Thread implements Runnable {
     private int userID;
     private String username;
     private String displayName;
     private String password;
     private int result;
+    private User thisUser;
+
+    private Socket clientSocket;
+    private DataOutputStream out;
 
     private JButton signUpButton;
     private JButton loginButton;
@@ -32,6 +36,16 @@ public class Client implements Runnable {
     private JFrame mainFrame = new JFrame("Welcome");
 
     private Client client;
+
+    public Client(){
+        try{
+            clientSocket = new Socket("localhost", 4141);
+            out = new DataOutputStream(clientSocket.getOutputStream());
+            this.start();
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 
     ActionListener actionListener = new ActionListener() {
         @Override
@@ -63,6 +77,7 @@ public class Client implements Runnable {
     }
 
     public void signUpPage() {
+
         JFrame frame = new JFrame("Sign Up");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(400, 300); // Set a more compact size for better UI
@@ -118,7 +133,19 @@ public class Client implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Signing up: " + usernameField.getText());
+                username = usernameField.getText();
+                displayName = displayNameField.getText();
+                password = passwordField.getText();
+                userID = User.numUsers++;
                 frame.dispose(); // Close the sign-up frame after confirming
+                String createUserLine = userID + "," + username + "," + password + "," + displayName;
+                while (!createUserLine.equals("###")) {
+                    try {
+                        out.writeUTF(createUserLine);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
+                }
             }
         });
         panel.add(confirmSignUp, gbc);
@@ -133,15 +160,7 @@ public class Client implements Runnable {
 
 
     public static void main(String[] args) throws IOException {
-        Socket socket = new Socket("localhost", 4141);
-        SwingUtilities.invokeLater(new Client());
-
-
-        //send data to and receive data from server
-        //basically create the UI, and send messages to the server so the server can do stuff
-        //can modify existing sign up and login methods to use that GUI, but the client doesn't process anything
-        //use complex GUI's, not just pop-ups
-        socket.close();
+        new Client();
     }
 
 

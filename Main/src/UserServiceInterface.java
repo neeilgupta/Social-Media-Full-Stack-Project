@@ -10,7 +10,7 @@
  */
 public interface UserServiceInterface {
         // Method to add a user
-        void addUser(String username, String password);
+        void addUser(int userID, String username, String password, String displayName);
 
         // Method to search for a user by username
         User searchUser(String username);

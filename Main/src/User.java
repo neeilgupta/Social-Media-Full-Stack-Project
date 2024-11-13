@@ -1,9 +1,6 @@
 
 //Made by both Neeil and Sameer to be utilized for saving in databases and newsfeed
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Serializable;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -24,11 +21,26 @@ public class User extends Client implements Serializable { //changed extension f
     //Sameer's instance variables
     private List<User> followers;
     private List<User> blockedUsers;
-    private String email = "";
+    //Emerson's instance variables
+    static File users = new File("users/");
+    public static int numUsers = getNumUsers();
+    private String password;
+    private String displayName;
+
+    private static int getNumUsers(){
+        try{
+            return users.listFiles().length;
+        } catch (NullPointerException e){
+            return 0;
+        }
+    }
+
     //Neeil's methods and constructers
-    public User(int userID, String username) {
+    public User(int userID, String username, String password, String displayName) {
         this.userID = userID;
         this.username = username;
+        this.password = password;
+        this.displayName = displayName;
         this.hiddenPosts = new ArrayList<>();
     }
 
@@ -49,8 +61,9 @@ public class User extends Client implements Serializable { //changed extension f
         assert lineInstance != null;
         String[] lineInstances = lineInstance.split(",");
         this.userID = Integer.parseInt(lineInstances[0]);
-        this.email = lineInstances[1];
         this.username = lineInstances[2];
+        this.password = lineInstances[3];
+        this.hiddenPosts = new ArrayList<>();
     }
 
     // JOptionPane.showMessageDialog(panel, "Perfect! Your username is " + username);

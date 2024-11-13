@@ -25,9 +25,9 @@ public class NewsFeedTest {
     @BeforeEach
     public void setUp() {
         newsFeed = new NewsFeed();
-        user1 = new User(1, "User1");
-        user2 = new User(2, "User2");
-        user3 = new User(3, "User3");
+        user1 = new User(User.numUsers++, "user1", "pass123", "oney");
+        user2 = new User(User.numUsers++, "user2", "pass123", "twoy");
+        user3 = new User(User.numUsers++, "user2", "pass123", "threey");
 
         post1 = new Post(1,"First post content", user1);
         post2 = new Post(2,"Second post content", user2);
@@ -67,9 +67,9 @@ public class NewsFeedTest {
     @Test
     public void testFeedOrderByLikes() {
         // Setup - creating users and posts
-        User user1 = new User(1, "User1");
-        User user2 = new User(2, "User2");
-        User user3 = new User(3, "User3");
+        user1 = new User(User.numUsers++, "user1", "pass123", "oney");
+        user2 = new User(User.numUsers++, "user2", "pass123", "twoy");
+        user3 = new User(User.numUsers++, "user2", "pass123", "threey");
 
         Post post1 = new Post(4,"Post 1 Content", user1);
         Post post2 = new Post(5,"Post 2 Content", user1);
