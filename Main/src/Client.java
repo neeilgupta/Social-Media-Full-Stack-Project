@@ -129,22 +129,19 @@ public class Client extends Thread implements Runnable {
         // Add Confirm Button at the Bottom
         gbc.gridy = 4;
         JButton confirmSignUp = new JButton("Confirm Sign Up");
-        confirmSignUp.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Signing up: " + usernameField.getText());
-                username = usernameField.getText();
-                displayName = displayNameField.getText();
-                password = passwordField.getText();
-                userID = User.numUsers++;
-                frame.dispose(); // Close the sign-up frame after confirming
-                String createUserLine = userID + "," + username + "," + password + "," + displayName;
-                while (!createUserLine.equals("###")) {
-                    try {
-                        out.writeUTF(createUserLine);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
+        confirmSignUp.addActionListener(e -> {
+            System.out.println("Signing up: " + usernameField.getText());
+            username = usernameField.getText();
+            displayName = displayNameField.getText();
+            password = passwordField.getText();
+            userID = User.numUsers++;
+            frame.dispose(); // Close the sign-up frame after confirming
+            String createUserLine = userID + "," + username + "," + password + "," + displayName;
+            while (!createUserLine.equals("###")) {
+                try {
+                    out.writeUTF(createUserLine);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });

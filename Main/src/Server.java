@@ -9,7 +9,6 @@ import java.net.*;
  * Emerson Barrett
  *
  * @version November 3rd, 2024
- *
  */
 
 
@@ -19,37 +18,41 @@ public class Server {
     private DataInputStream in;
     private static final int PORT = 4141;
 
-    public Server(){
-        try{
+    public Server() {
+        try {
             serverSocket = new ServerSocket(PORT);
             socket = serverSocket.accept();
             in = new DataInputStream(
                     new BufferedInputStream(socket.getInputStream())
             );
             String line = "";
-            while (!line.equals("###")){
+            while (!line.equals("###")) {
                 try {
                     line = in.readUTF();
                     String[] userComponents = line.split(",");
                     UsersService.addUser(userComponents[0], userComponents[1], userComponents[2], userComponents[3]);
 
-        while (true){
-            Socket clientSocket = serverSocket.accept();
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                    while (true) {
+                        Socket clientSocket = serverSocket.accept();
+                        BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                        PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
 
 
+                        //process client requests
+                        //use existing login and sign up method processing
 
-            //process client requests
-            //use existing login and sign up method processing
-
-            clientSocket.close();
-        } catch (IOException e){
-            e.printStackTrace();
+                        clientSocket.close();
+                    }
+                } catch(IOException e){
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-    }
 
-    public static void main(String[] args) {
+    }
+    public static void main (String[]args){
         new Server();
     }
 }
