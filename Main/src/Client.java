@@ -37,12 +37,12 @@ public class Client extends Thread implements Runnable {
 
     private Client client;
 
-    public Client(){
-        try{
+    public Client() {
+        try {
             clientSocket = new Socket("localhost", 4141);
             out = new DataOutputStream(clientSocket.getOutputStream());
             this.start();
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -129,22 +129,19 @@ public class Client extends Thread implements Runnable {
         // Add Confirm Button at the Bottom
         gbc.gridy = 4;
         JButton confirmSignUp = new JButton("Confirm Sign Up");
-        confirmSignUp.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                System.out.println("Signing up: " + usernameField.getText());
-                username = usernameField.getText();
-                displayName = displayNameField.getText();
-                password = passwordField.getText();
-                userID = User.numUsers++;
-                frame.dispose(); // Close the sign-up frame after confirming
-                String createUserLine = userID + "," + username + "," + password + "," + displayName;
-                while (!createUserLine.equals("###")) {
-                    try {
-                        out.writeUTF(createUserLine);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
+        confirmSignUp.addActionListener(e -> {
+            System.out.println("Signing up: " + usernameField.getText());
+            username = usernameField.getText();
+            displayName = displayNameField.getText();
+            password = passwordField.getText();
+            userID = User.numUsers++;
+            frame.dispose(); // Close the sign-up frame after confirming
+            String createUserLine = userID + "," + username + "," + password + "," + displayName;
+            while (!createUserLine.equals("###")) {
+                try {
+                    out.writeUTF(createUserLine);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });
@@ -160,7 +157,15 @@ public class Client extends Thread implements Runnable {
 
 
     public static void main(String[] args) throws IOException {
-        new Client();
+        Socket socket = new Socket("localhost", 4141);
+        SwingUtilities.invokeLater(new Client());
+
+
+        //send data to and receive data from server
+        //basically create the UI, and send messages to the server so the server can do stuff
+        //can modify existing sign up and login methods to use that GUI, but the client doesn't process anything
+        //use complex GUI's, not just pop-ups
+        socket.close();
     }
 
 
@@ -182,6 +187,11 @@ public class Client extends Thread implements Runnable {
         panel.add(loginButton);
         loginButton.addActionListener(actionListener);
 
+        if (validUsername(username) && validPassword(password)) {
+            mainFrame.dispose();
+            //link to homepage
+        }
+
 
 //        content.add(panel, BorderLayout.CENTER);
         mainFrame.add(panel);
@@ -189,6 +199,52 @@ public class Client extends Thread implements Runnable {
 
 //        mainFrame.pack();
         mainFrame.setVisible(true);
+    }
+
+
+    public boolean validPassword(String password) {
+        //fill
+    }
+
+    public boolean validUsername(String username) {
+//        if (username == null) {
+//            return false;
+        if (username.length() < 3 || username.length() > 16) {
+            JOptionPane.showMessageDialog(mainFrame,
+                    "Make sure username is longer than 3 characters and shorter than 16 characters");
+            return false;
+        } else if (!username.chars().allMatch(c -> (c >= 48 && c <= 57) || (c >= 65 && c <= 90) || (c == 95) ||
+                (c >= 97 && c <= 122))) {
+            JOptionPane.showMessageDialog(mainFrame,
+                    "Make sure to include only letters, digits, or underscores");
+            return false;
+        } else if (this.isUsernameTaken()) {
+            JOptionPane.showMessageDialog(mainFrame, "Username taken");
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    private boolean isUsernameTaken() {
+        try (Socket socket = new Socket("localhost", 4141)) {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
+
+            writer.write(username);
+            writer.flush();
+
+            BufferedReader bfr = new BufferedReader(new FileReader("UserInfo.txt"));
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                if (line.split(",")[0].equals(username)) {
+                    return true;
+                }
+            }
+            return false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
 
@@ -202,7 +258,7 @@ public class Client extends Thread implements Runnable {
 //                SUoL.join();
 //        } catch (InterruptedException ie) {
 //        throw new RuntimeException(ie);
-//        }
+// m      }
 //                if (osul.isSignUpButtonClicked()) {
 //        System.out.println("Starting SignUp thread..."); //delete later
 //            signUp.start();

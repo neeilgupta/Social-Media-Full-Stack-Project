@@ -20,8 +20,8 @@ public class Server {
     private DataInputStream in;
     private static final int PORT = 4141;
 
-    public Server(){
-        try{
+    public Server() {
+        try {
             serverSocket = new ServerSocket(PORT);
             socket = serverSocket.accept();
             in = new DataInputStream(

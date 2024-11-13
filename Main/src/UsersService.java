@@ -16,6 +16,9 @@ public class UsersService implements UserServiceInterface {
         this.database = database;
     }
 
+    public static void addUser(String userComponent, String userComponent1, String userComponent2, String userComponent3) {
+    }
+
     // Constructor(database: Database)
     //ignore the fact that there are two constructors. Intellij being weird.
     public void UserService(UserFileDatabase database) {
