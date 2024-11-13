@@ -37,7 +37,7 @@ class UsersService_Junit_Tester {
 
     @Test
     void testAddUser() {
-        userService.addUser("john_doe", "password123");
+        userService.addUser(User.numUsers++, "john_doe", "password123", "jdoe");
 
         // Check that the user was added to the file database
         User storedUser = database.retrieveUser("john_doe");
@@ -47,7 +47,7 @@ class UsersService_Junit_Tester {
 
     @Test
     void testSearchUser() {
-        User user = new User("john_doe", "password123");
+        User user = new User(User.numUsers++, "john_doe", "password123", "jdoe");
         database.storeUser(user);
 
         User retrievedUser = userService.searchUser("john_doe");
@@ -59,8 +59,8 @@ class UsersService_Junit_Tester {
 
     @Test
     void testFollowUser() {
-        User john = new User("john_doe", "password123");
-        User jane = new User("jane_doe", "password456");
+        User john = new User(User.numUsers++, "john_doe", "password123", "jdoe");
+        User jane = new User(User.numUsers++, "jane_doe", "password456", "jand");
 
         john.follow(jane);
 
@@ -70,8 +70,8 @@ class UsersService_Junit_Tester {
 
     @Test
     void testUnfollowUser() {
-        User john = new User("john_doe", "password123");
-        User jane = new User("jane_doe", "password456");
+        User john = new User(User.numUsers++, "john_doe", "password123", "jdoe");
+        User jane = new User(User.numUsers++, "jane_doe", "password456", "jand");
 
         john.follow(jane);
         john.unfollow(jane);
@@ -82,8 +82,8 @@ class UsersService_Junit_Tester {
 
     @Test
     void testBlockUser() {
-        User john = new User("john_doe", "password123");
-        User jane = new User("jane_doe", "password456");
+        User john = new User(User.numUsers++, "john_doe", "password123", "jdoe");
+        User jane = new User(User.numUsers++, "jane_doe", "password456", "jand");
 
         john.block(jane);
 
@@ -94,8 +94,8 @@ class UsersService_Junit_Tester {
 
     @Test
     void testUnblockUser() {
-        User john = new User("john_doe", "password123");
-        User jane = new User("jane_doe", "password456");
+        User john = new User(User.numUsers++, "john_doe", "password123", "jdoe");
+        User jane = new User(User.numUsers++, "jane_doe", "password456", "jand");
 
         john.block(jane);
         john.unblock(jane);
@@ -106,7 +106,7 @@ class UsersService_Junit_Tester {
 
     @Test
     void testViewUser() {
-        User user = new User("john_doe", "password123");
+        User user = new User(User.numUsers++, "john_doe", "password123", "jdoe");
         database.storeUser(user);
 
         User viewedUser = userService.viewUser("john_doe");
@@ -118,8 +118,8 @@ class UsersService_Junit_Tester {
 
     @Test
     void testAddFollower() {
-        User john = new User("john_doe", "password123");
-        User jane = new User("jane_doe", "password456");
+        User john = new User(User.numUsers++, "john_doe", "password123", "jdoe");
+        User jane = new User(User.numUsers++, "jane_doe", "password456", "jand");
 
         database.storeUser(john);
         database.storeUser(jane);
@@ -132,8 +132,8 @@ class UsersService_Junit_Tester {
 
     @Test
     void testRemoveFollower() {
-        User john = new User("john_doe", "password123");
-        User jane = new User("jane_doe", "password456");
+        User john = new User(User.numUsers++, "john_doe", "password123", "jdoe");
+        User jane = new User(User.numUsers++, "jane_doe", "password456", "jand");
 
         john.follow(jane);
         userService.removeFollower(john, jane);

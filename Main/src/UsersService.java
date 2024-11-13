@@ -23,9 +23,9 @@ public class UsersService implements UserServiceInterface {
     }
 
    @Override
-    public void addUser(String username, String password) {
+    public void addUser(int userID, String username, String password, String displayName) {
         // Create new User object
-        User user = new User(username, password);
+        User user = new User(userID, username, password, displayName);
         // Store the User object in the database
         database.storeUser(user);
     }

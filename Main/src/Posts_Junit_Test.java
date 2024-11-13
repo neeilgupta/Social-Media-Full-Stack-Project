@@ -37,7 +37,7 @@ class Posts_Junit_Test {
 
     @Test
     void testAddPost() {
-        postService.addPost(15,"this is the first post", new User(123, "user1"));
+        postService.addPost(15,"this is the first post", new User(User.numUsers++, "user1", "pass123", "oney"));
 
         // Check that the user was added to the file database
         Post storedPost = database.retrievePost(15);
@@ -47,7 +47,7 @@ class Posts_Junit_Test {
 
     @Test
     void testSearchPost() {
-        Post post = new Post(10,"this is the second post", new User(234, "user2"));
+        Post post = new Post(10,"this is the second post", new User(User.numUsers++, "user2", "pass123", "twoy"));
         database.storePost(post);
 
         Post retrievedPost = postService.searchPost(10);
@@ -60,7 +60,7 @@ class Posts_Junit_Test {
 
     @Test
     void testViewPost() {
-        Post post = new Post(64, "this is the third post", new User(345, "user3"));
+        Post post = new Post(64, "this is the third post", new User(User.numUsers++, "user3", "pass123", "threey"));
         database.storePost(post);
 
         Post viewedPost = postService.viewPost(64);

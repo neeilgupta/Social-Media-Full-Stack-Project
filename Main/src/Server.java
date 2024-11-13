@@ -23,8 +23,6 @@ public class Server {
             BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
 
-
-
             //process client requests
             //use existing login and sign up method processing
 
