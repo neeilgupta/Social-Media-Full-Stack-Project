@@ -144,7 +144,7 @@ public class SignUp implements Runnable, Serializable {
             if (result == JOptionPane.OK_OPTION) {
                 if (displayName == null) {
                     return;
-                } else if (displayName.isEmpty() || username.length() >= 40) {
+                } else if (displayName.isEmpty() || displayName.length() >= 40) {
                     JOptionPane.showMessageDialog(panel,
                             "Make sure username is not empty and shorter than 40 characters");
                 } else {
