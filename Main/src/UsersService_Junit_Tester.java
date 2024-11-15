@@ -1,3 +1,9 @@
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import java.io.IOException;
+
 /**
  * Junit tester
  *
@@ -8,11 +14,6 @@
  * @version November 4th, 2024
  *
  */
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
-import java.io.IOException;
 
 class UsersService_Junit_Tester {
 

@@ -137,12 +137,10 @@ public class Client extends Thread implements Runnable {
             userID = User.numUsers++;
             frame.dispose(); // Close the sign-up frame after confirming
             String createUserLine = userID + "," + username + "," + password + "," + displayName;
-            while (!createUserLine.equals("###")) {
-                try {
-                    out.writeUTF(createUserLine);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
-                }
+            try {
+                out.writeUTF(createUserLine);
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
         });
         panel.add(confirmSignUp, gbc);
@@ -157,15 +155,13 @@ public class Client extends Thread implements Runnable {
 
 
     public static void main(String[] args) throws IOException {
-        Socket socket = new Socket("localhost", 4141);
-        SwingUtilities.invokeLater(new Client());
-
+        Client client = new Client();
 
         //send data to and receive data from server
         //basically create the UI, and send messages to the server so the server can do stuff
         //can modify existing sign up and login methods to use that GUI, but the client doesn't process anything
         //use complex GUI's, not just pop-ups
-        socket.close();
+        //socket.close();
     }
 
 
@@ -204,12 +200,13 @@ public class Client extends Thread implements Runnable {
 
     public boolean validPassword(String password) {
         //fill
+        return true; //for testing purposes
     }
 
     public boolean validUsername(String username) {
-//        if (username == null) {
-//            return false;
-        if (username.length() < 3 || username.length() > 16) {
+        if (username == null) {
+            return false;
+        } else if (username.length() < 3 || username.length() > 16) {
             JOptionPane.showMessageDialog(mainFrame,
                     "Make sure username is longer than 3 characters and shorter than 16 characters");
             return false;

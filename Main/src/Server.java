@@ -28,15 +28,25 @@ public class Server {
                     new BufferedInputStream(socket.getInputStream())
             );
             String line = "";
-            while (!line.equals("###") && in.available() > 0) {
+            while (!line.equals("###")) {
                 try {
                     line = in.readUTF();
                     String[] userComponents = line.split(",");
+                    System.out.println(userComponents[0]);
+                    System.out.println(userComponents[1]);
+                    System.out.println(userComponents[2]);
+                    System.out.println(userComponents[3]);
                     //UsersService.addUser(userComponents[0], userComponents[1], userComponents[2], userComponents[3]);
-
-                    System.out.println(line);
+                    UserFileDatabase database = new UserFileDatabase("user_database.txt");
+                    //UsersService usersService = new UsersService(database);
+                    //User user = new User(Integer.parseInt(userComponents[0]), userComponents[1], userComponents[2],
+                            //userComponents[3]);
+                    //usersService.addUser(Integer.parseInt(userComponents[0]), userComponents[1], userComponents[2],
+                            //userComponents[3]);
+                    //System.out.println(line);
                 } catch (IOException e){
                     e.printStackTrace();
+                    line = "###";
                 }
             }
             socket.close();
