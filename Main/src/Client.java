@@ -17,10 +17,10 @@ import java.util.Random;
  */
 
 public class Client extends Thread implements Runnable {
-    private int userID;
-    private String username;
-    private String displayName;
-    private String password;
+    int userID;
+    String username;
+    String displayName;
+    String password;
     private int result;
     private User thisUser;
 
@@ -29,9 +29,9 @@ public class Client extends Thread implements Runnable {
 
     private JButton signUpButton;
     private JButton loginButton;
-    private JTextField usernameField;
-    private JPasswordField passwordField;
-    private JTextField displayNameField;
+    JTextField usernameField;
+    JPasswordField passwordField;
+    JTextField displayNameField;
     private JButton autogenerateButton;
     private JFrame mainFrame = new JFrame("Welcome");
 
@@ -64,7 +64,7 @@ public class Client extends Thread implements Runnable {
         }
     };
 
-    private void autogenerate() {
+    void autogenerate() {
         StringBuilder generatedPassword = new StringBuilder(30);
         autogenerateButton.addActionListener(e -> {
             String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-_=+/?.>,<`~[{]}:;";
