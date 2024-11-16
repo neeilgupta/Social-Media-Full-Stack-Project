@@ -37,30 +37,39 @@ class Posts_Junit_Test {
 
     @Test
     void testAddPost() {
-        postService.addPost(15,"this is the first post", new User(User.numUsers++, "user1", "pass123", "oney"));
+        //create user with unique id
+        User user = new User(User.numUsers++, "user1", "pass123", "oney");
+
+        postService.addPost(15,"this is the first post",user);
 
         // Check that the user was added to the file database
         Post storedPost = database.retrievePost(15);
         assertNotNull(storedPost);
         assertEquals(15, storedPost.getID());
+        assertEquals("this is the first post", storedPost.getContent());
+
     }
 
     @Test
     void testSearchPost() {
-        Post post = new Post(10,"this is the second post", new User(User.numUsers++, "user2", "pass123", "twoy"));
+        User user = new User(User.numUsers++, "user2","pass123","twoy");
+        Post post = new Post(10, "this is the second post", user);
+
         database.storePost(post);
 
         Post retrievedPost = postService.searchPost(10);
-
         // Verify that the retrieved user is correct
         assertNotNull(retrievedPost);
         assertEquals(10, retrievedPost.getID());
+        assertEquals("this is the second post", retrievedPost.getContent());
+
     }
 
 
     @Test
     void testViewPost() {
-        Post post = new Post(64, "this is the third post", new User(User.numUsers++, "user3", "pass123", "threey"));
+        User user = new User(User.numUsers++,"user3", "pass123", "threey");
+        Post post = new Post(64, "this is the third post", user);
         database.storePost(post);
 
         Post viewedPost = postService.viewPost(64);
@@ -68,5 +77,7 @@ class Posts_Junit_Test {
         // Verify that the viewed post matches the expected post
         assertNotNull(viewedPost);
         assertEquals(64, viewedPost.getID());
+        assertEquals("this is the third post", viewedPost.getContent());
+
     }
 }
