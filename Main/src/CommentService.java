@@ -39,12 +39,12 @@ public class CommentService implements Serializable {
         return database.retrieveComment(commentID);
     }
 
-    public void likeComment(Comment currentComment, User currentUser, Post currentPost) {
-        currentComment.addLike(currentUser, currentPost);
+    public void likeComment(Comment currentComment, User currentUser) {
+        currentComment.addLike(currentUser);
         database.updateComment(currentComment);
     }
-    public void dislikeComment(Comment currentComment, User currentUser, Post currentPost) {
-        currentComment.dislike(currentUser, currentPost);
+    public void dislikeComment(Comment currentComment, User currentUser) {
+        currentComment.dislike(currentUser);
         database.updateComment(currentComment);
     }
 

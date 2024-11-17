@@ -5,11 +5,11 @@ import java.util.Arrays;
 /**
  * Server
  * <p>
- * DESCRIPTION GOES HERE
+ * Initiates the server, and creates threads for ServerApp that complete the tasks requested by the client
  * <p>
  * Emerson Barrett
  *
- * @version November 3rd, 2024
+ * @version November 17, 2024
  */
 
 

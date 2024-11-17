@@ -1,4 +1,4 @@
-import java.io.Serializable;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -30,6 +30,26 @@ public class Comment implements Serializable {
         this.dateTime = LocalDateTime.now();
         this.likes = new ArrayList<>();
         this.post = post;
+    }
+    public static Comment deserialize(String data) throws IOException {
+        String[] parts = data.split(",");
+        BufferedReader read = new BufferedReader(new FileReader("user.ser"));
+        String line = read.readLine();
+        User thisUser = null;
+        Post thisPost = null;
+        while ((line = read.readLine()) != null) {
+            if (line.substring(0, line.indexOf(",")).equals(parts[2])) {
+                thisUser = User.deserialize(line);
+            }
+        }
+        BufferedReader read2 = new BufferedReader(new FileReader("post.ser"));
+        line = read2.readLine();
+        while ((line = read2.readLine()) != null) {
+            if (line.substring(0, line.indexOf(",")).equals(parts[3])) {
+                thisPost = Post.deserialize(line);
+            }
+        }
+        return new Comment(Integer.parseInt(parts[0]), parts[1], thisUser, thisPost);
     }
     //getter and setter methods
     public int getID(){
@@ -68,10 +88,10 @@ public class Comment implements Serializable {
     public void setDislikes(ArrayList<User> dislikes){
         this.dislikes = dislikes;
     }
-    public void addLike(User user, Post post){
+    public void addLike(User user){
         this.likes.add(user);
     }
-    public void dislike(User user, Post post){
+    public void dislike(User user){
         this.likes.add(user);
     }
 
