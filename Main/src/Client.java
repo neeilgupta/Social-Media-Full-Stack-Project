@@ -1,7 +1,9 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
 import java.util.Random;
@@ -34,6 +36,7 @@ public class Client extends Thread implements Runnable {
     JPasswordField passwordField;
     JTextField displayNameField;
     private JButton autogenerateButton;
+    private JButton showPasswordButton;
     private JFrame mainFrame = new JFrame("Welcome");
 
     private Client client;
@@ -62,8 +65,19 @@ public class Client extends Thread implements Runnable {
             if (e.getSource() == autogenerateButton) {
                 client.autogenerate();
             }
+            if (e.getSource() == showPasswordButton) {
+                client.showPassword();
+            }
         }
     };
+
+    private void showPassword() {
+        if (passwordField.getEchoChar() == '*') {
+            passwordField.setEchoChar((char) 0); // Show password
+        } else {
+            passwordField.setEchoChar('*'); // Hide password
+        }
+    }
 
     void autogenerate() {
         StringBuilder generatedPassword = new StringBuilder(30);
@@ -81,7 +95,7 @@ public class Client extends Thread implements Runnable {
 
         JFrame frame = new JFrame("Sign Up");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300); // Set a more compact size for better UI
+        frame.setSize(500, 350); // Set a more compact size for better UI
         frame.setLocationRelativeTo(null);
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -127,21 +141,67 @@ public class Client extends Thread implements Runnable {
         autogenerateButton.addActionListener(actionListener);
         panel.add(autogenerateButton, gbc);
 
+         // Show Password Button (next to password field)
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+
+        try {
+            // Load the original image
+            BufferedImage originalImage = ImageIO.read(new File("/Users/hhatami/IdeaProjects/group-project-cs180/Main/password-hidding-icon-icon-for-data-privacy-and-sensitive-content-mark-illustration-vector.jpg"));
+
+            // Get the preferred height of the password field
+            int fieldHeight = passwordField.getPreferredSize().height;
+
+            // Resize the image to a square with height equal to the field height
+            BufferedImage resizedImage = new BufferedImage(fieldHeight, fieldHeight, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D g2d = resizedImage.createGraphics();
+            g2d.drawImage(originalImage, 0, 0, fieldHeight, fieldHeight, null);
+            g2d.dispose();
+
+            // Convert resized image to an icon
+            ImageIcon resizedIcon = new ImageIcon(resizedImage);
+
+            // Create the button with the resized icon
+            showPasswordButton = new JButton(resizedIcon);
+            showPasswordButton.setBorderPainted(false);
+            showPasswordButton.setFocusPainted(false);
+            showPasswordButton.setContentAreaFilled(false);
+            showPasswordButton.setPreferredSize(new Dimension(fieldHeight, fieldHeight));
+            showPasswordButton.addActionListener(actionListener);
+
+
+            // Place the button next to the password field
+            gbc.gridx = 2;
+            gbc.gridy = 2;
+            gbc.gridwidth = 1; // Reset gridwidth to avoid spanning multiple columns
+            panel.add(showPasswordButton, gbc);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+
+
         // Add Confirm Button at the Bottom
         gbc.gridy = 4;
         JButton confirmSignUp = new JButton("Confirm Sign Up");
+
         confirmSignUp.addActionListener(e -> {
-            System.out.println("Signing up: " + usernameField.getText());
             username = usernameField.getText();
             displayName = displayNameField.getText();
             password = passwordField.getText();
             userID = User.numUsers++;
-            frame.dispose(); // Close the sign-up frame after confirming
-            String createUserLine = "create##" + userID + "," + username + "," + password + "," + displayName;
-            try {
-                out.writeUTF(createUserLine);
-            } catch (IOException ex) {
-                ex.printStackTrace();
+
+            if (validUsername(username) && validPassword(password) && validDisplayName(displayName)) {
+                System.out.println("Signing up: " + username);
+                frame.dispose(); // Close the sign-up frame after confirming
+                String createUserLine = "create##" + userID + "," + username + "," + password + "," + displayName;
+                try {
+                    out.writeUTF(createUserLine);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
         panel.add(confirmSignUp, gbc);
@@ -198,14 +258,35 @@ public class Client extends Thread implements Runnable {
         mainFrame.setVisible(true);
     }
 
+    public boolean validDisplayName(String displayName) {
+        if (displayName.contains(",")) {
+            JOptionPane.showMessageDialog(null, "Display name contains invalid characters!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        } else if (displayName.length() > 30) {
+            JOptionPane.showMessageDialog(null, "Display name is too long!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+
 
     public boolean validPassword(String password) {
-        //fill
-        return true; //for testing purposes
+        if (password == null) {
+            return false;
+        } else if (password.length() < 8) {
+            JOptionPane.showMessageDialog(mainFrame, "Password must be at least 8 characters");
+            return false;
+        } else if (password.length() > 32) {
+            JOptionPane.showMessageDialog(mainFrame, "Password must be at most 32 characters");
+            return false;
+        } else {
+            return true;
+        }
     }
 
     public boolean validUsername(String username) {
-        User user = database.retrieveUser(username);
+//        User user = database.retrieveUser(username);
         if (username == null) {
             return false;
         } else if (username.length() < 3 || username.length() > 16) {

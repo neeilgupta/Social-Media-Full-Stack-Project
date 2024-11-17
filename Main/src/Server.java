@@ -10,7 +10,6 @@ import java.util.Arrays;
  * Emerson Barrett
  *
  * @version November 3rd, 2024
- *
  */
 
 
@@ -19,13 +18,9 @@ public class Server {
     private ServerSocket serverSocket;
     private DataInputStream in;
     private static final int PORT = 4141;
-    private UsersService userService;
-    private UserFileDatabase database;
 
     public Server() {
-        database = new UserFileDatabase("userinfo.txt");
-        database.migrateSerializedUsers("path/to/ser/directory"); // Migrate data
-        userService = new UsersService(database);
+//        while (true) {
         try {
             serverSocket = new ServerSocket(PORT);
             socket = serverSocket.accept();
@@ -45,7 +40,7 @@ public class Server {
                     }
 
                     line = "###";
-                } catch (IOException e){
+                } catch (IOException e) {
                     e.printStackTrace();
                     line = "###";
                 }
@@ -53,12 +48,13 @@ public class Server {
             socket.close();
             in.close();
 
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
+//    }
 
-    private void createUser(String userInfo){
+    private void createUser(String userInfo) {
         String[] userComponents = userInfo.split(",");
         System.out.println(userComponents[0]);
         System.out.println(userComponents[1]);
@@ -73,18 +69,6 @@ public class Server {
     }
 
     public static void main(String[] args) {
-        // Initialize database
-        UserFileDatabase database = new UserFileDatabase("userinfo.txt");
-
-        // Migrate serialized user data
-        database.migrateSerializedUsers("path/to/ser/directory");
-
-        // Initialize the service
-        UsersService userService = new UsersService(database);
-
-        System.out.println("Application started, and users migrated.");
-
         new Server();
-
     }
 }
