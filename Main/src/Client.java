@@ -347,13 +347,12 @@ public class Client extends Thread implements Runnable {
 
         confirmSULI.addActionListener(_ -> {
             username = usernameField.getText();
-            displayName = displayNameField.getText();
             password = passwordField.getText();
             userID = User.numUsers++;
 
-            if (validUsernameLI(username) && validPasswordLI(password) && validDisplayName(displayName)) {
+            if (validUsernameLI(username) && validPasswordLI(password)) {
                 System.out.println("Signing up: " + username);
-                frame.dispose(); // Close the sign-up frame after confirming
+                frame.dispose();
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
@@ -606,7 +605,7 @@ public class Client extends Thread implements Runnable {
 
     private boolean isUsernameTaken() {
         try{
-            BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
+            BufferedReader bfr = new BufferedReader(new FileReader(username + ".ser"));
             String line;
             while ((line = bfr.readLine()) != null) {
                 if (line.split(",")[0].equals(username)) {
@@ -617,6 +616,7 @@ public class Client extends Thread implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        JOptionPane.showMessageDialog(mainFrame, "Username taken", "Error", JOptionPane.ERROR_MESSAGE);
         return false;
     }
 }

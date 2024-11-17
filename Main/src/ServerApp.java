@@ -14,9 +14,11 @@ import java.net.Socket;
 
 public class ServerApp extends Thread {
     private Socket socket;
-    public ServerApp(Socket inSocket){
+
+    public ServerApp(Socket inSocket) {
         socket = inSocket;
     }
+
     public void run() {
         try {
             DataInputStream in = new DataInputStream(
@@ -25,29 +27,31 @@ public class ServerApp extends Thread {
             String line = "";
             while (!line.equals("###")) {
                 try {
-                    line = in.readUTF();
-                    String action = line.substring(0, line.indexOf("##"));
-                    String input = line.substring(line.indexOf("##") + 2);
-                    if (action.equals("createUser")) {
-                        createUser(input);
-                    } else if (action.equals("createPost")) {
-                        createPost(input);
-                    } else if (action.equals("createComment")) {
-                        createComment(input);
-                    } else if (action.equals("likePost")) {
-                        likePost(input);
-                    } else if (action.equals("dislikePost")) {
-                        dislikePost(input);
-                    } else if (action.equals("likeComment")) {
-                        likeComment(input);
-                    } else if (action.equals("dislikeComment")) {
-                        dislikeComment(input);
-                    } else if (action.equals("follow")) {
-                        follow(input);
-                    } else if (action.equals("unfollow")) {
-                        unfollow(input);
-                    } else if (action.equals("removeAccount")) {
-                        removeAccount(input);
+                    if (in.available() > 0) {  // Check if data is available
+                        line = in.readUTF();
+                        String action = line.substring(0, line.indexOf("##"));
+                        String input = line.substring(line.indexOf("##") + 2);
+                        if (action.equals("createUser")) {
+                            createUser(input);
+                        } else if (action.equals("createPost")) {
+                            createPost(input);
+                        } else if (action.equals("createComment")) {
+                            createComment(input);
+                        } else if (action.equals("likePost")) {
+                            likePost(input);
+                        } else if (action.equals("dislikePost")) {
+                            dislikePost(input);
+                        } else if (action.equals("likeComment")) {
+                            likeComment(input);
+                        } else if (action.equals("dislikeComment")) {
+                            dislikeComment(input);
+                        } else if (action.equals("follow")) {
+                            follow(input);
+                        } else if (action.equals("unfollow")) {
+                            unfollow(input);
+                        } else if (action.equals("removeAccount")) {
+                            removeAccount(input);
+                        }
                     }
 
                     line = "###";
@@ -79,6 +83,7 @@ public class ServerApp extends Thread {
         usersService.addUser(Integer.parseInt(userComponents[0]), userComponents[1], userComponents[2],
                 userComponents[3]);
     }
+
     private void createPost(String postInfo) throws IOException {
         String[] postComponents = postInfo.split(",");
         BufferedReader read = new BufferedReader(new FileReader("user.ser"));
@@ -91,8 +96,9 @@ public class ServerApp extends Thread {
         }
         PostFileDatabase database = new PostFileDatabase("posts.ser");
         PostService postService = new PostService(database);
-        Post post = new Post (Integer.parseInt(postComponents[0]), postComponents[1], thisUser);
+        Post post = new Post(Integer.parseInt(postComponents[0]), postComponents[1], thisUser);
     }
+
     private void createComment(String commentInfo) throws IOException {
         String[] commentComponents = commentInfo.split(",");
         BufferedReader read = new BufferedReader(new FileReader("comments.ser"));
@@ -111,8 +117,9 @@ public class ServerApp extends Thread {
         }
         CommentFileDatabase database = new CommentFileDatabase("comments.ser");
         CommentService commentService = new CommentService(database);
-        Comment comment = new Comment (Integer.parseInt(commentComponents[0]), commentComponents[1], thisUser, thisPost);
+        Comment comment = new Comment(Integer.parseInt(commentComponents[0]), commentComponents[1], thisUser, thisPost);
     }
+
     public void likePost(String input) {
         String line;
         int postID = Integer.parseInt(input.substring(0, input.indexOf(",")));
@@ -121,14 +128,14 @@ public class ServerApp extends Thread {
         User thisUser = null;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
-            while ((line = bfr.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == userID){
+            while ((line = bfr.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == userID) {
                     thisUser = User.deserialize(line);
                 }
             }
             BufferedReader bfr2 = new BufferedReader(new FileReader("posts.ser"));
-            while ((line = bfr2.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == postID){
+            while ((line = bfr2.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == postID) {
                     thisPost = Post.deserialize(line);
                 }
             }
@@ -141,6 +148,7 @@ public class ServerApp extends Thread {
             ex.printStackTrace();
         }
     }
+
     public void dislikePost(String input) {
         String line;
         int postID = Integer.parseInt(input.substring(0, input.indexOf(",")));
@@ -149,14 +157,14 @@ public class ServerApp extends Thread {
         User thisUser = null;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
-            while ((line = bfr.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == userID){
+            while ((line = bfr.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == userID) {
                     thisUser = User.deserialize(line);
                 }
             }
             BufferedReader bfr2 = new BufferedReader(new FileReader("posts.ser"));
-            while ((line = bfr2.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == postID){
+            while ((line = bfr2.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == postID) {
                     thisPost = Post.deserialize(line);
                 }
             }
@@ -169,6 +177,7 @@ public class ServerApp extends Thread {
             ex.printStackTrace();
         }
     }
+
     public void likeComment(String input) {
         String line;
         int commentID = Integer.parseInt(input.substring(0, input.indexOf(",")));
@@ -177,14 +186,14 @@ public class ServerApp extends Thread {
         User thisUser = null;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
-            while ((line = bfr.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == userID){
+            while ((line = bfr.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == userID) {
                     thisUser = User.deserialize(line);
                 }
             }
             BufferedReader bfr2 = new BufferedReader(new FileReader("comments.ser"));
-            while ((line = bfr2.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == commentID){
+            while ((line = bfr2.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == commentID) {
                     thisComment = Comment.deserialize(line);
                 }
             }
@@ -197,6 +206,7 @@ public class ServerApp extends Thread {
             ex.printStackTrace();
         }
     }
+
     public void dislikeComment(String input) {
         String line;
         int commentID = Integer.parseInt(input.substring(0, input.indexOf(",")));
@@ -205,14 +215,14 @@ public class ServerApp extends Thread {
         User thisUser = null;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
-            while ((line = bfr.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == userID){
+            while ((line = bfr.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == userID) {
                     thisUser = User.deserialize(line);
                 }
             }
             BufferedReader bfr2 = new BufferedReader(new FileReader("comments.ser"));
-            while ((line = bfr2.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == commentID){
+            while ((line = bfr2.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == commentID) {
                     thisComment = Comment.deserialize(line);
                 }
             }
@@ -225,7 +235,8 @@ public class ServerApp extends Thread {
             ex.printStackTrace();
         }
     }
-    public void follow(String input){
+
+    public void follow(String input) {
         int currentUserID = Integer.parseInt(input.substring(0, input.indexOf(",")));
         int otherUserID = Integer.parseInt(input.substring(input.indexOf(",") + 1));
         User currentUser = null;
@@ -233,14 +244,14 @@ public class ServerApp extends Thread {
         String line;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
-            while ((line = bfr.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == currentUserID){
+            while ((line = bfr.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == currentUserID) {
                     currentUser = User.deserialize(line);
                 }
             }
             BufferedReader bfr2 = new BufferedReader(new FileReader("users.ser"));
-            while ((line = bfr2.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == otherUserID){
+            while ((line = bfr2.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == otherUserID) {
                     otherUser = User.deserialize(line);
                 }
             }
@@ -253,7 +264,8 @@ public class ServerApp extends Thread {
             ex.printStackTrace();
         }
     }
-    public void unfollow(String input){
+
+    public void unfollow(String input) {
         int currentUserID = Integer.parseInt(input.substring(0, input.indexOf(",")));
         int otherUserID = Integer.parseInt(input.substring(input.indexOf(",") + 1));
         User currentUser = null;
@@ -261,14 +273,14 @@ public class ServerApp extends Thread {
         String line;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
-            while ((line = bfr.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == currentUserID){
+            while ((line = bfr.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == currentUserID) {
                     currentUser = User.deserialize(line);
                 }
             }
             BufferedReader bfr2 = new BufferedReader(new FileReader("users.ser"));
-            while ((line = bfr2.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == otherUserID){
+            while ((line = bfr2.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == otherUserID) {
                     otherUser = User.deserialize(line);
                 }
             }
@@ -281,22 +293,23 @@ public class ServerApp extends Thread {
             ex.printStackTrace();
         }
     }
-    public void removeAccount(String input){
+
+    public void removeAccount(String input) {
         File inputFile = new File("users.ser");
         File tempFile = new File(inputFile.getAbsolutePath() + ".temp");
-        try(BufferedReader reader = new BufferedReader(new FileReader(inputFile));
-        BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
             String line;
-            while ((line = reader.readLine()) != null){
-                if (line.substring(0, line.indexOf(",")).equals(input)){
+            while ((line = reader.readLine()) != null) {
+                if (line.substring(0, line.indexOf(",")).equals(input)) {
                     continue;
                 }
                 writer.write(line);
                 writer.newLine();
             }
 
-            if (inputFile.delete()){
-                if (!tempFile.renameTo(inputFile)){
+            if (inputFile.delete()) {
+                if (!tempFile.renameTo(inputFile)) {
                     System.out.println("Failed to rename temp file");
                 }
             } else {
