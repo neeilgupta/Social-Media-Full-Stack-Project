@@ -26,7 +26,7 @@ public class Client extends Thread implements Runnable {
 
     private Socket clientSocket;
     private DataOutputStream out;
-
+    private boolean isTestMode = false;
     private JButton signUpButton;
     private JButton loginButton;
     JTextField usernameField;
@@ -47,6 +47,16 @@ public class Client extends Thread implements Runnable {
         }
     }
 
+    public Client(boolean isTestMode) {
+        this.isTestMode = isTestMode;
+        try{
+            clientSocket = new Socket("localhost", 4141);
+            out = new DataOutputStream(clientSocket.getOutputStream());
+            this.start();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
     ActionListener actionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -167,34 +177,36 @@ public class Client extends Thread implements Runnable {
 
     @Override
     public void run() {
-        client = this;
+        if(!isTestMode) {
+            client = this;
 
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        Container content = mainFrame.getContentPane();
 //        content.setLayout(new GridLayout(2, 1));
-        mainFrame.setSize(200, 100);
-        mainFrame.setLocationRelativeTo(null); // adjust later on to fit directly center
-        JPanel panel = new JPanel(new GridLayout(2, 1));
-        signUpButton = new JButton("Sign Up");
-        panel.add(signUpButton);
-        signUpButton.addActionListener(actionListener);
+            mainFrame.setSize(200, 100);
+            mainFrame.setLocationRelativeTo(null); // adjust later on to fit directly center
+            JPanel panel = new JPanel(new GridLayout(2, 1));
+            signUpButton = new JButton("Sign Up");
+            panel.add(signUpButton);
+            signUpButton.addActionListener(actionListener);
 
-        loginButton = new JButton("Login");
-        panel.add(loginButton);
-        loginButton.addActionListener(actionListener);
+            loginButton = new JButton("Login");
+            panel.add(loginButton);
+            loginButton.addActionListener(actionListener);
 
-        if (validUsername(username) && validPassword(password)) {
-            mainFrame.dispose();
-            //link to homepage
-        }
+            if (validUsername(username) && validPassword(password)) {
+                mainFrame.dispose();
+                //link to homepage
+            }
 
 
 //        content.add(panel, BorderLayout.CENTER);
-        mainFrame.add(panel);
+            mainFrame.add(panel);
 
 
 //        mainFrame.pack();
-        mainFrame.setVisible(true);
+            mainFrame.setVisible(true);
+        }
     }
 
 
@@ -242,6 +254,14 @@ public class Client extends Thread implements Runnable {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setTestMode(boolean testMode) {
+        this.isTestMode = testMode;
+    }
+
+    public boolean isTestMode() {
+        return isTestMode;
     }
 }
 
