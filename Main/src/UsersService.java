@@ -1,7 +1,7 @@
 /**
  * UserService class
  *
- * Class that search, follows, unfollows, blocks, and unblocks users 
+ * Class that search, follows, unfollows, blocks, and unblocks users
  *
  * Sameer Dadoo
  *
@@ -25,7 +25,7 @@ public class UsersService implements UserServiceInterface {
     //    this.database = database;
     //}
 
-   @Override
+    @Override
     public void addUser(int userID, String username, String password, String displayName) {
         // Create new User object
         User user = new User(userID, username, password, displayName);

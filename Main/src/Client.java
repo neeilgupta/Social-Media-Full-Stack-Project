@@ -23,6 +23,7 @@ public class Client extends Thread implements Runnable {
     String password;
     private int result;
     private User thisUser;
+    private UserFileDatabase database; // creates the use of database in this class
 
     private Socket clientSocket;
     private DataOutputStream out;
@@ -204,6 +205,7 @@ public class Client extends Thread implements Runnable {
     }
 
     public boolean validUsername(String username) {
+        User user = database.retrieveUser(username);
         if (username == null) {
             return false;
         } else if (username.length() < 3 || username.length() > 16) {
