@@ -37,6 +37,7 @@ public class Client extends Thread implements Runnable {
     JTextField displayNameField;
     private JButton autogenerateButton;
     private JButton showPasswordButton;
+    private JButton confirmPasswordField;
     private JFrame mainFrame = new JFrame("Welcome");
 
     private Client client;
@@ -74,7 +75,7 @@ public class Client extends Thread implements Runnable {
     private void showPassword() {
         if (passwordField.getEchoChar() == '●') {
             passwordField.setEchoChar('\0');
-            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-200.png");
+            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/506282-200.png");
 
 
             // Get the preferred height of the password field
@@ -94,7 +95,7 @@ public class Client extends Thread implements Runnable {
 
         } else if (passwordField.getEchoChar() == '\0') {
             passwordField.setEchoChar('●');
-            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/506282-200.png");
+            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-200.png");
 
 
             // Get the preferred height of the password field
@@ -115,14 +116,14 @@ public class Client extends Thread implements Runnable {
 
     void autogenerate() {
         StringBuilder generatedPassword = new StringBuilder(30);
-        autogenerateButton.addActionListener(e -> {
-            String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-_=+/?.>,<`~[{]}:;";
-            for (int i = 0; i < 30; i++) {
-                int random = new Random().nextInt(chars.length());
-                generatedPassword.append(chars.charAt(random));
-            }
-            passwordField.setText(generatedPassword.toString());
-        });
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-_=+/?.><`~[{]}:;";
+        for (int i = 0; i < 30; i++) {
+            int random = new Random().nextInt(chars.length());
+            generatedPassword.append(chars.charAt(random));
+        }
+        passwordField.setText(generatedPassword.toString());
+        passwordField.setEchoChar('\0');
+        this.showPassword();
     }
 
     public void signUpPage() {
@@ -164,6 +165,7 @@ public class Client extends Thread implements Runnable {
         gbc.gridx = 1;
         passwordField = new JPasswordField(16);
         panel.add(passwordField, gbc);
+
 
         // Autogenerate Password Button
         gbc.gridx = 0;
@@ -307,6 +309,9 @@ public class Client extends Thread implements Runnable {
             return false;
         } else if (password.length() > 32) {
             JOptionPane.showMessageDialog(mainFrame, "Password must be at most 32 characters");
+            return false;
+        } else if (password.contains(",")) {
+            JOptionPane.showMessageDialog(mainFrame, "Password contains invalid characters");
             return false;
         } else {
             return true;
