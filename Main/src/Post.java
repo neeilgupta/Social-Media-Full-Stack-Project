@@ -1,7 +1,7 @@
+import java.io.*;
 import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.io.Serializable;
 
 /**
  * Post
@@ -33,6 +33,19 @@ public class Post implements PostInterface, Serializable{
         this.comments = new ArrayList<>();
         this.likes = new ArrayList<>();
         this.dislikes = new ArrayList<>();
+    }
+
+    public static Post deserialize(String data) throws IOException {
+        String[] parts = data.split(",");
+        BufferedReader read = new BufferedReader(new FileReader("user.ser"));
+        String line = read.readLine();
+        User thisUser = null;
+        while ((line = read.readLine()) != null) {
+            if (line.substring(0, line.indexOf(",")).equals(parts[2])) {
+                thisUser = User.deserialize(line);
+            }
+        }
+        return new Post(Integer.parseInt(parts[0]), parts[1], thisUser);
     }
 
     @Override

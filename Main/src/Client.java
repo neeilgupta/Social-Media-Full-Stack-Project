@@ -242,7 +242,7 @@ public class Client extends Thread implements Runnable {
             if (validUsernameSU(username) && validPasswordSU(password) && validDisplayName(displayName)) {
                 System.out.println("Signing up: " + username);
                 frame.dispose(); // Close the sign-up frame after confirming
-                String createUserLine = "create##" + userID + "," + username + "," + password + "," + displayName;
+                String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
                 } catch (IOException ex) {
@@ -338,7 +338,7 @@ public class Client extends Thread implements Runnable {
             if (validUsernameLI(username) && validPasswordSU(password) && validDisplayName(displayName)) {
                 System.out.println("Signing up: " + username);
                 frame.dispose(); // Close the sign-up frame after confirming
-                String createUserLine = "create##" + userID + "," + username + "," + password + "," + displayName;
+                String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
                 } catch (IOException ex) {
@@ -350,6 +350,27 @@ public class Client extends Thread implements Runnable {
 
         frame.add(panel);
         frame.setVisible(true);
+    }
+
+    private void createPost(int postID, String content, User user) {
+        int userID = user.getUserID();
+        String createPostLine = "createPost##" + postID + "," + content + "," + userID;
+        try {
+            out.writeUTF(createPostLine);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void createComment(int commentID, String content, User user, Post post) {
+        int userID = user.getUserID();
+        int postID = post.getID();
+        String createCommentLine = "createComment##" + commentID + "," + content + "," + userID + "," + postID;
+        try {
+            out.writeUTF(createCommentLine);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 
 
