@@ -136,7 +136,7 @@ public class Client extends Thread implements Runnable {
             password = passwordField.getText();
             userID = User.numUsers++;
             frame.dispose(); // Close the sign-up frame after confirming
-            String createUserLine = userID + "," + username + "," + password + "," + displayName;
+            String createUserLine = "create##" + userID + "," + username + "," + password + "," + displayName;
             try {
                 out.writeUTF(createUserLine);
             } catch (IOException ex) {

@@ -32,7 +32,7 @@ public class Server {
                 try {
                     line = in.readUTF();
                     String action = line.substring(0, line.indexOf("##"));
-                    String input = line.substring(line.indexOf(" ") + 1);
+                    String input = line.substring(line.indexOf("##") + 2);
                     if (action.equals("create")) {
                         createUser(input);
                     } else if (action.equals("login")) {
