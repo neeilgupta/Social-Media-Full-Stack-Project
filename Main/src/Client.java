@@ -310,11 +310,12 @@ public class Client extends Thread implements Runnable {
         passwordField.setEchoChar('\0');
         ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-200.png");
 
+
         // Get the preferred height of the password field
         int fieldHeight = passwordField.getPreferredSize().height;
 
         // Resize the image to a square with height equal to the field height
-        BufferedImage resizedImage = null;
+        BufferedImage resizedImage;
         Graphics2D g2d;
 
         resizedImage = new BufferedImage(fieldHeight, fieldHeight, BufferedImage.TYPE_INT_ARGB);
@@ -344,13 +345,13 @@ public class Client extends Thread implements Runnable {
         gbc.gridy = 5;
         JButton confirmSULI = new JButton("Login");
 
-        confirmSULI.addActionListener(e -> {
+        confirmSULI.addActionListener(_ -> {
             username = usernameField.getText();
             displayName = displayNameField.getText();
             password = passwordField.getText();
             userID = User.numUsers++;
 
-            if (validUsernameLI(username) && validPasswordSU(password) && validDisplayName(displayName)) {
+            if (validUsernameLI(username) && validPasswordLI(password) && validDisplayName(displayName)) {
                 System.out.println("Signing up: " + username);
                 frame.dispose(); // Close the sign-up frame after confirming
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
@@ -498,12 +499,24 @@ public class Client extends Thread implements Runnable {
 
     public  boolean validPasswordLI(String password) {
         User user = database.retrieveUser(username);
+        try {
+            BufferedReader bfr = new BufferedReader(new FileReader(username + ".ser"));
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                if (line.contains(password)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         // How to check if the username's password matches? I can't locate the file where the usernames and passwords are saved.
         if (user == null) {
             JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        return true;
+        return false;
     }
 
     public boolean validUsernameSU(String username) {
