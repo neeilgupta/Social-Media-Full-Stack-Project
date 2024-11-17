@@ -1,7 +1,7 @@
 /**
  * UserService class
  *
- * Class that search, follows, unfollows, blocks, and unblocks users 
+ * Class that search, follows, unfollows, blocks, and unblocks users
  *
  * Sameer Dadoo
  *
@@ -21,11 +21,11 @@ public class UsersService implements UserServiceInterface {
 
     // Constructor(database: Database)
     //ignore the fact that there are two constructors. Intellij being weird.
-    public void UserService(UserFileDatabase database) {
-        this.database = database;
-    }
+    //public void UserService(UserFileDatabase database) {
+    //    this.database = database;
+    //}
 
-   @Override
+    @Override
     public void addUser(int userID, String username, String password, String displayName) {
         // Create new User object
         User user = new User(userID, username, password, displayName);

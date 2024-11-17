@@ -53,10 +53,10 @@ public class ClientTest {
     @Test
     public void testValidUsername() {
         Client client = new Client();
-        assertTrue(client.validUsername("Valid_User1"));
-        assertFalse(client.validUsername("ab"), "Expected invalid username (too short");
-        assertFalse(client.validUsername("thisusernameiswaytoolong"), "Excpected invalid username(too long)");
-        assertFalse(client.validUsername("invalid!name"), "Expected invalid useranme(special characters");
+        assertTrue(client.validUsernameSU("Valid_User1"));
+        assertFalse(client.validUsernameSU("ab"), "Expected invalid username (too short");
+        assertFalse(client.validUsernameSU("thisusernameiswaytoolong"), "Excpected invalid username(too long)");
+        assertFalse(client.validUsernameSU("invalid!name"), "Expected invalid useranme(special characters");
     }
 
     @Test

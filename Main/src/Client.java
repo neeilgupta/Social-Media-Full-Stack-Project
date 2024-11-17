@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
 import java.util.Random;
@@ -23,16 +24,19 @@ public class Client extends Thread implements Runnable {
     String password;
     private int result;
     private User thisUser;
+    private UserFileDatabase database; // creates the use of database in this class
 
     private Socket clientSocket;
     private DataOutputStream out;
-    private boolean isTestMode = false;
+
     private JButton signUpButton;
     private JButton loginButton;
     JTextField usernameField;
     JPasswordField passwordField;
     JTextField displayNameField;
     private JButton autogenerateButton;
+    private JButton showPasswordButton;
+    private JPasswordField confirmPasswordField;
     private JFrame mainFrame = new JFrame("Welcome");
 
     private Client client;
@@ -47,16 +51,6 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    public Client(boolean isTestMode) {
-        this.isTestMode = isTestMode;
-        try{
-            clientSocket = new Socket("localhost", 4141);
-            out = new DataOutputStream(clientSocket.getOutputStream());
-            this.start();
-        }catch(IOException e){
-            e.printStackTrace();
-        }
-    }
     ActionListener actionListener = new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -71,30 +65,82 @@ public class Client extends Thread implements Runnable {
             if (e.getSource() == autogenerateButton) {
                 client.autogenerate();
             }
+            if (e.getSource() == showPasswordButton) {
+                client.showPassword();
+            }
         }
     };
 
+    private void showPassword() {
+        if (passwordField.getEchoChar() == '●') {
+            passwordField.setEchoChar('\0');
+            if (confirmPasswordField != null) {
+                confirmPasswordField.setEchoChar('\0');
+            }
+            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/506282-200.png");
+
+
+            // Get the preferred height of the password field
+            int fieldHeight = passwordField.getPreferredSize().height;
+
+            // Resize the image to a square with height equal to the field height
+            BufferedImage resizedImage = null;
+            Graphics2D g2d;
+
+            resizedImage = new BufferedImage(fieldHeight, fieldHeight, BufferedImage.TYPE_INT_ARGB);
+            g2d = resizedImage.createGraphics();
+            g2d.drawImage(icon.getImage(), 0, 0, fieldHeight, fieldHeight, null);
+            g2d.dispose();
+
+            showPasswordButton.setIcon(new ImageIcon(resizedImage));
+
+
+        } else if (passwordField.getEchoChar() == '\0') {
+            passwordField.setEchoChar('●');
+            if (confirmPasswordField != null) {
+                confirmPasswordField.setEchoChar('●');
+            }
+            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-200.png");
+
+
+            // Get the preferred height of the password field
+            int fieldHeight = passwordField.getPreferredSize().height;
+
+            // Resize the image to a square with height equal to the field height
+            BufferedImage resizedImage = null;
+            Graphics2D g2d;
+
+            resizedImage = new BufferedImage(fieldHeight, fieldHeight, BufferedImage.TYPE_INT_ARGB);
+            g2d = resizedImage.createGraphics();
+            g2d.drawImage(icon.getImage(), 0, 0, fieldHeight, fieldHeight, null);
+            g2d.dispose();
+
+            showPasswordButton.setIcon(new ImageIcon(resizedImage));
+        }
+    }
+
     void autogenerate() {
         StringBuilder generatedPassword = new StringBuilder(30);
-        autogenerateButton.addActionListener(e -> {
-            String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-_=+/?.>,<`~[{]}:;";
-            for (int i = 0; i < 30; i++) {
-                int random = new Random().nextInt(chars.length());
-                generatedPassword.append(chars.charAt(random));
-            }
-            passwordField.setText(generatedPassword.toString());
-        });
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890!@#$%^&*()-_=+/?.><`~[{]}:;";
+        for (int i = 0; i < 30; i++) {
+            int random = new Random().nextInt(chars.length());
+            generatedPassword.append(chars.charAt(random));
+        }
+        passwordField.setText(generatedPassword.toString());
+        passwordField.setEchoChar('\0');
+        confirmPasswordField.setText(generatedPassword.toString());
+        confirmPasswordField.setEchoChar('\0');
+        this.showPassword();
     }
 
     public void signUpPage() {
-
         JFrame frame = new JFrame("Sign Up");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(400, 300); // Set a more compact size for better UI
+        frame.setSize(600, 400); // Set a more compact size for better UI
         frame.setLocationRelativeTo(null);
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding around the panel
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5); // Add spacing between components
@@ -127,30 +173,96 @@ public class Client extends Thread implements Runnable {
         passwordField = new JPasswordField(16);
         panel.add(passwordField, gbc);
 
-        // Autogenerate Password Button
         gbc.gridx = 0;
         gbc.gridy = 3;
+        panel.add(new JLabel("Confirm Password:"), gbc);
+
+        gbc.gridx = 1;
+        confirmPasswordField = new JPasswordField(16);
+        panel.add(confirmPasswordField, gbc);
+        confirmPasswordField.setEchoChar('\0');
+
+        // Autogenerate Password Button
+        gbc.gridx = 0;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER; // Center the button
         autogenerateButton = new JButton("Autogenerate Password");
         autogenerateButton.addActionListener(actionListener);
         panel.add(autogenerateButton, gbc);
 
-        // Add Confirm Button at the Bottom
-        gbc.gridy = 4;
+        // Show Password Button (next to password field)
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+
+        passwordField.setEchoChar('\0');
+        ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-200.png");
+
+
+        // Get the preferred height of the password field
+        int fieldHeight = passwordField.getPreferredSize().height;
+
+        // Resize the image to a square with height equal to the field height
+        BufferedImage resizedImage = null;
+        Graphics2D g2d;
+
+        resizedImage = new BufferedImage(fieldHeight, fieldHeight, BufferedImage.TYPE_INT_ARGB);
+        g2d = resizedImage.createGraphics();
+        g2d.drawImage(icon.getImage(), 0, 0, fieldHeight, fieldHeight, null);
+        g2d.dispose();
+
+        ImageIcon resizedIcon = new ImageIcon(resizedImage);
+
+        if (showPasswordButton == null) {
+            showPasswordButton = new JButton(resizedIcon);
+            showPasswordButton.setBorderPainted(false);
+            showPasswordButton.setFocusPainted(false);
+            showPasswordButton.setContentAreaFilled(false);
+            showPasswordButton.setPreferredSize(new Dimension(fieldHeight, fieldHeight));
+            showPasswordButton.addActionListener(actionListener);
+
+            gbc.gridx = 2;
+            gbc.gridy = 2;
+            gbc.gridwidth = 1;
+            panel.add(showPasswordButton, gbc);
+        } else {
+            showPasswordButton.setIcon(resizedIcon);
+        }
+
+
+        gbc.gridy = 5;
         JButton confirmSignUp = new JButton("Confirm Sign Up");
+
         confirmSignUp.addActionListener(e -> {
-            System.out.println("Signing up: " + usernameField.getText());
             username = usernameField.getText();
             displayName = displayNameField.getText();
             password = passwordField.getText();
-            userID = User.numUsers++;
-            frame.dispose(); // Close the sign-up frame after confirming
-            String createUserLine = userID + "," + username + "," + password + "," + displayName;
+            String line;
+            int id = 0;
             try {
-                out.writeUTF(createUserLine);
+                BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
+                while ((line = bfr.readLine()) != null){
+                    if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+                        id = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                    }
+                }
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
             } catch (IOException ex) {
                 ex.printStackTrace();
+            }
+            userID = ++id;
+
+
+            if (validUsernameSU(username) && validPasswordSU(password) && validDisplayName(displayName)) {
+                System.out.println("Signing up: " + username);
+                frame.dispose(); // Close the sign-up frame after confirming
+                String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
+                try {
+                    out.writeUTF(createUserLine);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
         panel.add(confirmSignUp, gbc);
@@ -161,6 +273,206 @@ public class Client extends Thread implements Runnable {
 
 
     private void loginPage() {
+        JFrame frame = new JFrame("Login");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 400); // Set a more compact size for better UI
+        frame.setLocationRelativeTo(null);
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5); // Add spacing between components
+
+        // Username Label and Field
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        panel.add(new JLabel("Username:"), gbc);
+
+        gbc.gridx = 1;
+        usernameField = new JTextField(16); // Limit the column size for a cleaner look
+        panel.add(usernameField, gbc);
+
+        // Password Label and Field
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(new JLabel("Password:"), gbc);
+
+        gbc.gridx = 1;
+        passwordField = new JPasswordField(16);
+        panel.add(passwordField, gbc);
+
+        // Show Password Button (next to password field)
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+
+        passwordField.setEchoChar('\0');
+        ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-200.png");
+
+        // Get the preferred height of the password field
+        int fieldHeight = passwordField.getPreferredSize().height;
+
+        // Resize the image to a square with height equal to the field height
+        BufferedImage resizedImage = null;
+        Graphics2D g2d;
+
+        resizedImage = new BufferedImage(fieldHeight, fieldHeight, BufferedImage.TYPE_INT_ARGB);
+        g2d = resizedImage.createGraphics();
+        g2d.drawImage(icon.getImage(), 0, 0, fieldHeight, fieldHeight, null);
+        g2d.dispose();
+
+        ImageIcon resizedIcon = new ImageIcon(resizedImage);
+
+        if (showPasswordButton == null) {
+            showPasswordButton = new JButton(resizedIcon);
+            showPasswordButton.setBorderPainted(false);
+            showPasswordButton.setFocusPainted(false);
+            showPasswordButton.setContentAreaFilled(false);
+            showPasswordButton.setPreferredSize(new Dimension(fieldHeight, fieldHeight));
+            showPasswordButton.addActionListener(actionListener);
+
+            gbc.gridx = 2;
+            gbc.gridy = 2;
+            gbc.gridwidth = 1;
+            panel.add(showPasswordButton, gbc);
+        } else {
+            showPasswordButton.setIcon(resizedIcon);
+        }
+
+
+        gbc.gridy = 5;
+        JButton confirmSULI = new JButton("Login");
+
+        confirmSULI.addActionListener(e -> {
+            username = usernameField.getText();
+            displayName = displayNameField.getText();
+            password = passwordField.getText();
+            userID = User.numUsers++;
+
+            if (validUsernameLI(username) && validPasswordSU(password) && validDisplayName(displayName)) {
+                System.out.println("Signing up: " + username);
+                frame.dispose(); // Close the sign-up frame after confirming
+                String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
+                try {
+                    out.writeUTF(createUserLine);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        panel.add(confirmSULI, gbc);
+
+        frame.add(panel);
+        frame.setVisible(true);
+    }
+    //Methods below include all information that must be passed to the server.
+    //Information in the method constructors can later be replaced with whatever necessary
+    //once the GUI is implemented.
+    //Method content, especially for determining id numbers, must remain.
+    //      -Emerson
+    private void createPost(String content, User user) {
+        String line;
+        int id = 0;
+        try {
+            BufferedReader bfr = new BufferedReader(new FileReader("posts.ser"));
+            while ((line = bfr.readLine()) != null){
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+                    id = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        int postID = id;
+
+        int userID = user.getUserID();
+        String createPostLine = "createPost##" + postID + "," + content + "," + userID;
+        try {
+            out.writeUTF(createPostLine);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void createComment(String content, User user, Post post) {
+        String line;
+        int id = 0;
+        try {
+            BufferedReader bfr = new BufferedReader(new FileReader("comments.ser"));
+            while ((line = bfr.readLine()) != null){
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+                    id = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        int commentID = id;
+
+        int userID = user.getUserID();
+        int postID = post.getID();
+        String createCommentLine = "createComment##" + commentID + "," + content + "," + userID + "," + postID;
+        try {
+            out.writeUTF(createCommentLine);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    private void likePost(int postID, int userID) {
+        String likePostLine = "likePost##" + postID + "," + userID;
+        try {
+            out.writeUTF(likePostLine);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    private void dislikePost(int postID, int userID){
+        String dislikePostLine = "dislikePost##" + postID + "," + userID;
+        try {
+            out.writeUTF(dislikePostLine);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    private void likeComment(int commentID, int userID) {
+        String likeCommentLine = "likeComment##" + commentID + "," + userID;
+        try {
+            out.writeUTF(likeCommentLine);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    private void dislikeComment(int commentID, int userID) {
+        String dislikeCommentLine = "dislikeComment##" + commentID + "," + userID;
+        try {
+            out.writeUTF(dislikeCommentLine);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    private void follow(int currentUserID, int otherUserID) {
+        String followLine = "follow##" + currentUserID + "," + otherUserID;
+        try {
+            out.writeUTF(followLine);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    private void unfollow(int currentUserID, int otherUserID) {
+        String unfollowLine = "unfollow##" + currentUserID + "," + otherUserID;
+        try {
+            out.writeUTF(unfollowLine);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    private void removeAccount(int userID){
+        String removeAccountLine = "removeAccount##" + userID;
     }
 
 
@@ -177,45 +489,80 @@ public class Client extends Thread implements Runnable {
 
     @Override
     public void run() {
-        if(!isTestMode) {
-            client = this;
+        client = this;
 
-            mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        Container content = mainFrame.getContentPane();
 //        content.setLayout(new GridLayout(2, 1));
-            mainFrame.setSize(200, 100);
-            mainFrame.setLocationRelativeTo(null); // adjust later on to fit directly center
-            JPanel panel = new JPanel(new GridLayout(2, 1));
-            signUpButton = new JButton("Sign Up");
-            panel.add(signUpButton);
-            signUpButton.addActionListener(actionListener);
+        mainFrame.setSize(200, 100);
+        mainFrame.setLocationRelativeTo(null); // adjust later on to fit directly center
+        JPanel panel = new JPanel(new GridLayout(2, 1));
+        signUpButton = new JButton("Sign Up");
+        panel.add(signUpButton);
+        signUpButton.addActionListener(actionListener);
 
-            loginButton = new JButton("Login");
-            panel.add(loginButton);
-            loginButton.addActionListener(actionListener);
+        loginButton = new JButton("Login");
+        panel.add(loginButton);
+        loginButton.addActionListener(actionListener);
 
-            if (validUsername(username) && validPassword(password)) {
-                mainFrame.dispose();
-                //link to homepage
-            }
+        if (validUsernameSU(username) && validPasswordSU(password)) {
+            mainFrame.dispose();
+            //link to homepage
+        }
 
 
 //        content.add(panel, BorderLayout.CENTER);
-            mainFrame.add(panel);
+        mainFrame.add(panel);
 
 
 //        mainFrame.pack();
-            mainFrame.setVisible(true);
+        mainFrame.setVisible(true);
+    }
+
+    public boolean validDisplayName(String displayName) {
+        if (displayName.contains(",")) {
+            JOptionPane.showMessageDialog(null, "Display name contains invalid characters!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        } else if (displayName.length() > 30) {
+            JOptionPane.showMessageDialog(null, "Display name is too long!", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+
+    public boolean validPasswordSU(String password) {
+        if (password == null) {
+            return false;
+        } else if (password.length() < 8) {
+            JOptionPane.showMessageDialog(mainFrame, "Password must be at least 8 characters");
+            return false;
+        } else if (password.length() > 32) {
+            JOptionPane.showMessageDialog(mainFrame, "Password must be at most 32 characters");
+            return false;
+        } else if (password.contains(",")) {
+            JOptionPane.showMessageDialog(mainFrame, "Password contains invalid characters");
+            return false;
+        } else if (!password.equals(confirmPasswordField.getText())) {
+            JOptionPane.showMessageDialog(mainFrame, "Passwords do not match");
+            return false;
+        } else {
+            return true;
         }
     }
 
-
-    public boolean validPassword(String password) {
-        //fill
-        return true; //for testing purposes
+    public  boolean validPasswordLI(String password) {
+        User user = database.retrieveUser(username);
+        // How to check if the username's password matches? I can't locate the file where the usernames and passwords are saved.
+        if (user == null) {
+            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
     }
 
-    public boolean validUsername(String username) {
+    public boolean validUsernameSU(String username) {
+//        User user = database.retrieveUser(username);
         if (username == null) {
             return false;
         } else if (username.length() < 3 || username.length() > 16) {
@@ -235,15 +582,18 @@ public class Client extends Thread implements Runnable {
         }
     }
 
+    private boolean validUsernameLI(String username) {
+        User user = database.retrieveUser(username);
+        if (user == null) {
+            JOptionPane.showMessageDialog(mainFrame, "Username not found", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
     private boolean isUsernameTaken() {
-        try (Socket socket = new Socket("localhost", 4141)) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-
-            writer.write(username);
-            writer.flush();
-
-            BufferedReader bfr = new BufferedReader(new FileReader("UserInfo.txt"));
+        try{
+            BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
             String line;
             while ((line = bfr.readLine()) != null) {
                 if (line.split(",")[0].equals(username)) {
@@ -252,16 +602,9 @@ public class Client extends Thread implements Runnable {
             }
             return false;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-    }
-
-    public void setTestMode(boolean testMode) {
-        this.isTestMode = testMode;
-    }
-
-    public boolean isTestMode() {
-        return isTestMode;
+        return false;
     }
 }
 
