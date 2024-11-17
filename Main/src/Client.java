@@ -237,7 +237,22 @@ public class Client extends Thread implements Runnable {
             username = usernameField.getText();
             displayName = displayNameField.getText();
             password = passwordField.getText();
-            userID = User.numUsers++;
+            String line;
+            int id = 0;
+            try {
+                BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
+                while ((line = bfr.readLine()) != null){
+                    if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+                        id = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                    }
+                }
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+            userID = ++id;
+
 
             if (validUsernameSU(username) && validPasswordSU(password) && validDisplayName(displayName)) {
                 System.out.println("Signing up: " + username);
@@ -352,7 +367,23 @@ public class Client extends Thread implements Runnable {
         frame.setVisible(true);
     }
 
-    private void createPost(int postID, String content, User user) {
+    private void createPost(String content, User user) {
+        String line;
+        int id = 0;
+        try {
+            BufferedReader bfr = new BufferedReader(new FileReader("posts.ser"));
+            while ((line = bfr.readLine()) != null){
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+                    id = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        int postID = id;
+
         int userID = user.getUserID();
         String createPostLine = "createPost##" + postID + "," + content + "," + userID;
         try {
@@ -362,7 +393,23 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    private void createComment(int commentID, String content, User user, Post post) {
+    private void createComment(String content, User user, Post post) {
+        String line;
+        int id = 0;
+        try {
+            BufferedReader bfr = new BufferedReader(new FileReader("comments.ser"));
+            while ((line = bfr.readLine()) != null){
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+                    id = Integer.parseInt(line.substring(0, line.indexOf(",")));
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        int commentID = id;
+
         int userID = user.getUserID();
         int postID = post.getID();
         String createCommentLine = "createComment##" + commentID + "," + content + "," + userID + "," + postID;
@@ -490,14 +537,8 @@ public class Client extends Thread implements Runnable {
     }
 
     private boolean isUsernameTaken() {
-        try (Socket socket = new Socket("localhost", 4141)) {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            PrintWriter writer = new PrintWriter(socket.getOutputStream(), true);
-
-            writer.write(username);
-            writer.flush();
-
-            BufferedReader bfr = new BufferedReader(new FileReader("UserInfo.txt"));
+        try{
+            BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
             String line;
             while ((line = bfr.readLine()) != null) {
                 if (line.split(",")[0].equals(username)) {
@@ -506,8 +547,9 @@ public class Client extends Thread implements Runnable {
             }
             return false;
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
+        return false;
     }
 }
 
