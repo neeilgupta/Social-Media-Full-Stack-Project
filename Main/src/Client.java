@@ -1,4 +1,3 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -37,7 +36,7 @@ public class Client extends Thread implements Runnable {
     JTextField displayNameField;
     private JButton autogenerateButton;
     private JButton showPasswordButton;
-    private JButton confirmPasswordField;
+    private JPasswordField confirmPasswordField;
     private JFrame mainFrame = new JFrame("Welcome");
 
     private Client client;
@@ -75,6 +74,9 @@ public class Client extends Thread implements Runnable {
     private void showPassword() {
         if (passwordField.getEchoChar() == '●') {
             passwordField.setEchoChar('\0');
+            if (confirmPasswordField != null) {
+                confirmPasswordField.setEchoChar('\0');
+            }
             ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/506282-200.png");
 
 
@@ -95,6 +97,9 @@ public class Client extends Thread implements Runnable {
 
         } else if (passwordField.getEchoChar() == '\0') {
             passwordField.setEchoChar('●');
+            if (confirmPasswordField != null) {
+                confirmPasswordField.setEchoChar('●');
+            }
             ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-200.png");
 
 
@@ -123,13 +128,15 @@ public class Client extends Thread implements Runnable {
         }
         passwordField.setText(generatedPassword.toString());
         passwordField.setEchoChar('\0');
+        confirmPasswordField.setText(generatedPassword.toString());
+        confirmPasswordField.setEchoChar('\0');
         this.showPassword();
     }
 
     public void signUpPage() {
         JFrame frame = new JFrame("Sign Up");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 350); // Set a more compact size for better UI
+        frame.setSize(600, 400); // Set a more compact size for better UI
         frame.setLocationRelativeTo(null);
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -166,10 +173,18 @@ public class Client extends Thread implements Runnable {
         passwordField = new JPasswordField(16);
         panel.add(passwordField, gbc);
 
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        panel.add(new JLabel("Confirm Password:"), gbc);
+
+        gbc.gridx = 1;
+        confirmPasswordField = new JPasswordField(16);
+        panel.add(confirmPasswordField, gbc);
+        confirmPasswordField.setEchoChar('\0');
 
         // Autogenerate Password Button
         gbc.gridx = 0;
-        gbc.gridy = 3;
+        gbc.gridy = 4;
         gbc.gridwidth = 2;
         gbc.anchor = GridBagConstraints.CENTER; // Center the button
         autogenerateButton = new JButton("Autogenerate Password");
@@ -215,7 +230,7 @@ public class Client extends Thread implements Runnable {
         }
 
 
-        gbc.gridy = 4;
+        gbc.gridy = 5;
         JButton confirmSignUp = new JButton("Confirm Sign Up");
 
         confirmSignUp.addActionListener(e -> {
@@ -224,7 +239,7 @@ public class Client extends Thread implements Runnable {
             password = passwordField.getText();
             userID = User.numUsers++;
 
-            if (validUsername(username) && validPassword(password) && validDisplayName(displayName)) {
+            if (validUsernameSU(username) && validPasswordSU(password) && validDisplayName(displayName)) {
                 System.out.println("Signing up: " + username);
                 frame.dispose(); // Close the sign-up frame after confirming
                 String createUserLine = "create##" + userID + "," + username + "," + password + "," + displayName;
@@ -243,6 +258,98 @@ public class Client extends Thread implements Runnable {
 
 
     private void loginPage() {
+        JFrame frame = new JFrame("Login");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 400); // Set a more compact size for better UI
+        frame.setLocationRelativeTo(null);
+
+        JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(5, 5, 5, 5); // Add spacing between components
+
+        // Username Label and Field
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.gridwidth = 1;
+        panel.add(new JLabel("Username:"), gbc);
+
+        gbc.gridx = 1;
+        usernameField = new JTextField(16); // Limit the column size for a cleaner look
+        panel.add(usernameField, gbc);
+
+        // Password Label and Field
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        panel.add(new JLabel("Password:"), gbc);
+
+        gbc.gridx = 1;
+        passwordField = new JPasswordField(16);
+        panel.add(passwordField, gbc);
+
+        // Show Password Button (next to password field)
+        gbc.gridx = 2;
+        gbc.gridy = 2;
+
+        passwordField.setEchoChar('\0');
+        ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-200.png");
+
+        // Get the preferred height of the password field
+        int fieldHeight = passwordField.getPreferredSize().height;
+
+        // Resize the image to a square with height equal to the field height
+        BufferedImage resizedImage = null;
+        Graphics2D g2d;
+
+        resizedImage = new BufferedImage(fieldHeight, fieldHeight, BufferedImage.TYPE_INT_ARGB);
+        g2d = resizedImage.createGraphics();
+        g2d.drawImage(icon.getImage(), 0, 0, fieldHeight, fieldHeight, null);
+        g2d.dispose();
+
+        ImageIcon resizedIcon = new ImageIcon(resizedImage);
+
+        if (showPasswordButton == null) {
+            showPasswordButton = new JButton(resizedIcon);
+            showPasswordButton.setBorderPainted(false);
+            showPasswordButton.setFocusPainted(false);
+            showPasswordButton.setContentAreaFilled(false);
+            showPasswordButton.setPreferredSize(new Dimension(fieldHeight, fieldHeight));
+            showPasswordButton.addActionListener(actionListener);
+
+            gbc.gridx = 2;
+            gbc.gridy = 2;
+            gbc.gridwidth = 1;
+            panel.add(showPasswordButton, gbc);
+        } else {
+            showPasswordButton.setIcon(resizedIcon);
+        }
+
+
+        gbc.gridy = 5;
+        JButton confirmSULI = new JButton("Login");
+
+        confirmSULI.addActionListener(e -> {
+            username = usernameField.getText();
+            displayName = displayNameField.getText();
+            password = passwordField.getText();
+            userID = User.numUsers++;
+
+            if (validUsernameLI(username) && validPasswordSU(password) && validDisplayName(displayName)) {
+                System.out.println("Signing up: " + username);
+                frame.dispose(); // Close the sign-up frame after confirming
+                String createUserLine = "create##" + userID + "," + username + "," + password + "," + displayName;
+                try {
+                    out.writeUTF(createUserLine);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            }
+        });
+        panel.add(confirmSULI, gbc);
+
+        frame.add(panel);
+        frame.setVisible(true);
     }
 
 
@@ -275,7 +382,7 @@ public class Client extends Thread implements Runnable {
         panel.add(loginButton);
         loginButton.addActionListener(actionListener);
 
-        if (validUsername(username) && validPassword(password)) {
+        if (validUsernameSU(username) && validPasswordSU(password)) {
             mainFrame.dispose();
             //link to homepage
         }
@@ -301,7 +408,7 @@ public class Client extends Thread implements Runnable {
     }
 
 
-    public boolean validPassword(String password) {
+    public boolean validPasswordSU(String password) {
         if (password == null) {
             return false;
         } else if (password.length() < 8) {
@@ -313,12 +420,25 @@ public class Client extends Thread implements Runnable {
         } else if (password.contains(",")) {
             JOptionPane.showMessageDialog(mainFrame, "Password contains invalid characters");
             return false;
+        } else if (!password.equals(confirmPasswordField.getText())) {
+            JOptionPane.showMessageDialog(mainFrame, "Passwords do not match");
+            return false;
         } else {
             return true;
         }
     }
 
-    public boolean validUsername(String username) {
+    public  boolean validPasswordLI(String password) {
+        User user = database.retrieveUser(username);
+        // How to check if the username's password matches? I can't locate the file where the usernames and passwords are saved.
+        if (user == null) {
+            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
+    }
+
+    public boolean validUsernameSU(String username) {
 //        User user = database.retrieveUser(username);
         if (username == null) {
             return false;
@@ -337,6 +457,15 @@ public class Client extends Thread implements Runnable {
         } else {
             return true;
         }
+    }
+
+    private boolean validUsernameLI(String username) {
+        User user = database.retrieveUser(username);
+        if (user == null) {
+            JOptionPane.showMessageDialog(mainFrame, "Username not found", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return true;
     }
 
     private boolean isUsernameTaken() {

@@ -60,7 +60,7 @@ public class Server {
         System.out.println(userComponents[1]);
         System.out.println(userComponents[2]);
         System.out.println(userComponents[3]);
-        UserFileDatabase database = new UserFileDatabase("user_database.txt");
+        UserFileDatabase database = new UserFileDatabase("username.ser");
         UsersService usersService = new UsersService(database);
         User user = new User(Integer.parseInt(userComponents[0]), userComponents[1], userComponents[2],
                 userComponents[3]);
