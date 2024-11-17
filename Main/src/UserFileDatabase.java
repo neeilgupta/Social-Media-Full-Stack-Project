@@ -29,7 +29,7 @@ public class UserFileDatabase implements UserDataBaseInterface {
     @Override
     public void storeUser(User user) {
         try (FileWriter writer = new FileWriter(fileName, true)) {
-            writer.write(user.serialize() + "\n");
+            writer.write(user.serialize() + "\n"); // Append serialized user to the file
         } catch (IOException e) {
             throw new RuntimeException("Failed to store user", e);
         }
@@ -48,7 +48,7 @@ public class UserFileDatabase implements UserDataBaseInterface {
         } catch (IOException e) {
             throw new RuntimeException("Failed to retrieve user", e);
         }
-        return null;
+        return null; // User not found
     }
 
     public void updateUser(User updatedUser) {
@@ -85,5 +85,27 @@ public class UserFileDatabase implements UserDataBaseInterface {
             throw new RuntimeException("Failed to write to the database file", e);
         }
     }
+
+    //This is a utility method for users written to wrong file
+    public void migrateSerializedUsers(String serDirectory) {
+        File dir = new File(serDirectory);
+        if (!dir.exists() || !dir.isDirectory()) {
+            throw new RuntimeException("Invalid .ser directory");
+        }
+
+        File[] serFiles = dir.listFiles((d, name) -> name.endsWith(".ser"));
+        if (serFiles == null) return;
+
+        for (File serFile : serFiles) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(serFile))) {
+                User user = (User) ois.readObject();
+                storeUser(user); // Write user to the unified .txt file
+                serFile.delete(); // Clean up the old .ser file
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Failed to migrate user from " + serFile.getName());
+            }
+        }
+    }
+
 
 }

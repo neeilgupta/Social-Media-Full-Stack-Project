@@ -19,8 +19,13 @@ public class Server {
     private ServerSocket serverSocket;
     private DataInputStream in;
     private static final int PORT = 4141;
+    private UsersService userService;
+    private UserFileDatabase database;
 
     public Server() {
+        database = new UserFileDatabase("userinfo.txt");
+        database.migrateSerializedUsers("path/to/ser/directory"); // Migrate data
+        userService = new UsersService(database);
         try {
             serverSocket = new ServerSocket(PORT);
             socket = serverSocket.accept();
@@ -68,6 +73,18 @@ public class Server {
     }
 
     public static void main(String[] args) {
+        // Initialize database
+        UserFileDatabase database = new UserFileDatabase("userinfo.txt");
+
+        // Migrate serialized user data
+        database.migrateSerializedUsers("path/to/ser/directory");
+
+        // Initialize the service
+        UsersService userService = new UsersService(database);
+
+        System.out.println("Application started, and users migrated.");
+
         new Server();
+
     }
 }
