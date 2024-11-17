@@ -7,9 +7,9 @@ import java.io.IOException;
 /**
  * Comment Junit Tester
  *
- * Junit tester that tests the methods of the comment class and comment service class
+ * Junit tester that tests the methods of the comment class and comment service class adjusted from the User class
  *
- * Emerson Barrett
+ * Emerson Barrett and Neeil Gupta
  *
  * @version November 4th, 2024
  *
@@ -36,11 +36,11 @@ class Comments_Junit_Test {
 
     @Test
     void testAddComment() {
-        commentService.addComment(15,"this is the first comment",
-                new User(User.numUsers++, "user1", "pass123", "oney"), new Post(98, "this is a post",
-                        new User (User.numUsers++, "user2", "pass123", "twoy")));
+        commentService.addComment(15, "this is the first comment",
+                new User(User.numUsers++, "user1", "pass123", "oney"),
+                new Post(98, "this is a post",
+                        new User(User.numUsers++, "user2", "pass123", "twoy")));
 
-        // Check that the comment was added to the file database
         Comment storedComment = database.retrieveComment(15);
         assertNotNull(storedComment);
         assertEquals(15, storedComment.getID());
