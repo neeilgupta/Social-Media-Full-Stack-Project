@@ -72,10 +72,44 @@ public class Client extends Thread implements Runnable {
     };
 
     private void showPassword() {
-        if (passwordField.getEchoChar() == '*') {
-            passwordField.setEchoChar((char) 0); // Show password
-        } else {
-            passwordField.setEchoChar('*'); // Hide password
+        if (passwordField.getEchoChar() == '●') {
+            passwordField.setEchoChar('\0');
+            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-200.png");
+
+
+            // Get the preferred height of the password field
+            int fieldHeight = passwordField.getPreferredSize().height;
+
+            // Resize the image to a square with height equal to the field height
+            BufferedImage resizedImage = null;
+            Graphics2D g2d;
+
+            resizedImage = new BufferedImage(fieldHeight, fieldHeight, BufferedImage.TYPE_INT_ARGB);
+            g2d = resizedImage.createGraphics();
+            g2d.drawImage(icon.getImage(), 0, 0, fieldHeight, fieldHeight, null);
+            g2d.dispose();
+
+            showPasswordButton.setIcon(new ImageIcon(resizedImage));
+
+
+        } else if (passwordField.getEchoChar() == '\0') {
+            passwordField.setEchoChar('●');
+            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/506282-200.png");
+
+
+            // Get the preferred height of the password field
+            int fieldHeight = passwordField.getPreferredSize().height;
+
+            // Resize the image to a square with height equal to the field height
+            BufferedImage resizedImage = null;
+            Graphics2D g2d;
+
+            resizedImage = new BufferedImage(fieldHeight, fieldHeight, BufferedImage.TYPE_INT_ARGB);
+            g2d = resizedImage.createGraphics();
+            g2d.drawImage(icon.getImage(), 0, 0, fieldHeight, fieldHeight, null);
+            g2d.dispose();
+
+            showPasswordButton.setIcon(new ImageIcon(resizedImage));
         }
     }
 
@@ -92,14 +126,13 @@ public class Client extends Thread implements Runnable {
     }
 
     public void signUpPage() {
-
         JFrame frame = new JFrame("Sign Up");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 350); // Set a more compact size for better UI
         frame.setLocationRelativeTo(null);
 
         JPanel panel = new JPanel(new GridBagLayout());
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Add padding around the panel
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.insets = new Insets(5, 5, 5, 5); // Add spacing between components
@@ -141,46 +174,60 @@ public class Client extends Thread implements Runnable {
         autogenerateButton.addActionListener(actionListener);
         panel.add(autogenerateButton, gbc);
 
-         // Show Password Button (next to password field)
+        // Show Password Button (next to password field)
         gbc.gridx = 2;
         gbc.gridy = 2;
 
         try {
             // Load the original image
-            BufferedImage originalImage = ImageIO.read(new File("/Users/hhatami/IdeaProjects/group-project-cs180/Main/password-hidding-icon-icon-for-data-privacy-and-sensitive-content-mark-illustration-vector.jpg"));
+            BufferedImage originalImage = ImageIO.read(new File("/Users/hhatami/IdeaProjects/group-project-" +
+                    "cs180/Main/777494-200.png"));
 
             // Get the preferred height of the password field
             int fieldHeight = passwordField.getPreferredSize().height;
 
             // Resize the image to a square with height equal to the field height
-            BufferedImage resizedImage = new BufferedImage(fieldHeight, fieldHeight, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D g2d = resizedImage.createGraphics();
-            g2d.drawImage(originalImage, 0, 0, fieldHeight, fieldHeight, null);
-            g2d.dispose();
-
+            BufferedImage resizedImage = null;
+            Graphics2D g2d;
+            if (passwordField.getEchoChar() == '●') {
+                resizedImage = new BufferedImage(fieldHeight, fieldHeight, BufferedImage.TYPE_INT_ARGB);
+                g2d = resizedImage.createGraphics();
+                g2d.drawImage(originalImage, 0, 0, fieldHeight, fieldHeight, null);
+                g2d.dispose();
+            }
+            if (passwordField.getEchoChar() == '\0') {
+                BufferedImage secondImage = ImageIO.read(new File("/Users/hhatami/IdeaProjects/group-" +
+                        "project-cs180/Main/506282-200.png"));
+                resizedImage = new BufferedImage(fieldHeight, fieldHeight, BufferedImage.TYPE_INT_ARGB);
+                g2d = resizedImage.createGraphics();
+                g2d.drawImage(secondImage, 0, 0, fieldHeight, fieldHeight, null);
+                g2d.dispose();
+            }
             // Convert resized image to an icon
             ImageIcon resizedIcon = new ImageIcon(resizedImage);
 
-            // Create the button with the resized icon
-            showPasswordButton = new JButton(resizedIcon);
-            showPasswordButton.setBorderPainted(false);
-            showPasswordButton.setFocusPainted(false);
-            showPasswordButton.setContentAreaFilled(false);
-            showPasswordButton.setPreferredSize(new Dimension(fieldHeight, fieldHeight));
-            showPasswordButton.addActionListener(actionListener);
+            if (showPasswordButton == null) {
+                showPasswordButton = new JButton(resizedIcon);
+                showPasswordButton.setBorderPainted(false);
+                showPasswordButton.setFocusPainted(false);
+                showPasswordButton.setContentAreaFilled(false);
+                showPasswordButton.setPreferredSize(new Dimension(fieldHeight, fieldHeight));
+                showPasswordButton.addActionListener(actionListener);
 
+                gbc.gridx = 2;
+                gbc.gridy = 2;
+                gbc.gridwidth = 1;
+                panel.add(showPasswordButton, gbc);
+            } else {
+                showPasswordButton.setIcon(resizedIcon);
+            }
 
-            // Place the button next to the password field
-            gbc.gridx = 2;
-            gbc.gridy = 2;
-            gbc.gridwidth = 1; // Reset gridwidth to avoid spanning multiple columns
-            panel.add(showPasswordButton, gbc);
+            panel.revalidate();
+            panel.repaint();
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
 
 
         // Add Confirm Button at the Bottom
@@ -268,7 +315,6 @@ public class Client extends Thread implements Runnable {
         }
         return true;
     }
-
 
 
     public boolean validPassword(String password) {
