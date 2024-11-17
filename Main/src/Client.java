@@ -136,7 +136,7 @@ public class Client extends Thread implements Runnable {
     public void signUpPage() {
         JFrame frame = new JFrame("Sign Up");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400); // Set a more compact size for better UI
+        frame.setSize(500, 300); // Set a more compact size for better UI
         frame.setLocationRelativeTo(null);
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -152,7 +152,7 @@ public class Client extends Thread implements Runnable {
         panel.add(new JLabel("Username:"), gbc);
 
         gbc.gridx = 1;
-        usernameField = new JTextField(16); // Limit the column size for a cleaner look
+        usernameField = new JTextField(24); // Limit the column size for a cleaner look
         panel.add(usernameField, gbc);
 
         // Display Name Label and Field
@@ -161,7 +161,7 @@ public class Client extends Thread implements Runnable {
         panel.add(new JLabel("Display Name:"), gbc);
 
         gbc.gridx = 1;
-        displayNameField = new JTextField(16);
+        displayNameField = new JTextField(24);
         panel.add(displayNameField, gbc);
 
         // Password Label and Field
@@ -170,7 +170,7 @@ public class Client extends Thread implements Runnable {
         panel.add(new JLabel("Password:"), gbc);
 
         gbc.gridx = 1;
-        passwordField = new JPasswordField(16);
+        passwordField = new JPasswordField(24);
         panel.add(passwordField, gbc);
 
         gbc.gridx = 0;
@@ -178,7 +178,7 @@ public class Client extends Thread implements Runnable {
         panel.add(new JLabel("Confirm Password:"), gbc);
 
         gbc.gridx = 1;
-        confirmPasswordField = new JPasswordField(16);
+        confirmPasswordField = new JPasswordField(24);
         panel.add(confirmPasswordField, gbc);
         confirmPasswordField.setEchoChar('\0');
 
@@ -229,8 +229,10 @@ public class Client extends Thread implements Runnable {
             showPasswordButton.setIcon(resizedIcon);
         }
 
-
+        gbc.gridx = 0;
         gbc.gridy = 5;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         JButton confirmSignUp = new JButton("Confirm Sign Up");
 
         confirmSignUp.addActionListener(e -> {
@@ -599,16 +601,23 @@ public class Client extends Thread implements Runnable {
         if (user == null) {
             JOptionPane.showMessageDialog(mainFrame, "Username not found", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
+        } else if (!this.isUsernameTaken()) {
+            JOptionPane.showMessageDialog(mainFrame, "Username does not exist", "Error", JOptionPane.ERROR_MESSAGE);
         }
         return true;
     }
 
     private boolean isUsernameTaken() {
-        try{
-            BufferedReader bfr = new BufferedReader(new FileReader(username + ".ser"));
+        File file = new File(username + ".ser");
+        if (!file.exists()) {
+            return false;
+        }
+
+        try (BufferedReader bfr = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = bfr.readLine()) != null) {
-                if (line.split(",")[0].equals(username)) {
+                if (line.split(",")[1].equals(username)) {
+                    JOptionPane.showMessageDialog(mainFrame, "Username taken", "Error", JOptionPane.ERROR_MESSAGE);
                     return true;
                 }
             }
@@ -616,7 +625,6 @@ public class Client extends Thread implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        JOptionPane.showMessageDialog(mainFrame, "Username taken", "Error", JOptionPane.ERROR_MESSAGE);
         return false;
     }
 }
