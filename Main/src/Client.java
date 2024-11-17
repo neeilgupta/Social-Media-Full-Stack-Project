@@ -127,9 +127,9 @@ public class Client extends Thread implements Runnable {
             generatedPassword.append(chars.charAt(random));
         }
         passwordField.setText(generatedPassword.toString());
-        passwordField.setEchoChar('\0');
+        passwordField.setEchoChar('●');
         confirmPasswordField.setText(generatedPassword.toString());
-        confirmPasswordField.setEchoChar('\0');
+        confirmPasswordField.setEchoChar('●');
         this.showPassword();
     }
 
