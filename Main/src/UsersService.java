@@ -21,9 +21,9 @@ public class UsersService implements UserServiceInterface {
 
     // Constructor(database: Database)
     //ignore the fact that there are two constructors. Intellij being weird.
-    public void UserService(UserFileDatabase database) {
-        this.database = database;
-    }
+    //public void UserService(UserFileDatabase database) {
+    //    this.database = database;
+    //}
 
    @Override
     public void addUser(int userID, String username, String password, String displayName) {
