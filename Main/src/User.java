@@ -66,6 +66,11 @@ public class User extends Client implements Serializable { //changed extension f
         this.hiddenPosts = new ArrayList<>();
     }
 
+    public static User deserialize(String data) {
+        String[] parts = data.split(",");
+        return new User(Integer.parseInt(parts[0]), parts[1], parts[2], parts[3]);
+    }
+
     // JOptionPane.showMessageDialog(panel, "Perfect! Your username is " + username);
     //        panel.removeAll();
     //        frame.remove(panel);
@@ -179,4 +184,9 @@ public class User extends Client implements Serializable { //changed extension f
     public Collection<User>getBlockedUsers() { //Additions by Sameer for Junit
         return blockedUsers;
     }
+
+    public String serialize() {
+        return userID + "," + username + "," + password + "," + displayName;
+    }
+
 }

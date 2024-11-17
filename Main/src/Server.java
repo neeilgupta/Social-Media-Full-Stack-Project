@@ -54,21 +54,17 @@ public class Server {
     }
 
     private void createUser(String userInfo){
-        try {
-            String[] userComponents = userInfo.split(",");
-            System.out.println(userComponents[0]);
-            System.out.println(userComponents[1]);
-            System.out.println(userComponents[2]);
-            System.out.println(userComponents[3]);
-            UserFileDatabase database = new UserFileDatabase("user_database.txt");
-            UsersService usersService = new UsersService(database);
-            User user = new User(Integer.parseInt(userComponents[0]), userComponents[1], userComponents[2],
-                    userComponents[3]);
-            usersService.addUser(Integer.parseInt(userComponents[0]), userComponents[1], userComponents[2],
-                    userComponents[3]);
-        } catch (IOException e){
-            e.printStackTrace();
-        }
+        String[] userComponents = userInfo.split(",");
+        System.out.println(userComponents[0]);
+        System.out.println(userComponents[1]);
+        System.out.println(userComponents[2]);
+        System.out.println(userComponents[3]);
+        UserFileDatabase database = new UserFileDatabase("user_database.txt");
+        UsersService usersService = new UsersService(database);
+        User user = new User(Integer.parseInt(userComponents[0]), userComponents[1], userComponents[2],
+                userComponents[3]);
+        usersService.addUser(Integer.parseInt(userComponents[0]), userComponents[1], userComponents[2],
+                userComponents[3]);
     }
 
     public static void main(String[] args) {
