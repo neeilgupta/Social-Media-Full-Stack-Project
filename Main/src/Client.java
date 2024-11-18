@@ -27,7 +27,7 @@ public class Client extends Thread implements Runnable {
     private UserFileDatabase database; // creates the use of database in this class
 
     private Socket clientSocket;
-    private DataOutputStream out;
+    DataOutputStream out;
 
     private JButton signUpButton;
     private JButton loginButton;
@@ -373,7 +373,7 @@ public class Client extends Thread implements Runnable {
     //once the GUI is implemented.
     //Method content, especially for determining id numbers, must remain.
     //      -Emerson
-    private void createPost(String content, User user) {
+    void createPost(String content, User user) {
         String line;
         int id = 0;
         try {
@@ -399,7 +399,7 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    private void createComment(String content, User user, Post post) {
+    void createComment(String content, User user, Post post) {
         String line;
         int id = 0;
         try {
@@ -425,7 +425,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    private void likePost(int postID, int userID) {
+    void likePost(int postID, int userID) {
         String likePostLine = "likePost##" + postID + "," + userID;
         try {
             out.writeUTF(likePostLine);
@@ -433,7 +433,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    private void dislikePost(int postID, int userID){
+    void dislikePost(int postID, int userID){
         String dislikePostLine = "dislikePost##" + postID + "," + userID;
         try {
             out.writeUTF(dislikePostLine);
@@ -441,7 +441,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    private void likeComment(int commentID, int userID) {
+    void likeComment(int commentID, int userID) {
         String likeCommentLine = "likeComment##" + commentID + "," + userID;
         try {
             out.writeUTF(likeCommentLine);
@@ -449,7 +449,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    private void dislikeComment(int commentID, int userID) {
+    void dislikeComment(int commentID, int userID) {
         String dislikeCommentLine = "dislikeComment##" + commentID + "," + userID;
         try {
             out.writeUTF(dislikeCommentLine);
@@ -457,7 +457,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    private void follow(int currentUserID, int otherUserID) {
+    void follow(int currentUserID, int otherUserID) {
         String followLine = "follow##" + currentUserID + "," + otherUserID;
         try {
             out.writeUTF(followLine);
@@ -465,7 +465,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    private void unfollow(int currentUserID, int otherUserID) {
+    void unfollow(int currentUserID, int otherUserID) {
         String unfollowLine = "unfollow##" + currentUserID + "," + otherUserID;
         try {
             out.writeUTF(unfollowLine);
@@ -473,7 +473,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    private void removeAccount(int userID){
+    void removeAccount(int userID){
         String removeAccountLine = "removeAccount##" + userID;
     }
     private void deletePost(int postID){
