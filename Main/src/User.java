@@ -189,4 +189,7 @@ public class User extends Client implements Serializable { //changed extension f
         return userID + "," + username + "," + password + "," + displayName;
     }
 
+    public List<User> getFollowing() {
+        return followers;
+    }
 }
