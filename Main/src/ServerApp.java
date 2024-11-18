@@ -68,7 +68,7 @@ public class ServerApp extends Thread {
 
 //    }
 
-    private void createUser(String userInfo) {
+    void createUser(String userInfo) {
         String[] userComponents = userInfo.split(",");
         UserFileDatabase database = new UserFileDatabase("users.ser");
         UsersService usersService = new UsersService(database);
