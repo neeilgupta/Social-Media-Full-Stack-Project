@@ -101,6 +101,109 @@ public class ClientTest {
         }
     }
 
+    @Test
+    void testCreatePost() throws IOException {
+        User user = new User(1, "TestUser", "password", "DisplayName");
+        Client client = new Client();
+        client.out = new DataOutputStream(new ByteArrayOutputStream());
+
+        client.createPost("This is a test post", user);
+
+        String expectedMessage = "createPost##0,This is a test post,1";
+        assertEquals(expectedMessage, client.out.toString().trim(), "Expected message format for createPost");
+    }
+
+    @Test
+    void testCreateComment() throws IOException {
+        User user = new User(1, "TestUser", "password", "DisplayName");
+        Post post = new Post(1, "Test Post Content", user);
+        Client client = new Client();
+        client.out = new DataOutputStream(new ByteArrayOutputStream());
+
+        client.createComment("This is a test comment", user, post);
+
+        String expectedMessage = "createComment##0,This is a test comment,1,1";
+        assertEquals(expectedMessage, client.out.toString().trim(), "Expected message format for createComment");
+    }
+
+    @Test
+    void testLikePost() throws IOException {
+        Client client = new Client();
+        client.out = new DataOutputStream(new ByteArrayOutputStream());
+
+        client.likePost(1, 1);
+
+        String expectedMessage = "likePost##1,1";
+        assertEquals(expectedMessage, client.out.toString().trim(), "Expected message format for likePost");
+    }
+
+    @Test
+    void testDislikePost() throws IOException {
+        Client client = new Client();
+        client.out = new DataOutputStream(new ByteArrayOutputStream());
+
+        client.dislikePost(1, 1);
+
+        String expectedMessage = "dislikePost##1,1";
+        assertEquals(expectedMessage, client.out.toString().trim(), "Expected message format for dislikePost");
+    }
+
+    @Test
+    void testLikeComment() throws IOException {
+        Client client = new Client();
+        client.out = new DataOutputStream(new ByteArrayOutputStream());
+
+        client.likeComment(1, 1);
+
+        String expectedMessage = "likeComment##1,1";
+        assertEquals(expectedMessage, client.out.toString().trim(), "Expected message format for likeComment");
+    }
+
+    @Test
+    void testDislikeComment() throws IOException {
+        Client client = new Client();
+        client.out = new DataOutputStream(new ByteArrayOutputStream());
+
+        client.dislikeComment(1, 1);
+
+        String expectedMessage = "dislikeComment##1,1";
+        assertEquals(expectedMessage, client.out.toString().trim(), "Expected message format for dislikeComment");
+    }
+
+    @Test
+    void testFollow() throws IOException {
+        Client client = new Client();
+        client.out = new DataOutputStream(new ByteArrayOutputStream());
+
+        client.follow(1, 2);
+
+        String expectedMessage = "follow##1,2";
+        assertEquals(expectedMessage, client.out.toString().trim(), "Expected message format for follow");
+    }
+
+    @Test
+    void testUnfollow() throws IOException {
+        Client client = new Client();
+        client.out = new DataOutputStream(new ByteArrayOutputStream());
+
+        client.unfollow(1, 2);
+
+        String expectedMessage = "unfollow##1,2";
+        assertEquals(expectedMessage, client.out.toString().trim(), "Expected message format for unfollow");
+    }
+
+    @Test
+    void testRemoveAccount() throws IOException {
+        Client client = new Client();
+        client.out = new DataOutputStream(new ByteArrayOutputStream());
+
+        client.removeAccount(1);
+
+        String expectedMessage = "removeAccount##1";
+        assertEquals(expectedMessage, client.out.toString().trim(), "Expected message format for removeAccount");
+    }
+
+
     @AfterEach
     //resets and cleans up resources from server
     public void tearDown() throws IOException {
