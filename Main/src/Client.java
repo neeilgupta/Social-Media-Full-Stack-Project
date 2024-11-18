@@ -27,7 +27,7 @@ public class Client extends Thread implements Runnable {
     private UserFileDatabase database; // creates the use of database in this class
 
     private Socket clientSocket;
-    DataOutputStream out;
+    protected DataOutputStream out;
 
     private JButton signUpButton;
     private JButton loginButton;
@@ -377,13 +377,13 @@ public class Client extends Thread implements Runnable {
     //once the GUI is implemented.
     //Method content, especially for determining id numbers, must remain.
     //      -Emerson
-    void createPost(String content, User user) {
+    protected void createPost(String content, User user) {
         String line;
         int id = 0;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("posts.ser"));
-            while ((line = bfr.readLine()) != null) {
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id) {
+            while ((line = bfr.readLine()) != null){
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
                     id = Integer.parseInt(line.substring(0, line.indexOf(",")));
                 }
             }
@@ -403,13 +403,13 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    void createComment(String content, User user, Post post) {
+    protected void createComment(String content, User user, Post post) {
         String line;
         int id = 0;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("comments.ser"));
-            while ((line = bfr.readLine()) != null) {
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id) {
+            while ((line = bfr.readLine()) != null){
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
                     id = Integer.parseInt(line.substring(0, line.indexOf(",")));
                 }
             }
@@ -429,7 +429,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void likePost(int postID, int userID) {
+    protected void likePost(int postID, int userID) {
         String likePostLine = "likePost##" + postID + "," + userID;
         try {
             out.writeUTF(likePostLine);
@@ -437,7 +437,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void dislikePost(int postID, int userID){
+    protected void dislikePost(int postID, int userID){
         String dislikePostLine = "dislikePost##" + postID + "," + userID;
         try {
             out.writeUTF(dislikePostLine);
@@ -445,7 +445,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void likeComment(int commentID, int userID) {
+    protected void likeComment(int commentID, int userID) {
         String likeCommentLine = "likeComment##" + commentID + "," + userID;
         try {
             out.writeUTF(likeCommentLine);
@@ -453,7 +453,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void dislikeComment(int commentID, int userID) {
+    protected void dislikeComment(int commentID, int userID) {
         String dislikeCommentLine = "dislikeComment##" + commentID + "," + userID;
         try {
             out.writeUTF(dislikeCommentLine);
@@ -461,7 +461,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void follow(int currentUserID, int otherUserID) {
+    protected void follow(int currentUserID, int otherUserID) {
         String followLine = "follow##" + currentUserID + "," + otherUserID;
         try {
             out.writeUTF(followLine);
@@ -469,7 +469,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void unfollow(int currentUserID, int otherUserID) {
+    protected void unfollow(int currentUserID, int otherUserID) {
         String unfollowLine = "unfollow##" + currentUserID + "," + otherUserID;
         try {
             out.writeUTF(unfollowLine);
@@ -477,16 +477,14 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void removeAccount(int userID){
+    protected void removeAccount(int userID){
         String removeAccountLine = "removeAccount##" + userID;
     }
-
-    private void deletePost(int postID) {
+    private void deletePost(int postID){
         //must validate that the user is the one who created the post
         String hidePostLine = "deletePost##" + postID;
     }
-
-    private void deleteComment(int commentID) {
+    private void deleteComment(int commentID){
         //must validate that the user is either the one who created the post that the comment is on
         //or the one who created the comment itself
         String deleteCommentLine = "deleteComment##" + commentID;
@@ -496,7 +494,6 @@ public class Client extends Thread implements Runnable {
 
     public static void main(String[] args) throws IOException {
         Client client = new Client();
-
 
         //send data to and receive data from server
         //basically create the UI, and send messages to the server so the server can do stuff
@@ -632,7 +629,6 @@ public class Client extends Thread implements Runnable {
         JOptionPane.showMessageDialog(mainFrame, "Incorrect username or password");
         return false;
     }
-
 
     private boolean isUsernameTaken() {
         File file = new File(username + ".ser");
