@@ -60,6 +60,7 @@ public class Client extends Thread implements Runnable {
 
             }
             if (e.getSource() == loginButton) {
+                mainFrame.dispose();
                 client.loginPage();
             }
             if (e.getSource() == autogenerateButton) {
@@ -243,8 +244,8 @@ public class Client extends Thread implements Runnable {
             int id = 0;
             try {
                 BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
-                while ((line = bfr.readLine()) != null){
-                    if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+                while ((line = bfr.readLine()) != null) {
+                    if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id) {
                         id = Integer.parseInt(line.substring(0, line.indexOf(",")));
                     }
                 }
@@ -352,8 +353,8 @@ public class Client extends Thread implements Runnable {
             password = passwordField.getText();
             userID = User.numUsers++;
 
-            if (validUsernameLI(username) && validPasswordLI(password)) {
-                System.out.println("Signing up: " + username);
+            if (validLogin(username, password))  {
+                System.out.println("Welcome! Logging In:" + username);
                 frame.dispose();
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
@@ -368,6 +369,7 @@ public class Client extends Thread implements Runnable {
         frame.add(panel);
         frame.setVisible(true);
     }
+
     //Methods below include all information that must be passed to the server.
     //Information in the method constructors can later be replaced with whatever necessary
     //once the GUI is implemented.
@@ -378,8 +380,8 @@ public class Client extends Thread implements Runnable {
         int id = 0;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("posts.ser"));
-            while ((line = bfr.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+            while ((line = bfr.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id) {
                     id = Integer.parseInt(line.substring(0, line.indexOf(",")));
                 }
             }
@@ -404,8 +406,8 @@ public class Client extends Thread implements Runnable {
         int id = 0;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("comments.ser"));
-            while ((line = bfr.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+            while ((line = bfr.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id) {
                     id = Integer.parseInt(line.substring(0, line.indexOf(",")));
                 }
             }
@@ -425,6 +427,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     private void likePost(int postID, int userID) {
         String likePostLine = "likePost##" + postID + "," + userID;
         try {
@@ -433,7 +436,8 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    private void dislikePost(int postID, int userID){
+
+    private void dislikePost(int postID, int userID) {
         String dislikePostLine = "dislikePost##" + postID + "," + userID;
         try {
             out.writeUTF(dislikePostLine);
@@ -441,6 +445,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     private void likeComment(int commentID, int userID) {
         String likeCommentLine = "likeComment##" + commentID + "," + userID;
         try {
@@ -449,6 +454,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     private void dislikeComment(int commentID, int userID) {
         String dislikeCommentLine = "dislikeComment##" + commentID + "," + userID;
         try {
@@ -457,6 +463,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     private void follow(int currentUserID, int otherUserID) {
         String followLine = "follow##" + currentUserID + "," + otherUserID;
         try {
@@ -465,6 +472,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     private void unfollow(int currentUserID, int otherUserID) {
         String unfollowLine = "unfollow##" + currentUserID + "," + otherUserID;
         try {
@@ -473,14 +481,17 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    private void removeAccount(int userID){
+
+    private void removeAccount(int userID) {
         String removeAccountLine = "removeAccount##" + userID;
     }
-    private void deletePost(int postID){
+
+    private void deletePost(int postID) {
         //must validate that the user is the one who created the post
         String hidePostLine = "deletePost##" + postID;
     }
-    private void deleteComment(int commentID){
+
+    private void deleteComment(int commentID) {
         //must validate that the user is either the one who created the post that the comment is on
         //or the one who created the comment itself
         String deleteCommentLine = "deleteComment##" + commentID;
@@ -490,6 +501,7 @@ public class Client extends Thread implements Runnable {
 
     public static void main(String[] args) throws IOException {
         Client client = new Client();
+
 
         //send data to and receive data from server
         //basically create the UI, and send messages to the server so the server can do stuff
@@ -563,27 +575,27 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    public  boolean validPasswordLI(String password) {
-        User user = database.retrieveUser(username);
-        try {
-            BufferedReader bfr = new BufferedReader(new FileReader(username + ".ser"));
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                if (line.contains(password)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // How to check if the username's password matches? I can't locate the file where the usernames and passwords are saved.
-        if (user == null) {
-            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        return false;
-    }
+//    public boolean validPasswordLI(String password) {
+//        User user = database.retrieveUser(username);
+//        try {
+//            BufferedReader bfr = new BufferedReader(new FileReader(username + ".ser"));
+//            String line;
+//            while ((line = bfr.readLine()) != null) {
+//                if (line.contains(password)) {
+//                    return true;
+//                }
+//            }
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        // How to check if the username's password matches? I can't locate the file where the usernames and passwords are saved.
+//        if (user == null) {
+//            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error", JOptionPane.ERROR_MESSAGE);
+//            return false;
+//        }
+//        return false;
+//    }
 
     public boolean validUsernameSU(String username) {
 //        User user = database.retrieveUser(username);
@@ -606,16 +618,26 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    private boolean validUsernameLI(String username) {
-        User user = database.retrieveUser(username);
-        if (user == null) {
-            JOptionPane.showMessageDialog(mainFrame, "Username not found", "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        } else if (!this.isUsernameTaken()) {
-            JOptionPane.showMessageDialog(mainFrame, "Username does not exist", "Error", JOptionPane.ERROR_MESSAGE);
+    private boolean validLogin(String username, String password) {
+        File file = new File("users.ser");
+//        if (!file.exists()) {
+//            return false;
+//        }
+
+        try (BufferedReader bfr = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                if (line.split(",")[1].equals(username) && line.contains(password)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return true;
+        JOptionPane.showMessageDialog(mainFrame, "Incorrect username or password");
+        return false;
     }
+
 
     private boolean isUsernameTaken() {
         File file = new File(username + ".ser");

@@ -7,7 +7,7 @@ import java.util.Arrays;
  * <p>
  * Initiates the server, and creates threads for ServerApp that complete the tasks requested by the client
  * <p>
- * Emerson Barrett
+ * Emerson Barrett, Hossein Hatami
  *
  * @version November 17, 2024
  */

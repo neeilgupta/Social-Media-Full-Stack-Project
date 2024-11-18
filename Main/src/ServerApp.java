@@ -18,50 +18,42 @@ public class ServerApp extends Thread {
         socket = inSocket;
     }
     public void run() {
-        try {
-            DataInputStream in = new DataInputStream(
-                    new BufferedInputStream(socket.getInputStream())
-            );
-            String line = "";
-            while (!line.equals("###")) {
+        try (DataInputStream in = new DataInputStream(
+                new BufferedInputStream(socket.getInputStream()))) {
+
+            String line;
+            while (true) {
                 try {
                     line = in.readUTF();
-                    String action = line.substring(0, line.indexOf("##"));
-                    String input = line.substring(line.indexOf("##") + 2);
-                    if (action.equals("createUser")) {
-                        createUser(input);
-                    } else if (action.equals("createPost")) {
-                        createPost(input);
-                    } else if (action.equals("createComment")) {
-                        createComment(input);
-                    } else if (action.equals("likePost")) {
-                        likePost(input);
-                    } else if (action.equals("dislikePost")) {
-                        dislikePost(input);
-                    } else if (action.equals("likeComment")) {
-                        likeComment(input);
-                    } else if (action.equals("dislikeComment")) {
-                        dislikeComment(input);
-                    } else if (action.equals("follow")) {
-                        follow(input);
-                    } else if (action.equals("unfollow")) {
-                        unfollow(input);
-                    } else if (action.equals("removeAccount")) {
-                        removeAccount(input);
-                    } else if (action.equals("deletePost")) {
-                        deletePost(input);
-                    } else if (action.equals("deleteComment")) {
-                        deleteComment(input);
+                    if (line.equals("###")) {
+                        break;
                     }
 
-                    line = "###";
+                    String action = line.substring(0, line.indexOf("##"));
+                    String input = line.substring(line.indexOf("##") + 2);
+
+                    switch (action) {
+                        case "createUser" -> createUser(input);
+                        case "createPost" -> createPost(input);
+                        case "createComment" -> createComment(input);
+                        case "likePost" -> likePost(input);
+                        case "dislikePost" -> dislikePost(input);
+                        case "likeComment" -> likeComment(input);
+                        case "dislikeComment" -> dislikeComment(input);
+                        case "follow" -> follow(input);
+                        case "unfollow" -> unfollow(input);
+                        case "removeAccount" -> removeAccount(input);
+                        case "deletePost" -> deletePost(input);
+                        case "deleteComment" -> deleteComment(input);
+                    }
+                } catch (EOFException e) {
+                    System.out.println("Client disconnected.");
+                    break;
                 } catch (IOException e) {
                     e.printStackTrace();
-                    line = "###";
+                    break;
                 }
             }
-            in.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -72,6 +64,8 @@ public class ServerApp extends Thread {
             }
         }
     }
+
+
 //    }
 
     private void createUser(String userInfo) {
