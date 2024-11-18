@@ -353,7 +353,7 @@ public class Client extends Thread implements Runnable {
             password = passwordField.getText();
             userID = User.numUsers++;
 
-            if (validUsernameLI(username) && validPasswordLI(password)) {
+            if (validLogin(username, password)) {
                 System.out.println("Signing up: " + username);
                 frame.dispose();
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
