@@ -48,6 +48,10 @@ public class ServerApp extends Thread {
                         unfollow(input);
                     } else if (action.equals("removeAccount")) {
                         removeAccount(input);
+                    } else if (action.equals("deletePost")) {
+                        deletePost(input);
+                    } else if (action.equals("deleteComment")) {
+                        deleteComment(input);
                     }
 
                     line = "###";
@@ -297,6 +301,88 @@ public class ServerApp extends Thread {
 
             if (inputFile.delete()){
                 if (!tempFile.renameTo(inputFile)){
+                    System.out.println("Failed to rename temp file");
+                }
+            } else {
+                System.out.println("Failed to delete og file");
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void blockUser(String input){
+        int currentUserID = Integer.parseInt(input.substring(0, input.indexOf(",")));
+        int otherUserID = Integer.parseInt(input.substring(input.indexOf(",") + 1));
+        User currentUser = null;
+        User otherUser = null;
+        String line;
+        try {
+            BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
+            while ((line = bfr.readLine()) != null){
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == currentUserID){
+                    currentUser = User.deserialize(line);
+                }
+            }
+            BufferedReader bfr2 = new BufferedReader(new FileReader("users.ser"));
+            while ((line = bfr2.readLine()) != null){
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) == otherUserID){
+                    otherUser = User.deserialize(line);
+                }
+            }
+            UserFileDatabase database = new UserFileDatabase("users.ser");
+            UsersService userService = new UsersService(database);
+            userService.blockUser(currentUser, otherUser);
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
+    public void deletePost(String input) {
+        File inputFile = new File("posts.ser");
+        File tempFile = new File(inputFile.getAbsolutePath() + ".temp");
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.substring(0, line.indexOf(",")).equals(input)) {
+                    continue;
+                }
+                writer.write(line);
+                writer.newLine();
+            }
+
+            if (inputFile.delete()) {
+                if (!tempFile.renameTo(inputFile)) {
+                    System.out.println("Failed to rename temp file");
+                }
+            } else {
+                System.out.println("Failed to delete og file");
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    public void deleteComment(String input) {
+        File inputFile = new File("comments.ser");
+        File tempFile = new File(inputFile.getAbsolutePath() + ".temp");
+        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile));
+             BufferedWriter writer = new BufferedWriter(new FileWriter(tempFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (line.substring(0, line.indexOf(",")).equals(input)) {
+                    continue;
+                }
+                writer.write(line);
+                writer.newLine();
+            }
+
+            if (inputFile.delete()) {
+                if (!tempFile.renameTo(inputFile)) {
                     System.out.println("Failed to rename temp file");
                 }
             } else {

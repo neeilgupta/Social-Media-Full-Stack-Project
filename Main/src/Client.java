@@ -474,6 +474,16 @@ public class Client extends Thread implements Runnable {
     private void removeAccount(int userID){
         String removeAccountLine = "removeAccount##" + userID;
     }
+    private void deletePost(int postID){
+        //must validate that the user is the one who created the post
+        String hidePostLine = "deletePost##" + postID;
+    }
+    private void deleteComment(int commentID){
+        //must validate that the user is either the one who created the post that the comment is on
+        //or the one who created the comment itself
+        String deleteCommentLine = "deleteComment##" + commentID;
+    }
+    //--Emerson's client methods ^^
 
 
     public static void main(String[] args) throws IOException {
