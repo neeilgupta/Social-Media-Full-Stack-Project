@@ -280,6 +280,12 @@ testAutogeneratePassword: Verifies that the password generation method creates a
 
 testSignUpPageInteraction: Simulates a user sign-up process by entering data into the GUI and checking if the correct data is sent to the server.
 
+# Server Class:
+The server's entry point is managing a ServerSocket to listen for client connections. It initializes shared resources like users.ser and posts.ser and spawns a new ServerApp thread for each client connection, continuously accepting requests until the server shuts down.
 
+# ServerApp Class: 
+The class handles individual client connections using a Socket and extends Thread for concurrency. Its run method processes client commands such as createUser, createPost, follow, and others by invoking private methods that interact with UsersService, PostService, and their respective databases. The connection is closed gracefully after processing client requests.
 
+# ServerApp Test Class: 
+A JUnit test suite that uses in-memory streams to simulate socket communication for testing ServerApp verifies functionality such as creating users and posts and handling relationships like following users. Simulated input is sent via helper methods, and database contents are checked after each operation to ensure correctness.
 
