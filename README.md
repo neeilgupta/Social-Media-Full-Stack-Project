@@ -132,75 +132,19 @@ Features
 **Creating a username:** Restriction in length and availability exists
 **Creating a display name:** No restrictions
 **Creating a user ID:** auto assigned
+**Show Password buttton** shows the password
+**Autogenerate Password** Autogenerate password
 
 Classes Overview
-OptionSignUpOrLogIn Class
-Method
-Parameters
-Purpose
+
+Server
 -
+The server that creates a connection with the client
 
-Public void run()
+Client
 -
-Runs the GUI menu
+Has all the GUI and preforms signing up and logging in properly. The main place where everything is run
 
-Public boolean isSignUpButtonClicked()
--
-Lets the main method know whether to start the signUp thread
-
-Public boolean isLogInButtonClicked() 
--
-Lets the main method know whether to start the Login thread
-
-Sign Up Class
-Method
-Parameters
-Purpose
-run()
--
-Manages the user registration process through GUI dialogs for email, password, username, and display name input.
-
-
-isEmailTaken()	
--
-Checks if the current email is already in use by reading the UserInfo.txt file. Returns true if taken, false otherwise.
-
-
-isUsernameTaken()	
--
-Checks if the current username is already in use by reading the UserInfo.txt file. Returns true if taken, false otherwise.
-
-
-getUserID()
--
-Returns the user ID.
-
-
-setUserID(int userID)
--
-Sets the user ID to the given integer value.
-getUsername()
-Returns the username
-
-setUsername(String username)
--
-Sets the username to the given string.
-
-getDisplayName()	
--
-Returns the display name
-
-setDisplayName(String displayName)	
--
-Sets the display name to the given string.
-
-getPassword()
--
-Returns the password.
-
-setPassword(int password)
--
-Sets the password to the given string.
 
 ## Getting Started
 Prerequisites
