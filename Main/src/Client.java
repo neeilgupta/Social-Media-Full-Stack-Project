@@ -10,11 +10,11 @@ import java.util.Random;
 /**
  * Client
  * <p>
- * DESCRIPTION GOES HERE
+ * This class initiates which interact with the server, and runs the GUI of the social media program
  * <p>
- * Hossein Hatami
+ * Hossein Hatami, Emerson Barrett
  *
- * @version November 3rd, 2024
+ * @version November 17, 2024
  */
 
 public class Client extends Thread implements Runnable {
