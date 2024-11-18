@@ -229,154 +229,56 @@ Add more detail and design to the frames in sign up class
 
 
 
-##Neeil Gupta
-#News Feed System
+### Neeil Gupta
+## News Feed:
 This project implements the News Feed functionality for a social media platform, allowing users to create posts, view friends' posts, interact with posts through upvotes, downvotes, and comments, and manage visibility of posts through hiding. The News Feed aggregates content from friends while ensuring that users can engage with posts effectively.
-Table of Contents
-Features
-Architecture
-Classes Overview
-Getting Started
-Database Setup
-Testing
-Future Improvements
-Features
+
+## Features:
 Post Creation: Users can create posts to share updates or content with their friends.
+
 Friends' Feed: The feed displays posts from users that the current user is following, sorted by engagement.
+
 Post Interaction: Users can upvote or downvote posts, allowing for content ranking.
+
 Commenting System: Users can add comments to posts, enabling conversations and feedback.
+
 Comment Interaction: Any user who can view a comment can upvote or downvote it; the post owner and comment owner have the ability to delete their comments.
-Architecture
-The project follows a modular architecture, where:
-NewsFeed Class: Manages the collection of posts and user interactions such as liking, disliking, and commenting.
-Post Class: Represents individual posts, storing content, user data, and metadata including timestamps and likes/dislikes.
-User Class: Handles user-specific functionalities, including followers, blocked users, and hidden posts.
-Classes Overview
-NewsFeed Class
-Method
-Parameters
-Purpose
-NewsFeed()
--
-Initializes an empty list to store posts.
-List<Post> getFeedForUser()
-User user
-Retrieves a user's feed, filtering posts by their followers and hidden posts.
-private void insertInOrder()
-List<Post> userFeed, Post post
-inserts a new post into the user feed in the correct order based on likes, dislikes, and timestamps
-void addPost()
-Post post
-Adds a new post to the feed.
-void likePost()
-Post post, User user
-Adds the user to the list of likes for the specified post.
-void dislikePost()
-Post post, User user
-Adds the user to the list of dislikes for the specified post.
-void addComment(Post post, Comment comment)
-Post post, Comment comment
-Adds a comment to the specified post.
-void likeComment(Post post, Comment comment, User user)
-Post post, Comment comment, User user
-Allows a user to like a specified comment on a post.
-
-Post Class
-Method
-Parameters
-Purpose
-Post()
-String content, User user
-Constructs a new post with the specified content and associated user.
-int getID()
--
-Returns the unique ID of the post.
-String getContent()
--
-Returns the content of the post.
-User getUser()
--
-Returns the user who created the post.
-LocalDateTime getDateTime()
--
-Returns the timestamp of when the post was created.
-ArrayList<Comment> getComments()
--
-Returns the list of comments associated with the post.
-ArrayList<User> getLikes()
--
-Returns the list of users who liked the post.
-ArrayList<User> getDislikes()
--
-Returns the list of users who disliked the post.
-void setContent()
-String content
-Sets the content of the post.
-void setUser()
-User user
-Sets the user associated with the post.
-
-User Class
-Method
-Parameters
-Purpose
-User()
-int userID, String username
-Constructs a new user with a specified ID and username.
-int getUserID()
--
-Returns the user's ID.
-String getUsername()
--
-Returns the username of the user.
-setUserID()
-int userID
-Sets the user’s ID
-setUsername()
-String username
-Sets the user’s username
-User getCurrentUser()
--
-Returns the current user
-ArrayList<Post> getHiddenPosts()
--
-Returns the list of posts hidden by the user.
-hidePost()
-Post post
-Hides a specified post from the user’s feed.
-unhidePost()
-Post post
-Removes a specified post from a user’s hidden posts
 
 
-Getting Started
-Prerequisites
-Java JDK 8 or higher
-A Java-compatible IDE (e.g., IntelliJ, Eclipse)
-Junit 4
-Installation
-Clone the repository:
-bash
-Copy code
-git clone https://github.com/emerson1203/group-project-cs180.git
-Open the project in your preferred IDE.
-Compile and run Main.java to start the program.
-Database Setup
-The PostFileDatabase class uses a file to store post data. The default file location can be specified in the class constructor or as an argument when running the program.
-Testing
-JUnit is used for unit testing in this project. To run the tests:
-Ensure JUnit is added as a dependency in your project.
-Run NewsFeedTest to execute test cases covering the core functionalities such as adding posts, liking, disliking, and ordering the feed.
-Sample Test Cases
-Some of the test cases included:
-testAddPost(): Verifies that a post is correctly added to the feed.
-testLikePost(): Confirms that a user can like a post.
-testDislikePost(): Confirms that a user can dislike a post.
-testFeedOrderByLikes(): Ensures that the feed orders posts by the number of likes and time.
-Future Improvements
-Enhanced Sorting Algorithms: Implement more advanced algorithms for feed sorting based on user engagement and reliability.
-User Notifications: Add notifications for users when their posts are liked or commented on.
-Improved GUI: Develop a more interactive user interface for better user experience.
+## Classes: 
+# Post:
+This class creates Post objects, which interact with users and comments. Users can make posts, which are then associated with that user. Users may also add comments to posts, posts have an array of comments. The testing on this class is done through the Post Junit Test class.
+
+# PostService:
+This class contains methods that utilize the methods of the Post class in tandem with files from the PostFileDatabase to read and write post files properly. Testing is done through the Post Junit Test class. 
+
+# PostFileDatabase:
+Creates serialized files in the post directory for each post that is created. These files can be manipulated and referenced as needed by the program. 
+
+# Post Junit Test:
+Tests the methods of the Post Service class which in turn tests the Post and Post File Database classes as they all work in tandem. 
+
+# Comment:
+This class creates Comment objects, which interact with posts and users. Users can make comments, which are then associated with that user, along with a specific post. The testing on this class is done through the Comment Junit Test class.
+
+# CommentService:
+This class contains methods that utilize the methods of the Comment class in tandem with files from the CommentFileDatabase to read and write post files properly. Testing is done through the Comment Junit Test class. 
+
+# CommentFileDatabase:
+Creates serialized files in the comment directory for each Comment that is created. These files can be manipulated and referenced as needed by the program. 
+
+# Comment Junit Test: 
+Tests the methods of the Comment Service class which in turn tests the Comment and Comment File Database classes as they all work in tandem.
+
+# Client Test Class:
+JUnit test suite designed to verify the functionality of the Client class, including methods for username validation, password generation, and user sign-up interactions. It simulates server-client communication to ensure correct data handling and behavior, testing edge cases like username length and format as well as password generation logic.
+
+# Sample Test Cases
+testValidUsername: Validates the username based on length, allowed characters, and whether it is already taken.
+
+testAutogeneratePassword: Verifies that the password generation method creates a non-null password of exactly 30 characters.
+
+testSignUpPageInteraction: Simulates a user sign-up process by entering data into the GUI and checking if the correct data is sent to the server.
 
 
 

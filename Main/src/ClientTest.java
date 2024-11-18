@@ -10,13 +10,24 @@ import java.net.Socket;
 import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 
+/**
+ * Client Test
+ * <p>
+ *     JUnit test suite designed to verify the functionality of the Client class, including methods for username validation, password generation,
+ *     and user sign-up interactions. It simulates server-client communication to ensure correct data handling and behavior, testing edge cases like
+ *     username length and format as well as password generation logic.
+ * <p>
+ * Neeil Gupta
+ *
+ * @version November 17th, 2024
+ */
 public class ClientTest {
     private static final int TEST_PORT = 4141;
     private ServerSocket serverSocket;
     private Thread serverThread;
 
     @BeforeEach
-     public void setUp() throws IOException {
+    public void setUp() throws IOException {
         //Start of a simple test that simulates the server
         serverSocket = new ServerSocket(TEST_PORT);
         serverThread = new Thread(new Runnable() {
@@ -40,7 +51,7 @@ public class ClientTest {
         serverThread.start();
     }
     @Test
-     public void testValidUsername() {
+    public void testValidUsername() {
         Client client = new Client();
         assertTrue(client.validUsernameSU("Valid_User1"));
         assertFalse(client.validUsernameSU("ab"), "Expected invalid username (too short");
@@ -101,4 +112,3 @@ public class ClientTest {
         }
     }
 }
-
