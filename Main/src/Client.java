@@ -10,11 +10,11 @@ import java.util.Random;
 /**
  * Client
  * <p>
- * DESCRIPTION GOES HERE
+ * This class initiates which interact with the server, and runs the GUI of the social media program
  * <p>
- * Hossein Hatami
+ * Hossein Hatami, Emerson Barrett
  *
- * @version November 3rd, 2024
+ * @version November 17, 2024
  */
 
 public class Client extends Thread implements Runnable {
@@ -127,16 +127,16 @@ public class Client extends Thread implements Runnable {
             generatedPassword.append(chars.charAt(random));
         }
         passwordField.setText(generatedPassword.toString());
-        passwordField.setEchoChar('\0');
+        passwordField.setEchoChar('●');
         confirmPasswordField.setText(generatedPassword.toString());
-        confirmPasswordField.setEchoChar('\0');
+        confirmPasswordField.setEchoChar('●');
         this.showPassword();
     }
 
     public void signUpPage() {
         JFrame frame = new JFrame("Sign Up");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400); // Set a more compact size for better UI
+        frame.setSize(500, 300); // Set a more compact size for better UI
         frame.setLocationRelativeTo(null);
 
         JPanel panel = new JPanel(new GridBagLayout());
@@ -152,7 +152,7 @@ public class Client extends Thread implements Runnable {
         panel.add(new JLabel("Username:"), gbc);
 
         gbc.gridx = 1;
-        usernameField = new JTextField(16); // Limit the column size for a cleaner look
+        usernameField = new JTextField(24); // Limit the column size for a cleaner look
         panel.add(usernameField, gbc);
 
         // Display Name Label and Field
@@ -161,7 +161,7 @@ public class Client extends Thread implements Runnable {
         panel.add(new JLabel("Display Name:"), gbc);
 
         gbc.gridx = 1;
-        displayNameField = new JTextField(16);
+        displayNameField = new JTextField(24);
         panel.add(displayNameField, gbc);
 
         // Password Label and Field
@@ -170,7 +170,7 @@ public class Client extends Thread implements Runnable {
         panel.add(new JLabel("Password:"), gbc);
 
         gbc.gridx = 1;
-        passwordField = new JPasswordField(16);
+        passwordField = new JPasswordField(24);
         panel.add(passwordField, gbc);
 
         gbc.gridx = 0;
@@ -178,7 +178,7 @@ public class Client extends Thread implements Runnable {
         panel.add(new JLabel("Confirm Password:"), gbc);
 
         gbc.gridx = 1;
-        confirmPasswordField = new JPasswordField(16);
+        confirmPasswordField = new JPasswordField(24);
         panel.add(confirmPasswordField, gbc);
         confirmPasswordField.setEchoChar('\0');
 
@@ -229,8 +229,10 @@ public class Client extends Thread implements Runnable {
             showPasswordButton.setIcon(resizedIcon);
         }
 
-
+        gbc.gridx = 0;
         gbc.gridy = 5;
+        gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         JButton confirmSignUp = new JButton("Confirm Sign Up");
 
         confirmSignUp.addActionListener(e -> {
@@ -310,11 +312,12 @@ public class Client extends Thread implements Runnable {
         passwordField.setEchoChar('\0');
         ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-200.png");
 
+
         // Get the preferred height of the password field
         int fieldHeight = passwordField.getPreferredSize().height;
 
         // Resize the image to a square with height equal to the field height
-        BufferedImage resizedImage = null;
+        BufferedImage resizedImage;
         Graphics2D g2d;
 
         resizedImage = new BufferedImage(fieldHeight, fieldHeight, BufferedImage.TYPE_INT_ARGB);
@@ -344,15 +347,14 @@ public class Client extends Thread implements Runnable {
         gbc.gridy = 5;
         JButton confirmSULI = new JButton("Login");
 
-        confirmSULI.addActionListener(e -> {
+        confirmSULI.addActionListener(_ -> {
             username = usernameField.getText();
-            displayName = displayNameField.getText();
             password = passwordField.getText();
             userID = User.numUsers++;
 
-            if (validUsernameLI(username) && validPasswordSU(password) && validDisplayName(displayName)) {
+            if (validUsernameLI(username) && validPasswordLI(password)) {
                 System.out.println("Signing up: " + username);
-                frame.dispose(); // Close the sign-up frame after confirming
+                frame.dispose();
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
@@ -474,6 +476,16 @@ public class Client extends Thread implements Runnable {
     void removeAccount(int userID){
         String removeAccountLine = "removeAccount##" + userID;
     }
+    private void deletePost(int postID){
+        //must validate that the user is the one who created the post
+        String hidePostLine = "deletePost##" + postID;
+    }
+    private void deleteComment(int commentID){
+        //must validate that the user is either the one who created the post that the comment is on
+        //or the one who created the comment itself
+        String deleteCommentLine = "deleteComment##" + commentID;
+    }
+    //--Emerson's client methods ^^
 
 
     public static void main(String[] args) throws IOException {
@@ -553,12 +565,24 @@ public class Client extends Thread implements Runnable {
 
     public  boolean validPasswordLI(String password) {
         User user = database.retrieveUser(username);
+        try {
+            BufferedReader bfr = new BufferedReader(new FileReader(username + ".ser"));
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                if (line.contains(password)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
         // How to check if the username's password matches? I can't locate the file where the usernames and passwords are saved.
         if (user == null) {
             JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
-        return true;
+        return false;
     }
 
     public boolean validUsernameSU(String username) {
@@ -587,16 +611,23 @@ public class Client extends Thread implements Runnable {
         if (user == null) {
             JOptionPane.showMessageDialog(mainFrame, "Username not found", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
+        } else if (!this.isUsernameTaken()) {
+            JOptionPane.showMessageDialog(mainFrame, "Username does not exist", "Error", JOptionPane.ERROR_MESSAGE);
         }
         return true;
     }
 
     private boolean isUsernameTaken() {
-        try{
-            BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
+        File file = new File(username + ".ser");
+        if (!file.exists()) {
+            return false;
+        }
+
+        try (BufferedReader bfr = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = bfr.readLine()) != null) {
-                if (line.split(",")[0].equals(username)) {
+                if (line.split(",")[1].equals(username)) {
+                    JOptionPane.showMessageDialog(mainFrame, "Username taken", "Error", JOptionPane.ERROR_MESSAGE);
                     return true;
                 }
             }
