@@ -370,6 +370,8 @@ public class Client extends Thread implements Runnable {
         frame.setVisible(true);
     }
 
+
+
     //Methods below include all information that must be passed to the server.
     //Information in the method constructors can later be replaced with whatever necessary
     //once the GUI is implemented.

@@ -2,6 +2,7 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Post
@@ -23,7 +24,7 @@ public class Post implements PostInterface, Serializable{
     private ArrayList<Comment> comments;
     private ArrayList<User> likes;
     private ArrayList<User> dislikes;
-
+    private static List<Post> posts = new ArrayList<>();
 
     public Post(int ID, String content, User user){
         this.ID = ID;
@@ -133,5 +134,28 @@ public class Post implements PostInterface, Serializable{
             this.getDislikes().add(user);
         }
     }
+
+    // Write posts to post.ser
+    public static void writePostsToFile() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("post.ser"))) {
+            oos.writeObject(posts);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Read posts from post.ser
+    @SuppressWarnings("unchecked")
+    public static void readPostsFromFile() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("post.ser"))) {
+            posts = (List<Post>) ois.readObject();
+        } catch (FileNotFoundException e) {
+            System.out.println("post.ser not found. Starting fresh.");
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 }
