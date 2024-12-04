@@ -264,6 +264,7 @@ public class Client extends Thread implements Runnable {
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
+                    // make sure the file is added properly
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
