@@ -77,7 +77,8 @@ public class Client extends Thread implements Runnable {
             if (confirmPasswordField != null) {
                 confirmPasswordField.setEchoChar('\0');
             }
-            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/506282-200.png");
+            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/506282-" +
+                    "200.png");
 
 
             // Get the preferred height of the password field
@@ -100,7 +101,8 @@ public class Client extends Thread implements Runnable {
             if (confirmPasswordField != null) {
                 confirmPasswordField.setEchoChar('●');
             }
-            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-200.png");
+            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-" +
+                    "200.png");
 
 
             // Get the preferred height of the password field
@@ -243,8 +245,8 @@ public class Client extends Thread implements Runnable {
             int id = 0;
             try {
                 BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
-                while ((line = bfr.readLine()) != null){
-                    if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+                while ((line = bfr.readLine()) != null) {
+                    if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id) {
                         id = Integer.parseInt(line.substring(0, line.indexOf(",")));
                     }
                 }
@@ -353,7 +355,7 @@ public class Client extends Thread implements Runnable {
             userID = User.numUsers++;
 
             if (validUsernameLI(username) && validPasswordLI(password)) {
-                System.out.println("Signing up: " + username);
+                System.out.println("Logging in: " + username);
                 frame.dispose();
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
@@ -466,8 +468,8 @@ public class Client extends Thread implements Runnable {
         int id = 0;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("posts.ser"));
-            while ((line = bfr.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+            while ((line = bfr.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id) {
                     id = Integer.parseInt(line.substring(0, line.indexOf(",")));
                 }
             }
@@ -492,8 +494,8 @@ public class Client extends Thread implements Runnable {
         int id = 0;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("comments.ser"));
-            while ((line = bfr.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+            while ((line = bfr.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id) {
                     id = Integer.parseInt(line.substring(0, line.indexOf(",")));
                 }
             }
@@ -513,6 +515,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     void likePost(int postID, int userID) {
         String likePostLine = "likePost##" + postID + "," + userID;
         try {
@@ -521,7 +524,8 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void dislikePost(int postID, int userID){
+
+    void dislikePost(int postID, int userID) {
         String dislikePostLine = "dislikePost##" + postID + "," + userID;
         try {
             out.writeUTF(dislikePostLine);
@@ -529,6 +533,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     void likeComment(int commentID, int userID) {
         String likeCommentLine = "likeComment##" + commentID + "," + userID;
         try {
@@ -537,6 +542,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     void dislikeComment(int commentID, int userID) {
         String dislikeCommentLine = "dislikeComment##" + commentID + "," + userID;
         try {
@@ -545,6 +551,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     void follow(int currentUserID, int otherUserID) {
         String followLine = "follow##" + currentUserID + "," + otherUserID;
         try {
@@ -553,6 +560,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     void unfollow(int currentUserID, int otherUserID) {
         String unfollowLine = "unfollow##" + currentUserID + "," + otherUserID;
         try {
@@ -561,14 +569,17 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void removeAccount(int userID){
+
+    void removeAccount(int userID) {
         String removeAccountLine = "removeAccount##" + userID;
     }
-    private void deletePost(int postID){
+
+    private void deletePost(int postID) {
         //must validate that the user is the one who created the post
         String hidePostLine = "deletePost##" + postID;
     }
-    private void deleteComment(int commentID){
+
+    private void deleteComment(int commentID) {
         //must validate that the user is either the one who created the post that the comment is on
         //or the one who created the comment itself
         String deleteCommentLine = "deleteComment##" + commentID;
@@ -621,10 +632,12 @@ public class Client extends Thread implements Runnable {
 
     public boolean validDisplayName(String displayName) {
         if (displayName.contains(",")) {
-            JOptionPane.showMessageDialog(null, "Display name contains invalid characters!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Display name contains invalid characters!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         } else if (displayName.length() > 30) {
-            JOptionPane.showMessageDialog(null, "Display name is too long!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Display name is too long!", "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
@@ -651,10 +664,11 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    public  boolean validPasswordLI(String password) {
-        User user = database.retrieveUser(username);
+    public boolean validPasswordLI(String password) {
         try {
-            BufferedReader bfr = new BufferedReader(new FileReader(username + ".ser"));
+            File f = new File(username + ".ser");
+            FileReader fr = new FileReader(f);
+            BufferedReader bfr = new BufferedReader(fr);
             String line;
             while ((line = bfr.readLine()) != null) {
                 if (line.contains(password)) {
@@ -665,16 +679,15 @@ public class Client extends Thread implements Runnable {
             throw new RuntimeException(e);
         }
 
-        // How to check if the username's password matches? I can't locate the file where the usernames and passwords are saved.
-        if (user == null) {
-            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error", JOptionPane.ERROR_MESSAGE);
+        if (password == null) {
+            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return false;
     }
 
     public boolean validUsernameSU(String username) {
-//        User user = database.retrieveUser(username);
         if (username == null) {
             return false;
         } else if (username.length() < 3 || username.length() > 16) {
@@ -695,14 +708,19 @@ public class Client extends Thread implements Runnable {
     }
 
     private boolean validUsernameLI(String username) {
-        User user = database.retrieveUser(username);
-        if (user == null) {
-            JOptionPane.showMessageDialog(mainFrame, "Username not found", "Error", JOptionPane.ERROR_MESSAGE);
+        if (username == null) {
+            JOptionPane.showMessageDialog(mainFrame, "Username not found", "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return false;
-        } else if (!this.isUsernameTaken()) {
-            JOptionPane.showMessageDialog(mainFrame, "Username does not exist", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        return true;
+
+        File f = new File(username + ".ser");
+        if (!f.exists()) {
+            JOptionPane.showMessageDialog(mainFrame, "Username does not exist");
+            return false;
+        }
+
+        return false;
     }
 
     private boolean isUsernameTaken() {
@@ -715,7 +733,6 @@ public class Client extends Thread implements Runnable {
             String line;
             while ((line = bfr.readLine()) != null) {
                 if (line.split(",")[1].equals(username)) {
-                    JOptionPane.showMessageDialog(mainFrame, "Username taken", "Error", JOptionPane.ERROR_MESSAGE);
                     return true;
                 }
             }
@@ -728,20 +745,3 @@ public class Client extends Thread implements Runnable {
 }
 
 
-//OptionSignUpOrLogin osul = new OptionSignUpOrLogin();
-//Thread SUoL = new Thread(osul);
-//Thread signUp = new Thread(new SignUp());
-//Thread login = new Thread(new Login());
-//        SUoL.start();
-//        try {
-//                SUoL.join();
-//        } catch (InterruptedException ie) {
-//        throw new RuntimeException(ie);
-// m      }
-//                if (osul.isSignUpButtonClicked()) {
-//        System.out.println("Starting SignUp thread..."); //delete later
-//            signUp.start();
-//        } else if (osul.isLoginButtonClicked()) {
-//        System.out.println("Starting Login thread..."); // delete later
-//            login.start();
-//        }
