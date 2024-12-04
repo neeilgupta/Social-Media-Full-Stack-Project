@@ -1,6 +1,7 @@
 import java.io.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Comment
@@ -21,6 +22,8 @@ public class Comment implements Serializable {
     private ArrayList<User> likes;
     private ArrayList<User> dislikes;
     private Post post;
+    private static List<Comment> comments = new ArrayList<>();
+
 
     //comment id, content of the comment, the user making the comment, the post the comment is being made on
     public Comment(int id, String content, User user, Post post){
@@ -51,6 +54,29 @@ public class Comment implements Serializable {
         }
         return new Comment(Integer.parseInt(parts[0]), parts[1], thisUser, thisPost);
     }
+
+    // Write comments to comments.ser
+    public static void writeCommentsToFile() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("comments.ser"))) {
+            oos.writeObject(comments);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Read comments from comments.ser
+    @SuppressWarnings("unchecked")
+    public static void readCommentsFromFile() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("comments.ser"))) {
+            comments = (List<Comment>) ois.readObject();
+        } catch (FileNotFoundException e) {
+            System.out.println("comments.ser not found. Starting fresh.");
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+
     //getter and setter methods
     public int getID(){
         return ID;

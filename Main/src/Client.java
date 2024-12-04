@@ -27,7 +27,7 @@ public class Client extends Thread implements Runnable {
     private UserFileDatabase database; // creates the use of database in this class
 
     private Socket clientSocket;
-    DataOutputStream out;
+    protected DataOutputStream out;
 
     private JButton signUpButton;
     private JButton loginButton;
@@ -60,6 +60,7 @@ public class Client extends Thread implements Runnable {
 
             }
             if (e.getSource() == loginButton) {
+                mainFrame.dispose();
                 client.loginPage();
             }
             if (e.getSource() == autogenerateButton) {
@@ -352,7 +353,7 @@ public class Client extends Thread implements Runnable {
             password = passwordField.getText();
             userID = User.numUsers++;
 
-            if (validUsernameLI(username) && validPasswordLI(password)) {
+            if (validLogin(username, password)) {
                 System.out.println("Signing up: " + username);
                 frame.dispose();
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
@@ -368,12 +369,15 @@ public class Client extends Thread implements Runnable {
         frame.add(panel);
         frame.setVisible(true);
     }
+
+
+
     //Methods below include all information that must be passed to the server.
     //Information in the method constructors can later be replaced with whatever necessary
     //once the GUI is implemented.
     //Method content, especially for determining id numbers, must remain.
     //      -Emerson
-    void createPost(String content, User user) {
+    protected void createPost(String content, User user) {
         String line;
         int id = 0;
         try {
@@ -399,7 +403,7 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    void createComment(String content, User user, Post post) {
+    protected void createComment(String content, User user, Post post) {
         String line;
         int id = 0;
         try {
@@ -425,7 +429,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void likePost(int postID, int userID) {
+    protected void likePost(int postID, int userID) {
         String likePostLine = "likePost##" + postID + "," + userID;
         try {
             out.writeUTF(likePostLine);
@@ -433,7 +437,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void dislikePost(int postID, int userID){
+    protected void dislikePost(int postID, int userID){
         String dislikePostLine = "dislikePost##" + postID + "," + userID;
         try {
             out.writeUTF(dislikePostLine);
@@ -441,7 +445,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void likeComment(int commentID, int userID) {
+    protected void likeComment(int commentID, int userID) {
         String likeCommentLine = "likeComment##" + commentID + "," + userID;
         try {
             out.writeUTF(likeCommentLine);
@@ -449,7 +453,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void dislikeComment(int commentID, int userID) {
+    protected void dislikeComment(int commentID, int userID) {
         String dislikeCommentLine = "dislikeComment##" + commentID + "," + userID;
         try {
             out.writeUTF(dislikeCommentLine);
@@ -457,7 +461,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void follow(int currentUserID, int otherUserID) {
+    protected void follow(int currentUserID, int otherUserID) {
         String followLine = "follow##" + currentUserID + "," + otherUserID;
         try {
             out.writeUTF(followLine);
@@ -465,7 +469,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void unfollow(int currentUserID, int otherUserID) {
+    protected void unfollow(int currentUserID, int otherUserID) {
         String unfollowLine = "unfollow##" + currentUserID + "," + otherUserID;
         try {
             out.writeUTF(unfollowLine);
@@ -473,7 +477,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void removeAccount(int userID){
+    protected void removeAccount(int userID){
         String removeAccountLine = "removeAccount##" + userID;
     }
     private void deletePost(int postID){
@@ -563,27 +567,27 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    public  boolean validPasswordLI(String password) {
-        User user = database.retrieveUser(username);
-        try {
-            BufferedReader bfr = new BufferedReader(new FileReader(username + ".ser"));
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                if (line.contains(password)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        // How to check if the username's password matches? I can't locate the file where the usernames and passwords are saved.
-        if (user == null) {
-            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        return false;
-    }
+//    public boolean validPasswordLI(String password) {
+//        User user = database.retrieveUser(username);
+//        try {
+//            BufferedReader bfr = new BufferedReader(new FileReader(username + ".ser"));
+//            String line;
+//            while ((line = bfr.readLine()) != null) {
+//                if (line.contains(password)) {
+//                    return true;
+//                }
+//            }
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        // How to check if the username's password matches? I can't locate the file where the usernames and passwords are saved.
+//        if (user == null) {
+//            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error", JOptionPane.ERROR_MESSAGE);
+//            return false;
+//        }
+//        return false;
+//    }
 
     public boolean validUsernameSU(String username) {
 //        User user = database.retrieveUser(username);
@@ -606,15 +610,24 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    private boolean validUsernameLI(String username) {
-        User user = database.retrieveUser(username);
-        if (user == null) {
-            JOptionPane.showMessageDialog(mainFrame, "Username not found", "Error", JOptionPane.ERROR_MESSAGE);
-            return false;
-        } else if (!this.isUsernameTaken()) {
-            JOptionPane.showMessageDialog(mainFrame, "Username does not exist", "Error", JOptionPane.ERROR_MESSAGE);
+    private boolean validLogin(String username, String password) {
+        File file = new File("users.ser");
+//        if (!file.exists()) {
+//            return false;
+//        }
+
+        try (BufferedReader bfr = new BufferedReader(new FileReader(file))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                if (line.split(",")[1].equals(username) && line.contains(password)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return true;
+        JOptionPane.showMessageDialog(mainFrame, "Incorrect username or password");
+        return false;
     }
 
     private boolean isUsernameTaken() {
