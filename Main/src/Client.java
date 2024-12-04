@@ -27,7 +27,7 @@ public class Client extends Thread implements Runnable {
     private UserFileDatabase database; // creates the use of database in this class
 
     private Socket clientSocket;
-    protected DataOutputStream out;
+    DataOutputStream out;
 
     private JButton signUpButton;
     private JButton loginButton;
@@ -60,7 +60,6 @@ public class Client extends Thread implements Runnable {
 
             }
             if (e.getSource() == loginButton) {
-                mainFrame.dispose();
                 client.loginPage();
             }
             if (e.getSource() == autogenerateButton) {
@@ -353,7 +352,7 @@ public class Client extends Thread implements Runnable {
             password = passwordField.getText();
             userID = User.numUsers++;
 
-            if (validLogin(username, password)) {
+            if (validUsernameLI(username) && validPasswordLI(password)) {
                 System.out.println("Signing up: " + username);
                 frame.dispose();
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
@@ -370,6 +369,91 @@ public class Client extends Thread implements Runnable {
         frame.setVisible(true);
     }
 
+    private void homePage() {
+        JFrame homeFrame = new JFrame("Home");
+        homeFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        homeFrame.setSize(400, 400);
+        homeFrame.setLayout(new BorderLayout());
+
+        JLabel welcomeLabel = new JLabel("Welcome, " + username, JLabel.CENTER);
+        welcomeLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        homeFrame.add(welcomeLabel, BorderLayout.NORTH);
+
+        // Profile section
+        JPanel profilePanel = new JPanel();
+        profilePanel.setLayout(new GridLayout(4, 1));
+
+        JLabel followersLabel = new JLabel("Followers: 100"); // Placeholder
+        JLabel followingLabel = new JLabel("Following: 50");
+        JLabel postsLabel = new JLabel("Posts: 5");
+
+        profilePanel.add(followersLabel);
+        profilePanel.add(followingLabel);
+        profilePanel.add(postsLabel);
+
+        homeFrame.add(profilePanel, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        JButton createPostButton = new JButton("Create Post");
+        JButton viewPostsButton = new JButton("View Posts");
+        JButton newsFeedButton = new JButton("News Feed");
+        JButton logoutButton = new JButton("Logout");
+
+        buttonPanel.add(createPostButton);
+        buttonPanel.add(viewPostsButton);
+        buttonPanel.add(newsFeedButton);
+        buttonPanel.add(logoutButton);
+
+        homeFrame.add(buttonPanel, BorderLayout.SOUTH);
+
+        logoutButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                homeFrame.dispose();
+                loginPage();
+            }
+        });
+
+        newsFeedButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                homeFrame.dispose();
+                newsFeedPage();
+            }
+        });
+
+        createPostButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("Create Post button clicked");
+                //creating a post goes here
+            }
+        });
+
+        viewPostsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("View Posts button clicked");
+                // viewing posts goes here
+            }
+        });
+
+        homeFrame.setVisible(true);
+    }
+
+    private void newsFeedPage() {
+        JFrame newsFeedFrame = new JFrame("News Feed");
+        newsFeedFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        newsFeedFrame.setSize(400, 200);
+        newsFeedFrame.setLayout(new BorderLayout());
+
+        JLabel titleLabel = new JLabel("News Feed", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
+        newsFeedFrame.add(titleLabel, BorderLayout.CENTER);
+
+        // Display the news feed page
+        newsFeedFrame.setVisible(true);
+    }
 
 
     //Methods below include all information that must be passed to the server.
@@ -377,7 +461,7 @@ public class Client extends Thread implements Runnable {
     //once the GUI is implemented.
     //Method content, especially for determining id numbers, must remain.
     //      -Emerson
-    protected void createPost(String content, User user) {
+    void createPost(String content, User user) {
         String line;
         int id = 0;
         try {
@@ -403,7 +487,7 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    protected void createComment(String content, User user, Post post) {
+    void createComment(String content, User user, Post post) {
         String line;
         int id = 0;
         try {
@@ -429,7 +513,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    protected void likePost(int postID, int userID) {
+    void likePost(int postID, int userID) {
         String likePostLine = "likePost##" + postID + "," + userID;
         try {
             out.writeUTF(likePostLine);
@@ -437,7 +521,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    protected void dislikePost(int postID, int userID){
+    void dislikePost(int postID, int userID){
         String dislikePostLine = "dislikePost##" + postID + "," + userID;
         try {
             out.writeUTF(dislikePostLine);
@@ -445,7 +529,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    protected void likeComment(int commentID, int userID) {
+    void likeComment(int commentID, int userID) {
         String likeCommentLine = "likeComment##" + commentID + "," + userID;
         try {
             out.writeUTF(likeCommentLine);
@@ -453,7 +537,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    protected void dislikeComment(int commentID, int userID) {
+    void dislikeComment(int commentID, int userID) {
         String dislikeCommentLine = "dislikeComment##" + commentID + "," + userID;
         try {
             out.writeUTF(dislikeCommentLine);
@@ -461,7 +545,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    protected void follow(int currentUserID, int otherUserID) {
+    void follow(int currentUserID, int otherUserID) {
         String followLine = "follow##" + currentUserID + "," + otherUserID;
         try {
             out.writeUTF(followLine);
@@ -469,7 +553,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    protected void unfollow(int currentUserID, int otherUserID) {
+    void unfollow(int currentUserID, int otherUserID) {
         String unfollowLine = "unfollow##" + currentUserID + "," + otherUserID;
         try {
             out.writeUTF(unfollowLine);
@@ -477,7 +561,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    protected void removeAccount(int userID){
+    void removeAccount(int userID){
         String removeAccountLine = "removeAccount##" + userID;
     }
     private void deletePost(int postID){
@@ -567,27 +651,27 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-//    public boolean validPasswordLI(String password) {
-//        User user = database.retrieveUser(username);
-//        try {
-//            BufferedReader bfr = new BufferedReader(new FileReader(username + ".ser"));
-//            String line;
-//            while ((line = bfr.readLine()) != null) {
-//                if (line.contains(password)) {
-//                    return true;
-//                }
-//            }
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//
-//        // How to check if the username's password matches? I can't locate the file where the usernames and passwords are saved.
-//        if (user == null) {
-//            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error", JOptionPane.ERROR_MESSAGE);
-//            return false;
-//        }
-//        return false;
-//    }
+    public  boolean validPasswordLI(String password) {
+        User user = database.retrieveUser(username);
+        try {
+            BufferedReader bfr = new BufferedReader(new FileReader(username + ".ser"));
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                if (line.contains(password)) {
+                    return true;
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        // How to check if the username's password matches? I can't locate the file where the usernames and passwords are saved.
+        if (user == null) {
+            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
+        return false;
+    }
 
     public boolean validUsernameSU(String username) {
 //        User user = database.retrieveUser(username);
@@ -610,24 +694,15 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    private boolean validLogin(String username, String password) {
-        File file = new File("users.ser");
-//        if (!file.exists()) {
-//            return false;
-//        }
-
-        try (BufferedReader bfr = new BufferedReader(new FileReader(file))) {
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                if (line.split(",")[1].equals(username) && line.contains(password)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+    private boolean validUsernameLI(String username) {
+        User user = database.retrieveUser(username);
+        if (user == null) {
+            JOptionPane.showMessageDialog(mainFrame, "Username not found", "Error", JOptionPane.ERROR_MESSAGE);
+            return false;
+        } else if (!this.isUsernameTaken()) {
+            JOptionPane.showMessageDialog(mainFrame, "Username does not exist", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        JOptionPane.showMessageDialog(mainFrame, "Incorrect username or password");
-        return false;
+        return true;
     }
 
     private boolean isUsernameTaken() {
