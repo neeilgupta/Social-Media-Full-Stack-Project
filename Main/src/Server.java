@@ -15,7 +15,7 @@ import java.util.Arrays;
 
 public class Server{
     public static void main(String[] args) throws Exception{
-        try(ServerSocket serverSocket = new ServerSocket(4141)) {
+        try(ServerSocket serverSocket = new ServerSocket(4141)) { //make sure it asks for the ip address instead of local host
             while (true) {
                 Socket socket = serverSocket.accept();
                 ServerApp sa = new ServerApp(socket);
