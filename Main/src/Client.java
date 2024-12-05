@@ -261,10 +261,10 @@ public class Client extends Thread implements Runnable {
             if (validUsernameSU(username) && validPasswordSU(password) && validDisplayName(displayName)) {
                 System.out.println("Signing up: " + username);
                 frame.dispose(); // Close the sign-up frame after confirming
+                homePage();
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
-                    homePage();
                     // make sure the file is added properly
                 } catch (IOException ex) {
                     ex.printStackTrace();
@@ -431,7 +431,7 @@ public class Client extends Thread implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Create Post button clicked");
-                //creating a post goes here
+                createPost();
             }
         });
 
@@ -444,6 +444,55 @@ public class Client extends Thread implements Runnable {
         });
 
         homeFrame.setVisible(true);
+    }
+
+    private void createPost() {
+        JFrame createPostFrame = new JFrame("Create Post");
+        createPostFrame.setSize(400, 300);
+        createPostFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only this window
+        createPostFrame.setLayout(new BorderLayout());
+
+        // Create a JLabel at the top
+        JLabel instructionLabel = new JLabel("Enter your post below:", JLabel.CENTER);
+        instructionLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        createPostFrame.add(instructionLabel, BorderLayout.NORTH);
+
+        JTextArea postTextArea = new JTextArea();
+        postTextArea.setLineWrap(true);
+        postTextArea.setWrapStyleWord(true);
+        JScrollPane scrollPane = new JScrollPane(postTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        createPostFrame.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        JButton postButton = new JButton("Post");
+        JButton cancelButton = new JButton("Cancel");
+
+        buttonPanel.add(postButton);
+        buttonPanel.add(cancelButton);
+        createPostFrame.add(buttonPanel, BorderLayout.SOUTH);
+
+        postButton.addActionListener(e -> {
+            String postContent = postTextArea.getText().trim();
+            if (postContent.isEmpty()) {
+                JOptionPane.showMessageDialog(createPostFrame, "Post content cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                System.out.println("New Post: " + postContent);
+                try {
+                    out.writeUTF("createPost##" + thisUser.getUserID() + "," + postContent);
+                    JOptionPane.showMessageDialog(createPostFrame, "Post created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    createPostFrame.dispose();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(createPostFrame, "Failed to create post!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        // Add action listener for the "Cancel" button
+        cancelButton.addActionListener(e -> createPostFrame.dispose());
+
+        createPostFrame.setLocationRelativeTo(null); // Center the frame
+        createPostFrame.setVisible(true);
     }
 
     private void newsFeedPage() {
