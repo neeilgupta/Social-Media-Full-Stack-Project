@@ -135,6 +135,16 @@ public class Post implements PostInterface, Serializable{
         }
     }
 
+    public static int getUserPostCount(User user) {
+        int count = 0;
+        for (Post post : posts) {
+            if (post.getUser().getUserID() == user.getUserID()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     // Write posts to post.ser
     public static void writePostsToFile() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("post.ser"))) {

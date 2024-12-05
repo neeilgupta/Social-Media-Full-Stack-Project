@@ -264,6 +264,7 @@ public class Client extends Thread implements Runnable {
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
+                    homePage();
                     // make sure the file is added properly
                 } catch (IOException ex) {
                     ex.printStackTrace();
@@ -361,6 +362,7 @@ public class Client extends Thread implements Runnable {
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
+                    homePage();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -386,9 +388,9 @@ public class Client extends Thread implements Runnable {
         JPanel profilePanel = new JPanel();
         profilePanel.setLayout(new GridLayout(4, 1));
 
-        JLabel followersLabel = new JLabel("Followers: 100"); // Placeholder
-        JLabel followingLabel = new JLabel("Following: 50");
-        JLabel postsLabel = new JLabel("Posts: 5");
+        JLabel followersLabel = new JLabel("Followers: " + thisUser.getFollowers().size()); // Placeholder
+        JLabel followingLabel = new JLabel("Following: " + thisUser.getFollowing().size());
+        JLabel postsLabel = new JLabel("Posts: " + Post.getUserPostCount(thisUser));
 
         profilePanel.add(followersLabel);
         profilePanel.add(followingLabel);
