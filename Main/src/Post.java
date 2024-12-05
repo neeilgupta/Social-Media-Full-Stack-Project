@@ -35,6 +35,12 @@ public class Post implements PostInterface, Serializable{
         this.dislikes = new ArrayList<>();
     }
 
+    public void addComment(Comment comment) {
+        this.comments.add(comment);
+        Comment.comments.add(comment);
+        Comment.writeCommentsToFile();
+    }
+
     public static ArrayList<Post> getUserPosts(User currentUser) {
         ArrayList<Post> userPosts = new ArrayList<>();
         for (Post post : posts) {

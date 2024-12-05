@@ -13,7 +13,7 @@ import java.util.Random;
  * <p>
  * This class initiates which interact with the server, and runs the GUI of the social media program
  * <p>
- * Hossein Hatami, Emerson Barrett
+ * Hossein Hatami, Emerson Barrett, Neeil Gupta
  *
  * @version November 17, 2024
  */
@@ -264,10 +264,10 @@ public class Client extends Thread implements Runnable {
             if (validUsernameSU(username) && validPasswordSU(password) && validDisplayName(displayName)) {
                 System.out.println("Signing up: " + username);
                 frame.dispose(); // Close the sign-up frame after confirming
-                homePage();
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
+                    homePage();
                     // make sure the file is added properly
                 } catch (IOException ex) {
                     ex.printStackTrace();
@@ -593,6 +593,37 @@ public class Client extends Thread implements Runnable {
             );
             metaLabel.setFont(new Font("Arial", Font.ITALIC, 12));
             metaLabel.setForeground(Color.DARK_GRAY);
+
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+            JButton likeButton = new JButton("Like");
+            likeButton.addActionListener(e -> {
+                post.likePost(thisUser);
+                metaLabel.setText("Likes: " + post.getLikes().size() + " | Dislikes: " + post.getDislikes().size());
+            });
+
+            JButton dislikeButton = new JButton("Dislike");
+            dislikeButton.addActionListener(e -> {
+                post.dislikePost(thisUser);
+                metaLabel.setText("Likes: " + post.getLikes().size() + " | Dislikes: " + post.getDislikes().size());
+            });
+
+            JButton commentButton = new JButton("Comment");
+            commentButton.addActionListener(e -> {
+                String commentContent = JOptionPane.showInputDialog(newsFeedFrame, "Enter your comment:");
+                if (commentContent != null && !commentContent.isBlank()) {
+                    int newCommentId = Comment.generateUniqueCommentID();
+                    Comment newComment = new Comment(
+                            newCommentId, // Function to generate unique ID
+                            commentContent,
+                            thisUser,
+                            post
+                    );
+                    post.addComment(newComment); // Example method to add a comment to the post
+                    JOptionPane.showMessageDialog(newsFeedFrame, "Comment added!");
+                }
+            });
 
             postPanel.add(contentLabel);
             postPanel.add(Box.createVerticalStrut(5));
