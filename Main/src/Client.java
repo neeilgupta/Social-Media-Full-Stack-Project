@@ -625,9 +625,26 @@ public class Client extends Thread implements Runnable {
                 }
             });
 
+            JButton viewCommentsButton = new JButton("View Comments");
+            viewCommentsButton.addActionListener(e -> {
+                StringBuilder commentsList = new StringBuilder("<html>");
+                for (Comment comment : post.getComments()) {
+                    commentsList.append("<b>").append(comment.getUserID().getUsername()).append("</b>: ")
+                            .append(comment.getContent()).append("<br/>");
+                }
+                commentsList.append("</html>");
+                JOptionPane.showMessageDialog(newsFeedFrame, commentsList.toString());
+            });
+
+            buttonPanel.add(likeButton);
+            buttonPanel.add(dislikeButton);
+            buttonPanel.add(commentButton);
+            buttonPanel.add(viewCommentsButton);
+
             postPanel.add(contentLabel);
             postPanel.add(Box.createVerticalStrut(5));
             postPanel.add(metaLabel);
+            postPanel.add(buttonPanel);
             postsPanel.add(postPanel);
             postsPanel.add(Box.createVerticalStrut(10));
         }
@@ -905,7 +922,7 @@ public class Client extends Thread implements Runnable {
             return false;
         }
 
-        return false;
+        return true;
     }
 
     private boolean isUsernameTaken() {
