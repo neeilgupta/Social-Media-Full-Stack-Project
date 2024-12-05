@@ -26,6 +26,7 @@ public class Client extends Thread implements Runnable {
     private int result;
     private User thisUser;
     private UserFileDatabase database; // creates the use of database in this class
+    private NewsFeed newsFeed;
 
     private Socket clientSocket;
     DataOutputStream out;
@@ -46,6 +47,7 @@ public class Client extends Thread implements Runnable {
         try {
             clientSocket = new Socket("localhost", 4141);
             out = new DataOutputStream(clientSocket.getOutputStream());
+            this.newsFeed = new NewsFeed();
             this.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -540,8 +542,10 @@ public class Client extends Thread implements Runnable {
                 JOptionPane.showMessageDialog(createPostFrame, "Post content cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 System.out.println("New Post: " + postContent);
+                Post newPost = new Post(thisUser.getUserID(), postContent, thisUser);
                 try {
                     out.writeUTF("createPost##" + thisUser.getUserID() + "," + postContent);
+                    newsFeed.addPost(newPost);
                     JOptionPane.showMessageDialog(createPostFrame, "Post created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     createPostFrame.dispose();
                 } catch (IOException ex) {
@@ -561,14 +565,50 @@ public class Client extends Thread implements Runnable {
     private void newsFeedPage() {
         JFrame newsFeedFrame = new JFrame("News Feed");
         newsFeedFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        newsFeedFrame.setSize(400, 200);
+        newsFeedFrame.setSize(600, 800);
         newsFeedFrame.setLayout(new BorderLayout());
 
         JLabel titleLabel = new JLabel("News Feed", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        newsFeedFrame.add(titleLabel, BorderLayout.CENTER);
+        newsFeedFrame.add(titleLabel, BorderLayout.NORTH);
 
-        // Display the news feed page
+        JPanel postsPanel = new JPanel();
+        postsPanel.setLayout(new BoxLayout(postsPanel, BoxLayout.Y_AXIS));
+        JScrollPane scrollPane = new JScrollPane(postsPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        newsFeedFrame.add(scrollPane, BorderLayout.CENTER);
+
+        ArrayList<Post> userFeed = newsFeed.getFeedForUser(thisUser);
+        for (Post post : userFeed) {
+            JPanel postPanel = new JPanel();
+            postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
+            postPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+            postPanel.setBackground(Color.WHITE);
+
+            JLabel contentLabel = new JLabel("<html><b>" + post.getContent() + "</b></html>");
+            contentLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+
+            JLabel metaLabel = new JLabel(
+                    "Likes: " + post.getLikes().size() + " | Dislikes: " + post.getDislikes().size(),
+                    JLabel.RIGHT
+            );
+            metaLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+            metaLabel.setForeground(Color.DARK_GRAY);
+
+            postPanel.add(contentLabel);
+            postPanel.add(Box.createVerticalStrut(5));
+            postPanel.add(metaLabel);
+            postsPanel.add(postPanel);
+            postsPanel.add(Box.createVerticalStrut(10));
+        }
+
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(e -> {
+            newsFeedFrame.dispose();
+            homePage();
+        });
+        newsFeedFrame.add(backButton, BorderLayout.SOUTH);
+
         newsFeedFrame.setVisible(true);
     }
 
