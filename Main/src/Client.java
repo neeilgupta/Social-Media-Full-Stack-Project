@@ -444,7 +444,6 @@ public class Client extends Thread implements Runnable {
                 System.out.println("View Posts button clicked");
                 homeFrame.dispose();
                 viewUserPostsPage(thisUser);
-                // viewing posts goes here
             }
         });
 
