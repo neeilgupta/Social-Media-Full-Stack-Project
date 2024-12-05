@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -439,11 +440,73 @@ public class Client extends Thread implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("View Posts button clicked");
+                homeFrame.dispose();
+                viewUserPostsPage(thisUser);
                 // viewing posts goes here
             }
         });
 
         homeFrame.setVisible(true);
+    }
+
+    private void viewUserPostsPage(User currentUser) {
+        JFrame viewUserPostsFrame = new JFrame("Your Posts");
+        viewUserPostsFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        viewUserPostsFrame.setSize(500, 600);
+        viewUserPostsFrame.setLayout(new BorderLayout());
+
+        JLabel titleLabel = new JLabel("Your Posts", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        viewUserPostsFrame.add(titleLabel, BorderLayout.NORTH);
+
+        // Scrollable panel for posts
+        JPanel postsPanel = new JPanel();
+        postsPanel.setLayout(new BoxLayout(postsPanel, BoxLayout.Y_AXIS));
+        JScrollPane scrollPane = new JScrollPane(postsPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        viewUserPostsFrame.add(scrollPane, BorderLayout.CENTER);
+
+        ArrayList<Post> userPosts = Post.getUserPosts(currentUser);
+
+        if (userPosts.isEmpty()) {
+            JLabel noPostsLabel = new JLabel("You haven't made any posts yet!", JLabel.CENTER);
+            noPostsLabel.setFont(new Font("Arial", Font.ITALIC, 16));
+            postsPanel.add(noPostsLabel);
+        } else {
+            for (Post post : userPosts) {
+                JPanel postPanel = new JPanel();
+                postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
+                postPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+                postPanel.setBackground(Color.WHITE);
+
+                JLabel contentLabel = new JLabel("<html><b>" + post.getContent() + "</b></html>");
+                contentLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+
+                // Post meta (likes/dislikes)
+                JLabel metaLabel = new JLabel(
+                        "Likes: " + post.getLikes() + " | Dislikes: " + post.getDislikes(),
+                        JLabel.RIGHT
+                );
+                metaLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+                metaLabel.setForeground(Color.DARK_GRAY);
+
+                postPanel.add(contentLabel);
+                postPanel.add(Box.createVerticalStrut(5));
+                postPanel.add(metaLabel);
+
+                postsPanel.add(postPanel);
+                postsPanel.add(Box.createVerticalStrut(10));
+            }
+        }
+
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(e -> {
+            viewUserPostsFrame.dispose(); // Close the current frame
+            homePage(); // Navigate back to the home page
+        });
+        viewUserPostsFrame.add(backButton, BorderLayout.SOUTH);
+
+        viewUserPostsFrame.setVisible(true);
     }
 
     private void createPost() {
