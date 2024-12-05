@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -25,6 +26,7 @@ public class Client extends Thread implements Runnable {
     private int result;
     private User thisUser;
     private UserFileDatabase database; // creates the use of database in this class
+    private NewsFeed newsFeed;
 
     private Socket clientSocket;
     DataOutputStream out;
@@ -45,6 +47,7 @@ public class Client extends Thread implements Runnable {
         try {
             clientSocket = new Socket("localhost", 4141);
             out = new DataOutputStream(clientSocket.getOutputStream());
+            this.newsFeed = new NewsFeed();
             this.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -77,7 +80,8 @@ public class Client extends Thread implements Runnable {
             if (confirmPasswordField != null) {
                 confirmPasswordField.setEchoChar('\0');
             }
-            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/506282-200.png");
+            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/506282-" +
+                    "200.png");
 
 
             // Get the preferred height of the password field
@@ -100,7 +104,8 @@ public class Client extends Thread implements Runnable {
             if (confirmPasswordField != null) {
                 confirmPasswordField.setEchoChar('●');
             }
-            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-200.png");
+            ImageIcon icon = new ImageIcon("/Users/hhatami/IdeaProjects/group-project-cs180/Main/777494-" +
+                    "200.png");
 
 
             // Get the preferred height of the password field
@@ -243,8 +248,8 @@ public class Client extends Thread implements Runnable {
             int id = 0;
             try {
                 BufferedReader bfr = new BufferedReader(new FileReader("users.ser"));
-                while ((line = bfr.readLine()) != null){
-                    if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+                while ((line = bfr.readLine()) != null) {
+                    if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id) {
                         id = Integer.parseInt(line.substring(0, line.indexOf(",")));
                     }
                 }
@@ -259,9 +264,11 @@ public class Client extends Thread implements Runnable {
             if (validUsernameSU(username) && validPasswordSU(password) && validDisplayName(displayName)) {
                 System.out.println("Signing up: " + username);
                 frame.dispose(); // Close the sign-up frame after confirming
+                homePage();
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
+                    // make sure the file is added properly
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -353,11 +360,12 @@ public class Client extends Thread implements Runnable {
             userID = User.numUsers++;
 
             if (validUsernameLI(username) && validPasswordLI(password)) {
-                System.out.println("Signing up: " + username);
+                System.out.println("Logging in: " + username);
                 frame.dispose();
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
+                    homePage();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -383,9 +391,9 @@ public class Client extends Thread implements Runnable {
         JPanel profilePanel = new JPanel();
         profilePanel.setLayout(new GridLayout(4, 1));
 
-        JLabel followersLabel = new JLabel("Followers: 100"); // Placeholder
-        JLabel followingLabel = new JLabel("Following: 50");
-        JLabel postsLabel = new JLabel("Posts: 5");
+        JLabel followersLabel = new JLabel("Followers: " + thisUser.getFollowers().size()); // Placeholder
+        JLabel followingLabel = new JLabel("Following: " + thisUser.getFollowing().size());
+        JLabel postsLabel = new JLabel("Posts: " + Post.getUserPostCount(thisUser));
 
         profilePanel.add(followersLabel);
         profilePanel.add(followingLabel);
@@ -426,7 +434,7 @@ public class Client extends Thread implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Create Post button clicked");
-                //creating a post goes here
+                createPost();
             }
         });
 
@@ -434,24 +442,172 @@ public class Client extends Thread implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("View Posts button clicked");
-                // viewing posts goes here
+                homeFrame.dispose();
+                viewUserPostsPage(thisUser);
             }
         });
 
         homeFrame.setVisible(true);
     }
 
+    private void viewUserPostsPage(User currentUser) {
+        JFrame viewUserPostsFrame = new JFrame("Your Posts");
+        viewUserPostsFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        viewUserPostsFrame.setSize(500, 600);
+        viewUserPostsFrame.setLayout(new BorderLayout());
+
+        JLabel titleLabel = new JLabel("Your Posts", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        viewUserPostsFrame.add(titleLabel, BorderLayout.NORTH);
+
+        // Scrollable panel for posts
+        JPanel postsPanel = new JPanel();
+        postsPanel.setLayout(new BoxLayout(postsPanel, BoxLayout.Y_AXIS));
+        JScrollPane scrollPane = new JScrollPane(postsPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        viewUserPostsFrame.add(scrollPane, BorderLayout.CENTER);
+
+        ArrayList<Post> userPosts = Post.getUserPosts(currentUser);
+
+        if (userPosts.isEmpty()) {
+            JLabel noPostsLabel = new JLabel("You haven't made any posts yet!", JLabel.CENTER);
+            noPostsLabel.setFont(new Font("Arial", Font.ITALIC, 16));
+            postsPanel.add(noPostsLabel);
+        } else {
+            for (Post post : userPosts) {
+                JPanel postPanel = new JPanel();
+                postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
+                postPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+                postPanel.setBackground(Color.WHITE);
+
+                JLabel contentLabel = new JLabel("<html><b>" + post.getContent() + "</b></html>");
+                contentLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+
+                // Post meta (likes/dislikes)
+                JLabel metaLabel = new JLabel(
+                        "Likes: " + post.getLikes() + " | Dislikes: " + post.getDislikes(),
+                        JLabel.RIGHT
+                );
+                metaLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+                metaLabel.setForeground(Color.DARK_GRAY);
+
+                postPanel.add(contentLabel);
+                postPanel.add(Box.createVerticalStrut(5));
+                postPanel.add(metaLabel);
+
+                postsPanel.add(postPanel);
+                postsPanel.add(Box.createVerticalStrut(10));
+            }
+        }
+
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(e -> {
+            viewUserPostsFrame.dispose(); // Close the current frame
+            homePage(); // Navigate back to the home page
+        });
+        viewUserPostsFrame.add(backButton, BorderLayout.SOUTH);
+
+        viewUserPostsFrame.setVisible(true);
+    }
+
+    private void createPost() {
+        JFrame createPostFrame = new JFrame("Create Post");
+        createPostFrame.setSize(400, 300);
+        createPostFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only this window
+        createPostFrame.setLayout(new BorderLayout());
+
+        // Create a JLabel at the top
+        JLabel instructionLabel = new JLabel("Enter your post below:", JLabel.CENTER);
+        instructionLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        createPostFrame.add(instructionLabel, BorderLayout.NORTH);
+
+        JTextArea postTextArea = new JTextArea();
+        postTextArea.setLineWrap(true);
+        postTextArea.setWrapStyleWord(true);
+        JScrollPane scrollPane = new JScrollPane(postTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        createPostFrame.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        JButton postButton = new JButton("Post");
+        JButton cancelButton = new JButton("Cancel");
+
+        buttonPanel.add(postButton);
+        buttonPanel.add(cancelButton);
+        createPostFrame.add(buttonPanel, BorderLayout.SOUTH);
+
+        postButton.addActionListener(e -> {
+            String postContent = postTextArea.getText().trim();
+            if (postContent.isEmpty()) {
+                JOptionPane.showMessageDialog(createPostFrame, "Post content cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                System.out.println("New Post: " + postContent);
+                Post newPost = new Post(thisUser.getUserID(), postContent, thisUser);
+                try {
+                    out.writeUTF("createPost##" + thisUser.getUserID() + "," + postContent);
+                    newsFeed.addPost(newPost);
+                    JOptionPane.showMessageDialog(createPostFrame, "Post created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    createPostFrame.dispose();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(createPostFrame, "Failed to create post!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        // Add action listener for the "Cancel" button
+        cancelButton.addActionListener(e -> createPostFrame.dispose());
+
+        createPostFrame.setLocationRelativeTo(null); // Center the frame
+        createPostFrame.setVisible(true);
+    }
+
     private void newsFeedPage() {
         JFrame newsFeedFrame = new JFrame("News Feed");
         newsFeedFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        newsFeedFrame.setSize(400, 200);
+        newsFeedFrame.setSize(600, 800);
         newsFeedFrame.setLayout(new BorderLayout());
 
         JLabel titleLabel = new JLabel("News Feed", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        newsFeedFrame.add(titleLabel, BorderLayout.CENTER);
+        newsFeedFrame.add(titleLabel, BorderLayout.NORTH);
 
-        // Display the news feed page
+        JPanel postsPanel = new JPanel();
+        postsPanel.setLayout(new BoxLayout(postsPanel, BoxLayout.Y_AXIS));
+        JScrollPane scrollPane = new JScrollPane(postsPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        newsFeedFrame.add(scrollPane, BorderLayout.CENTER);
+
+        ArrayList<Post> userFeed = newsFeed.getFeedForUser(thisUser);
+        for (Post post : userFeed) {
+            JPanel postPanel = new JPanel();
+            postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
+            postPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+            postPanel.setBackground(Color.WHITE);
+
+            JLabel contentLabel = new JLabel("<html><b>" + post.getContent() + "</b></html>");
+            contentLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+
+            JLabel metaLabel = new JLabel(
+                    "Likes: " + post.getLikes().size() + " | Dislikes: " + post.getDislikes().size(),
+                    JLabel.RIGHT
+            );
+            metaLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+            metaLabel.setForeground(Color.DARK_GRAY);
+
+            postPanel.add(contentLabel);
+            postPanel.add(Box.createVerticalStrut(5));
+            postPanel.add(metaLabel);
+            postsPanel.add(postPanel);
+            postsPanel.add(Box.createVerticalStrut(10));
+        }
+
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(e -> {
+            newsFeedFrame.dispose();
+            homePage();
+        });
+        newsFeedFrame.add(backButton, BorderLayout.SOUTH);
+
         newsFeedFrame.setVisible(true);
     }
 
@@ -466,8 +622,8 @@ public class Client extends Thread implements Runnable {
         int id = 0;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("posts.ser"));
-            while ((line = bfr.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+            while ((line = bfr.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id) {
                     id = Integer.parseInt(line.substring(0, line.indexOf(",")));
                 }
             }
@@ -492,8 +648,8 @@ public class Client extends Thread implements Runnable {
         int id = 0;
         try {
             BufferedReader bfr = new BufferedReader(new FileReader("comments.ser"));
-            while ((line = bfr.readLine()) != null){
-                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id){
+            while ((line = bfr.readLine()) != null) {
+                if (Integer.parseInt(line.substring(0, line.indexOf(","))) > id) {
                     id = Integer.parseInt(line.substring(0, line.indexOf(",")));
                 }
             }
@@ -513,6 +669,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     void likePost(int postID, int userID) {
         String likePostLine = "likePost##" + postID + "," + userID;
         try {
@@ -521,7 +678,8 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void dislikePost(int postID, int userID){
+
+    void dislikePost(int postID, int userID) {
         String dislikePostLine = "dislikePost##" + postID + "," + userID;
         try {
             out.writeUTF(dislikePostLine);
@@ -529,6 +687,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     void likeComment(int commentID, int userID) {
         String likeCommentLine = "likeComment##" + commentID + "," + userID;
         try {
@@ -537,6 +696,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     void dislikeComment(int commentID, int userID) {
         String dislikeCommentLine = "dislikeComment##" + commentID + "," + userID;
         try {
@@ -545,6 +705,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     void follow(int currentUserID, int otherUserID) {
         String followLine = "follow##" + currentUserID + "," + otherUserID;
         try {
@@ -553,6 +714,7 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
+
     void unfollow(int currentUserID, int otherUserID) {
         String unfollowLine = "unfollow##" + currentUserID + "," + otherUserID;
         try {
@@ -561,14 +723,17 @@ public class Client extends Thread implements Runnable {
             ex.printStackTrace();
         }
     }
-    void removeAccount(int userID){
+
+    void removeAccount(int userID) {
         String removeAccountLine = "removeAccount##" + userID;
     }
-    private void deletePost(int postID){
+
+    private void deletePost(int postID) {
         //must validate that the user is the one who created the post
         String hidePostLine = "deletePost##" + postID;
     }
-    private void deleteComment(int commentID){
+
+    private void deleteComment(int commentID) {
         //must validate that the user is either the one who created the post that the comment is on
         //or the one who created the comment itself
         String deleteCommentLine = "deleteComment##" + commentID;
@@ -621,10 +786,12 @@ public class Client extends Thread implements Runnable {
 
     public boolean validDisplayName(String displayName) {
         if (displayName.contains(",")) {
-            JOptionPane.showMessageDialog(null, "Display name contains invalid characters!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Display name contains invalid characters!",
+                    "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         } else if (displayName.length() > 30) {
-            JOptionPane.showMessageDialog(null, "Display name is too long!", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Display name is too long!", "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return true;
@@ -651,10 +818,11 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    public  boolean validPasswordLI(String password) {
-        User user = database.retrieveUser(username);
+    public boolean validPasswordLI(String password) {
         try {
-            BufferedReader bfr = new BufferedReader(new FileReader(username + ".ser"));
+            File f = new File(username + ".ser");
+            FileReader fr = new FileReader(f);
+            BufferedReader bfr = new BufferedReader(fr);
             String line;
             while ((line = bfr.readLine()) != null) {
                 if (line.contains(password)) {
@@ -665,16 +833,15 @@ public class Client extends Thread implements Runnable {
             throw new RuntimeException(e);
         }
 
-        // How to check if the username's password matches? I can't locate the file where the usernames and passwords are saved.
-        if (user == null) {
-            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error", JOptionPane.ERROR_MESSAGE);
+        if (password == null) {
+            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return false;
         }
         return false;
     }
 
     public boolean validUsernameSU(String username) {
-//        User user = database.retrieveUser(username);
         if (username == null) {
             return false;
         } else if (username.length() < 3 || username.length() > 16) {
@@ -695,14 +862,19 @@ public class Client extends Thread implements Runnable {
     }
 
     private boolean validUsernameLI(String username) {
-        User user = database.retrieveUser(username);
-        if (user == null) {
-            JOptionPane.showMessageDialog(mainFrame, "Username not found", "Error", JOptionPane.ERROR_MESSAGE);
+        if (username == null) {
+            JOptionPane.showMessageDialog(mainFrame, "Username not found", "Error",
+                    JOptionPane.ERROR_MESSAGE);
             return false;
-        } else if (!this.isUsernameTaken()) {
-            JOptionPane.showMessageDialog(mainFrame, "Username does not exist", "Error", JOptionPane.ERROR_MESSAGE);
         }
-        return true;
+
+        File f = new File(username + ".ser");
+        if (!f.exists()) {
+            JOptionPane.showMessageDialog(mainFrame, "Username does not exist");
+            return false;
+        }
+
+        return false;
     }
 
     private boolean isUsernameTaken() {
@@ -715,7 +887,6 @@ public class Client extends Thread implements Runnable {
             String line;
             while ((line = bfr.readLine()) != null) {
                 if (line.split(",")[1].equals(username)) {
-                    JOptionPane.showMessageDialog(mainFrame, "Username taken", "Error", JOptionPane.ERROR_MESSAGE);
                     return true;
                 }
             }
@@ -728,20 +899,3 @@ public class Client extends Thread implements Runnable {
 }
 
 
-//OptionSignUpOrLogin osul = new OptionSignUpOrLogin();
-//Thread SUoL = new Thread(osul);
-//Thread signUp = new Thread(new SignUp());
-//Thread login = new Thread(new Login());
-//        SUoL.start();
-//        try {
-//                SUoL.join();
-//        } catch (InterruptedException ie) {
-//        throw new RuntimeException(ie);
-// m      }
-//                if (osul.isSignUpButtonClicked()) {
-//        System.out.println("Starting SignUp thread..."); //delete later
-//            signUp.start();
-//        } else if (osul.isLoginButtonClicked()) {
-//        System.out.println("Starting Login thread..."); // delete later
-//            login.start();
-//        }

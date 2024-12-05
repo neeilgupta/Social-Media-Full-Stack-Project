@@ -1,5 +1,4 @@
 import java.io.*;
-import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +34,17 @@ public class Post implements PostInterface, Serializable{
         this.likes = new ArrayList<>();
         this.dislikes = new ArrayList<>();
     }
+
+    public static ArrayList<Post> getUserPosts(User currentUser) {
+        ArrayList<Post> userPosts = new ArrayList<>();
+        for (Post post : posts) {
+            if (post.getUser().getUserID() == currentUser.getUserID()) {
+                userPosts.add(post);
+            }
+        }
+        return userPosts;
+    }
+
 
     public static Post deserialize(String data) throws IOException {
         String[] parts = data.split(",");
@@ -133,6 +143,16 @@ public class Post implements PostInterface, Serializable{
         if (!alreadyDisliked) {
             this.getDislikes().add(user);
         }
+    }
+
+    public static int getUserPostCount(User user) {
+        int count = 0;
+        for (Post post : posts) {
+            if (post.getUser().getUserID() == user.getUserID()) {
+                count++;
+            }
+        }
+        return count;
     }
 
     // Write posts to post.ser
