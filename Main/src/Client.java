@@ -5,6 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -12,7 +13,7 @@ import java.util.Random;
  * <p>
  * This class initiates which interact with the server, and runs the GUI of the social media program
  * <p>
- * Hossein Hatami, Emerson Barrett
+ * Hossein Hatami, Emerson Barrett, Neeil Gupta
  *
  * @version November 17, 2024
  */
@@ -25,6 +26,7 @@ public class Client extends Thread implements Runnable {
     private int result;
     private User thisUser;
     private UserFileDatabase database; // creates the use of database in this class
+    private NewsFeed newsFeed;
 
     private Socket clientSocket;
     DataOutputStream out;
@@ -45,6 +47,7 @@ public class Client extends Thread implements Runnable {
         try {
             clientSocket = new Socket("localhost", 4141);
             out = new DataOutputStream(clientSocket.getOutputStream());
+            this.newsFeed = new NewsFeed();
             this.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -264,6 +267,7 @@ public class Client extends Thread implements Runnable {
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
+                    homePage();
                     // make sure the file is added properly
                 } catch (IOException ex) {
                     ex.printStackTrace();
@@ -361,6 +365,7 @@ public class Client extends Thread implements Runnable {
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
+                    homePage();
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
@@ -386,9 +391,9 @@ public class Client extends Thread implements Runnable {
         JPanel profilePanel = new JPanel();
         profilePanel.setLayout(new GridLayout(4, 1));
 
-        JLabel followersLabel = new JLabel("Followers: 100"); // Placeholder
-        JLabel followingLabel = new JLabel("Following: 50");
-        JLabel postsLabel = new JLabel("Posts: 5");
+        JLabel followersLabel = new JLabel("Followers: " + thisUser.getFollowers().size()); // Placeholder
+        JLabel followingLabel = new JLabel("Following: " + thisUser.getFollowing().size());
+        JLabel postsLabel = new JLabel("Posts: " + Post.getUserPostCount(thisUser));
 
         profilePanel.add(followersLabel);
         profilePanel.add(followingLabel);
@@ -429,7 +434,7 @@ public class Client extends Thread implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("Create Post button clicked");
-                //creating a post goes here
+                createPost();
             }
         });
 
@@ -437,24 +442,220 @@ public class Client extends Thread implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 System.out.println("View Posts button clicked");
-                // viewing posts goes here
+                homeFrame.dispose();
+                viewUserPostsPage(thisUser);
             }
         });
 
         homeFrame.setVisible(true);
     }
 
+    private void viewUserPostsPage(User currentUser) {
+        JFrame viewUserPostsFrame = new JFrame("Your Posts");
+        viewUserPostsFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        viewUserPostsFrame.setSize(500, 600);
+        viewUserPostsFrame.setLayout(new BorderLayout());
+
+        JLabel titleLabel = new JLabel("Your Posts", JLabel.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        viewUserPostsFrame.add(titleLabel, BorderLayout.NORTH);
+
+        // Scrollable panel for posts
+        JPanel postsPanel = new JPanel();
+        postsPanel.setLayout(new BoxLayout(postsPanel, BoxLayout.Y_AXIS));
+        JScrollPane scrollPane = new JScrollPane(postsPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        viewUserPostsFrame.add(scrollPane, BorderLayout.CENTER);
+
+        ArrayList<Post> userPosts = Post.getUserPosts(currentUser);
+
+        if (userPosts.isEmpty()) {
+            JLabel noPostsLabel = new JLabel("You haven't made any posts yet!", JLabel.CENTER);
+            noPostsLabel.setFont(new Font("Arial", Font.ITALIC, 16));
+            postsPanel.add(noPostsLabel);
+        } else {
+            for (Post post : userPosts) {
+                JPanel postPanel = new JPanel();
+                postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
+                postPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+                postPanel.setBackground(Color.WHITE);
+
+                JLabel contentLabel = new JLabel("<html><b>" + post.getContent() + "</b></html>");
+                contentLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+
+                // Post meta (likes/dislikes)
+                JLabel metaLabel = new JLabel(
+                        "Likes: " + post.getLikes() + " | Dislikes: " + post.getDislikes(),
+                        JLabel.RIGHT
+                );
+                metaLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+                metaLabel.setForeground(Color.DARK_GRAY);
+
+                postPanel.add(contentLabel);
+                postPanel.add(Box.createVerticalStrut(5));
+                postPanel.add(metaLabel);
+
+                postsPanel.add(postPanel);
+                postsPanel.add(Box.createVerticalStrut(10));
+            }
+        }
+
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(e -> {
+            viewUserPostsFrame.dispose(); // Close the current frame
+            homePage(); // Navigate back to the home page
+        });
+        viewUserPostsFrame.add(backButton, BorderLayout.SOUTH);
+
+        viewUserPostsFrame.setVisible(true);
+    }
+
+    private void createPost() {
+        JFrame createPostFrame = new JFrame("Create Post");
+        createPostFrame.setSize(400, 300);
+        createPostFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Close only this window
+        createPostFrame.setLayout(new BorderLayout());
+
+        // Create a JLabel at the top
+        JLabel instructionLabel = new JLabel("Enter your post below:", JLabel.CENTER);
+        instructionLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        createPostFrame.add(instructionLabel, BorderLayout.NORTH);
+
+        JTextArea postTextArea = new JTextArea();
+        postTextArea.setLineWrap(true);
+        postTextArea.setWrapStyleWord(true);
+        JScrollPane scrollPane = new JScrollPane(postTextArea, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        createPostFrame.add(scrollPane, BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel();
+        JButton postButton = new JButton("Post");
+        JButton cancelButton = new JButton("Cancel");
+
+        buttonPanel.add(postButton);
+        buttonPanel.add(cancelButton);
+        createPostFrame.add(buttonPanel, BorderLayout.SOUTH);
+
+        postButton.addActionListener(e -> {
+            String postContent = postTextArea.getText().trim();
+            if (postContent.isEmpty()) {
+                JOptionPane.showMessageDialog(createPostFrame, "Post content cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
+            } else {
+                System.out.println("New Post: " + postContent);
+                Post newPost = new Post(thisUser.getUserID(), postContent, thisUser);
+                try {
+                    out.writeUTF("createPost##" + thisUser.getUserID() + "," + postContent);
+                    newsFeed.addPost(newPost);
+                    JOptionPane.showMessageDialog(createPostFrame, "Post created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    createPostFrame.dispose();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(createPostFrame, "Failed to create post!", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        // Add action listener for the "Cancel" button
+        cancelButton.addActionListener(e -> createPostFrame.dispose());
+
+        createPostFrame.setLocationRelativeTo(null); // Center the frame
+        createPostFrame.setVisible(true);
+    }
+
     private void newsFeedPage() {
         JFrame newsFeedFrame = new JFrame("News Feed");
         newsFeedFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        newsFeedFrame.setSize(400, 200);
+        newsFeedFrame.setSize(600, 800);
         newsFeedFrame.setLayout(new BorderLayout());
 
         JLabel titleLabel = new JLabel("News Feed", JLabel.CENTER);
         titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        newsFeedFrame.add(titleLabel, BorderLayout.CENTER);
+        newsFeedFrame.add(titleLabel, BorderLayout.NORTH);
 
-        // Display the news feed page
+        JPanel postsPanel = new JPanel();
+        postsPanel.setLayout(new BoxLayout(postsPanel, BoxLayout.Y_AXIS));
+        JScrollPane scrollPane = new JScrollPane(postsPanel);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        newsFeedFrame.add(scrollPane, BorderLayout.CENTER);
+
+        ArrayList<Post> userFeed = newsFeed.getFeedForUser(thisUser);
+        for (Post post : userFeed) {
+            JPanel postPanel = new JPanel();
+            postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));
+            postPanel.setBorder(BorderFactory.createLineBorder(Color.GRAY, 1));
+            postPanel.setBackground(Color.WHITE);
+
+            JLabel contentLabel = new JLabel("<html><b>" + post.getContent() + "</b></html>");
+            contentLabel.setFont(new Font("Arial", Font.PLAIN, 14));
+
+            JLabel metaLabel = new JLabel(
+                    "Likes: " + post.getLikes().size() + " | Dislikes: " + post.getDislikes().size(),
+                    JLabel.RIGHT
+            );
+            metaLabel.setFont(new Font("Arial", Font.ITALIC, 12));
+            metaLabel.setForeground(Color.DARK_GRAY);
+
+            JPanel buttonPanel = new JPanel();
+            buttonPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+
+            JButton likeButton = new JButton("Like");
+            likeButton.addActionListener(e -> {
+                post.likePost(thisUser);
+                metaLabel.setText("Likes: " + post.getLikes().size() + " | Dislikes: " + post.getDislikes().size());
+            });
+
+            JButton dislikeButton = new JButton("Dislike");
+            dislikeButton.addActionListener(e -> {
+                post.dislikePost(thisUser);
+                metaLabel.setText("Likes: " + post.getLikes().size() + " | Dislikes: " + post.getDislikes().size());
+            });
+
+            JButton commentButton = new JButton("Comment");
+            commentButton.addActionListener(e -> {
+                String commentContent = JOptionPane.showInputDialog(newsFeedFrame, "Enter your comment:");
+                if (commentContent != null && !commentContent.isBlank()) {
+                    int newCommentId = Comment.generateUniqueCommentID();
+                    Comment newComment = new Comment(
+                            newCommentId, // Function to generate unique ID
+                            commentContent,
+                            thisUser,
+                            post
+                    );
+                    post.addComment(newComment); // Example method to add a comment to the post
+                    JOptionPane.showMessageDialog(newsFeedFrame, "Comment added!");
+                }
+            });
+
+            JButton viewCommentsButton = new JButton("View Comments");
+            viewCommentsButton.addActionListener(e -> {
+                StringBuilder commentsList = new StringBuilder("<html>");
+                for (Comment comment : post.getComments()) {
+                    commentsList.append("<b>").append(comment.getUserID().getUsername()).append("</b>: ")
+                            .append(comment.getContent()).append("<br/>");
+                }
+                commentsList.append("</html>");
+                JOptionPane.showMessageDialog(newsFeedFrame, commentsList.toString());
+            });
+
+            buttonPanel.add(likeButton);
+            buttonPanel.add(dislikeButton);
+            buttonPanel.add(commentButton);
+            buttonPanel.add(viewCommentsButton);
+
+            postPanel.add(contentLabel);
+            postPanel.add(Box.createVerticalStrut(5));
+            postPanel.add(metaLabel);
+            postPanel.add(buttonPanel);
+            postsPanel.add(postPanel);
+            postsPanel.add(Box.createVerticalStrut(10));
+        }
+
+        JButton backButton = new JButton("Back");
+        backButton.addActionListener(e -> {
+            newsFeedFrame.dispose();
+            homePage();
+        });
+        newsFeedFrame.add(backButton, BorderLayout.SOUTH);
+
         newsFeedFrame.setVisible(true);
     }
 
@@ -721,7 +922,7 @@ public class Client extends Thread implements Runnable {
             return false;
         }
 
-        return false;
+        return true;
     }
 
     private boolean isUsernameTaken() {

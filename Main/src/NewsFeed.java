@@ -21,8 +21,8 @@ public class NewsFeed {
     }
 
     // Retrieves a feed for the user, filtering by followers and sorted by likes and timestamp
-    public List<Post> getFeedForUser(User user) {
-        List<Post> userFeed = new ArrayList<>();
+    public ArrayList<Post> getFeedForUser(User user) {
+        ArrayList<Post> userFeed = new ArrayList<>();
 
         // Stores posts from user and people they follow
         for (Post post : posts) {

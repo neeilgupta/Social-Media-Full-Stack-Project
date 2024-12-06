@@ -22,7 +22,7 @@ public class Comment implements Serializable {
     private ArrayList<User> likes;
     private ArrayList<User> dislikes;
     private Post post;
-    private static List<Comment> comments = new ArrayList<>();
+    static List<Comment> comments = new ArrayList<>();
 
 
     //comment id, content of the comment, the user making the comment, the post the comment is being made on
@@ -76,6 +76,11 @@ public class Comment implements Serializable {
         }
     }
 
+    public static int generateUniqueCommentID() {
+        return comments.size() + 1; // Simple ID generator
+    }
+
+
 
     //getter and setter methods
     public int getID(){
@@ -118,7 +123,7 @@ public class Comment implements Serializable {
         this.likes.add(user);
     }
     public void dislike(User user){
-        this.likes.add(user);
+        this.dislikes.add(user);
     }
 
 }
