@@ -39,7 +39,7 @@ class Comments_Junit_Test {
         commentService.addComment(15, "this is the first comment",
                 new User(User.numUsers++, "user1", "pass123", "oney"),
                 new Post(98, "this is a post",
-                        new User(User.numUsers++, "user2", "pass123", "twoy")));
+                        new User(User.numUsers++, "user2", "pass123", "twoy"), 0, 0));
 
         Comment storedComment = database.retrieveComment(15);
         assertNotNull(storedComment);
@@ -51,7 +51,7 @@ class Comments_Junit_Test {
         Comment comment = new Comment(10,"this is the second comment",
                 new User(User.numUsers++, "user2", "pass123", "twoy"),
                 new Post (546, "this is another post",
-                        new User (User.numUsers++, "user2", "pass123", "twoy")));
+                        new User (User.numUsers++, "user2", "pass123", "twoy"), 0, 0));
         database.storeComment(comment);
 
         Comment retrievedComment = commentService.searchComment(10);
@@ -67,7 +67,7 @@ class Comments_Junit_Test {
         Comment comment = new Comment(64, "this is the third comment",
                 new User(User.numUsers++, "user3", "pass123", "threey"),
                 new Post(280, "this is yet another post",
-                        new User (User.numUsers++, "user4", "pass123", "foury")));
+                        new User (User.numUsers++, "user4", "pass123", "foury"), 0, 0));
         database.storeComment(comment);
 
         Comment viewedComment = commentService.viewComment(64);

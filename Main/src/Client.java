@@ -420,10 +420,12 @@ public class Client extends Thread implements Runnable {
         JButton createPostButton = new JButton("Create Post");
         JButton viewPostsButton = new JButton("View Posts");
         JButton newsFeedButton = new JButton("News Feed");
+        JButton searchUsersButton = new JButton("Search for Users");
         JButton logoutButton = new JButton("Logout");
 
         buttonPanel.add(createPostButton);
         buttonPanel.add(viewPostsButton);
+        buttonPanel.add(searchUsersButton);
         buttonPanel.add(newsFeedButton);
         buttonPanel.add(logoutButton);
 
@@ -441,7 +443,15 @@ public class Client extends Thread implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 homeFrame.dispose();
+                newsFeed = new NewsFeed();
                 newsFeedPage();
+            }
+        });
+
+        searchUsersButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createSearchUsersGUI(thisUser);// Open the search GUI
             }
         });
 
@@ -463,6 +473,43 @@ public class Client extends Thread implements Runnable {
         });
 
         homeFrame.setVisible(true);
+    }
+
+    private void createSearchUsersGUI(User thisUser) {
+        JFrame searchFrame = new JFrame("Search for Users");
+        searchFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        searchFrame.setSize(400, 200);
+
+        JLabel searchLabel = new JLabel("Enter Username:");
+        JTextField usernameField = new JTextField(20);
+        JButton searchButton = new JButton("Search");
+        JLabel resultLabel = new JLabel();
+        JButton followButton = new JButton("Follow");
+        followButton.setVisible(false); // Initially hidden
+
+        searchButton.addActionListener(e -> {
+            String username = usernameField.getText().trim();
+            try (BufferedReader reader = new BufferedReader(new FileReader("user.ser"))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    User potentialUser = new User(Integer.parseInt(line.split(",")[0]), line.split(",")[1],line.split(",")[2], line.split(",")[3]);
+                    if (line.split(",")[1].equals(username)) {
+                        resultLabel.setText("User found: " + potentialUser);
+                        followButton.setVisible(true);
+                        followButton.addActionListener(followEvent -> {
+                            thisUser.follow(potentialUser);
+                            JOptionPane.showMessageDialog(searchFrame, "You are now following " + potentialUser.getUsername());
+                            followButton.setVisible(false); // Hide the button after following
+                        });
+                    }
+                }
+            } catch (FileNotFoundException ex) {
+                throw new RuntimeException(ex);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+        });
+
     }
 
     private void viewUserPostsPage(User currentUser) {
@@ -556,12 +603,11 @@ public class Client extends Thread implements Runnable {
                 JOptionPane.showMessageDialog(createPostFrame, "Post content cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 System.out.println("New Post: " + postContent);
-                Post newPost = new Post(userID, postContent, thisUser);
+                Post newPost = new Post(userID, postContent, thisUser, 0, 0);
 
                     Post.getPosts().add(newPost);
                     Post.writePostToFile(userID, newPost);
                     //out.writeUTF("createPost##" + thisUser.getUserID() + "," + postContent);
-                    thisUser.getNewsFeed().addPost(newPost);
                     JOptionPane.showMessageDialog(createPostFrame, "Post created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     createPostFrame.dispose();
             }
@@ -590,7 +636,7 @@ public class Client extends Thread implements Runnable {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         newsFeedFrame.add(scrollPane, BorderLayout.CENTER);
 
-        ArrayList<Post> userFeed = newsFeed.getFeedForUser(thisUser);
+        ArrayList<Post> userFeed = newsFeed.getFeedForUser(thisUser.getUserID());
         for (Post post : userFeed) {
             JPanel postPanel = new JPanel();
             postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));

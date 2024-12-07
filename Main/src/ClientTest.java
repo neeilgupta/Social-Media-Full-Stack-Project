@@ -116,7 +116,7 @@ public class ClientTest {
     @Test
     void testCreateComment() throws IOException {
         User user = new User(1, "TestUser", "password", "DisplayName");
-        Post post = new Post(1, "Test Post Content", user);
+        Post post = new Post(1, "Test Post Content", user, 0, 0);
         Client client = new Client();
         client.out = new DataOutputStream(new ByteArrayOutputStream());
 

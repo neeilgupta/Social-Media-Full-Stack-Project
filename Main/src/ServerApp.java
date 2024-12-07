@@ -1,5 +1,4 @@
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
@@ -89,7 +88,7 @@ public class ServerApp extends Thread {
         }
         PostFileDatabase database = new PostFileDatabase("posts.ser");
         PostService postService = new PostService(database);
-        Post post = new Post (Integer.parseInt(postComponents[0]), postComponents[1], thisUser);
+        Post post = new Post (Integer.parseInt(postComponents[0]), postComponents[1], thisUser, 0, 0);
     }
     private void createComment(String commentInfo) throws IOException {
         String[] commentComponents = commentInfo.split(",");

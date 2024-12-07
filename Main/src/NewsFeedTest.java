@@ -2,7 +2,7 @@
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.ArrayList;
+
 import java.util.List;
 
 /**
@@ -29,9 +29,9 @@ public class NewsFeedTest {
         user2 = new User(User.numUsers++, "user2", "pass123", "twoy");
         user3 = new User(User.numUsers++, "user2", "pass123", "threey");
 
-        post1 = new Post(1,"First post content", user1);
-        post2 = new Post(2,"Second post content", user2);
-        post3 = new Post(3,"Third post content", user3);
+        post1 = new Post(1,"First post content", user1, 0, 0);
+        post2 = new Post(2,"Second post content", user2, 0, 0);
+        post3 = new Post(3,"Third post content", user3, 0, 0);
 
         newsFeed.addPost(post1);
         newsFeed.addPost(post2);
@@ -40,11 +40,11 @@ public class NewsFeedTest {
 
     @Test
     public void testAddPost() {
-        Post newPost = new Post(4,"New post content", user1);
+        Post newPost = new Post(4,"New post content", user1, 0, 0);
         newsFeed.addPost(newPost);
 
         // Check if the post is added correctly
-        List<Post> userFeed = newsFeed.getFeedForUser(user1);
+        List<Post> userFeed = newsFeed.getFeedForUser(user1.getUserID());
         assertTrue(userFeed.contains(newPost), "New post should be in the user's feed");
     }
 
@@ -71,8 +71,8 @@ public class NewsFeedTest {
         user2 = new User(User.numUsers++, "user2", "pass123", "twoy");
         user3 = new User(User.numUsers++, "user2", "pass123", "threey");
 
-        Post post1 = new Post(4,"Post 1 Content", user1);
-        Post post2 = new Post(5,"Post 2 Content", user1);
+        Post post1 = new Post(4,"Post 1 Content", user1, 0, 0);
+        Post post2 = new Post(5,"Post 2 Content", user1, 0, 0);
 
         // Adding posts to the feed
         newsFeed.addPost(post1);
@@ -84,7 +84,7 @@ public class NewsFeedTest {
         newsFeed.likePost(post2, user1);
 
         // Get user feed for user1
-        List<Post> userFeed = newsFeed.getFeedForUser(user1);
+        List<Post> userFeed = newsFeed.getFeedForUser(user1.getUserID());
 
         // Debugging output
         System.out.println("User feed size: " + userFeed.size());
@@ -103,10 +103,10 @@ public class NewsFeedTest {
 
     @Test
     public void testFeedOrderByTimestamp() {
-        Post post4 = new Post(6,"Newest post content", user1);
+        Post post4 = new Post(6,"Newest post content", user1, 0, 0);
         newsFeed.addPost(post4);
 
-        List<Post> userFeed = newsFeed.getFeedForUser(user1);
+        List<Post> userFeed = newsFeed.getFeedForUser(user1.getUserID());
 
         // Check that the newest post appears first if likes are equal
         assertEquals(post4, userFeed.get(0), "Newest post should appear first in the feed");

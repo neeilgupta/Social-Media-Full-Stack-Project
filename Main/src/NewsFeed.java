@@ -1,5 +1,8 @@
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.*;
 
 /**
  * The NewsFeed class represents a social media feed for users.
@@ -21,22 +24,47 @@ public class NewsFeed {
     }
 
     // Retrieves a feed for the user, filtering by followers and sorted by likes and timestamp
-    public ArrayList<Post> getFeedForUser(User user) {
+    public static ArrayList<Post> getFeedForUser(int userId) {
         ArrayList<Post> userFeed = new ArrayList<>();
 
-        // Stores posts from user and people they follow
-        for (Post post : posts) {
-            // Check if the post is from the user or someone they follow
-            if ((post.getUser() == user || isFollowing(user, post.getUser())) && !user.getHiddenPosts().contains(post)) {
-                insertInOrder(userFeed, post); // Only insert posts that are not hidden
+        try (BufferedReader reader = new BufferedReader(new FileReader("post.ser"))) {
+            String line;
+            boolean processLine = false;
+            while ((line = reader.readLine()) != null) {
+                if(processLine) {
+                    String[] parts = line.split(",", 5);
+                    if (parts.length == 5) {
+                        try {
+                            int lineUserId = Integer.parseInt(parts[0].trim());
+                            String content = parts[1].trim();
+                            LocalDateTime time = LocalDateTime.parse(parts[2].trim());
+                            int postLikes = Integer.parseInt(parts[3].trim());
+                            int postDislikes = Integer.parseInt(parts[4].trim());
+
+                            Post post = new Post(userId, content, User.getCurrentUser(), postLikes, postDislikes);
+                            if ((post.getID() == lineUserId || isFollowing(User.getCurrentUser(), post.getUser()))) {
+                                insertInOrder(userFeed, post);
+                            }
+                        } catch (NumberFormatException | DateTimeParseException e) {
+                            System.out.println("Invalid data format in file: " + line);
+                        }
+                    } else {
+                        System.out.println("Skipping malformed line: " + line);
+                    }
+                }
+                processLine = !processLine;
             }
+        } catch (FileNotFoundException e) {
+            System.out.println("post.ser not found. Returning an empty list.");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         return userFeed;
     }
 
     // Method to insert posts into userFeed based on likes and timestamp
-    private void insertInOrder(List<Post> userFeed, Post post) {
+    private static void insertInOrder(List<Post> userFeed, Post post) {
         int i = 0;
         while (i < userFeed.size()) {
             // Check the number of likes
@@ -60,7 +88,7 @@ public class NewsFeed {
     }
 
     // Helper method to check if a user follows another user
-    private boolean isFollowing(User user, User postUser) {
+    private static boolean isFollowing(User user, User postUser) {
         if(user.getFollowers().contains(postUser)) {
             return true;
         }
