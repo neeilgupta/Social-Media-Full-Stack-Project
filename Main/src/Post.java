@@ -41,6 +41,10 @@ public class Post implements PostInterface, Serializable{
         Comment.writeCommentsToFile();
     }
 
+    public static List<Post> getPosts() {
+        return posts;
+    }
+
     public static ArrayList<Post> getUserPosts(User currentUser) {
         ArrayList<Post> userPosts = new ArrayList<>();
         for (Post post : posts) {
@@ -162,9 +166,9 @@ public class Post implements PostInterface, Serializable{
     }
 
     // Write posts to post.ser
-    public static void writePostsToFile() {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("post.ser"))) {
-            oos.writeObject(posts);
+    public static void writePostToFile(int userID, Post post) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("post.ser", true))) {
+            oos.writeObject("\n" + userID + "," + post.getContent() + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -181,6 +185,27 @@ public class Post implements PostInterface, Serializable{
             e.printStackTrace();
         }
     }
+
+    public static ArrayList<Post> getPostsByUser(int userId) {
+        ArrayList<Post> userPosts = new ArrayList<>();
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("post.ser"))) {
+            // Read the posts list from the file
+            List<Post> allPosts = (List<Post>) ois.readObject();
+
+            // Filter posts by userId
+            for (Post post : allPosts) {
+                if (post.getUser().getUserID() == userId) {
+                    userPosts.add(post);
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("post.ser not found. Returning an empty list.");
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return userPosts;
+    }
+
 
 
 

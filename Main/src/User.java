@@ -26,6 +26,7 @@ public class User extends Client implements Serializable { //changed extension f
     public static int numUsers = getNumUsers();
     private String password;
     private String displayName;
+    private NewsFeed newsFeed;
 
     private static int getNumUsers(){
         try{
@@ -42,6 +43,7 @@ public class User extends Client implements Serializable { //changed extension f
         this.password = password;
         this.displayName = displayName;
         this.hiddenPosts = new ArrayList<>();
+        newsFeed = new NewsFeed();
     }
 
     //This reads from the Userinfo.txt file
@@ -122,6 +124,10 @@ public class User extends Client implements Serializable { //changed extension f
 
     public ArrayList<Post> getHiddenPosts() {
         return hiddenPosts;
+    }
+
+    public NewsFeed getNewsFeed() {
+        return newsFeed;
     }
 
     public void hidePost(Post post) {

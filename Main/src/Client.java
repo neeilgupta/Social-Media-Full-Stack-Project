@@ -47,7 +47,6 @@ public class Client extends Thread implements Runnable {
         try {
             clientSocket = new Socket("localhost", 4141);
             out = new DataOutputStream(clientSocket.getOutputStream());
-            this.newsFeed = new NewsFeed();
             this.start();
         } catch (IOException e) {
             e.printStackTrace();
@@ -267,6 +266,7 @@ public class Client extends Thread implements Runnable {
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
                     out.writeUTF(createUserLine);
+                    thisUser = new User(userID, username, password, displayName);
                     homePage();
                     // make sure the file is added properly
                 } catch (IOException ex) {
@@ -357,18 +357,33 @@ public class Client extends Thread implements Runnable {
         confirmSULI.addActionListener(_ -> {
             username = usernameField.getText();
             password = passwordField.getText();
-            userID = User.numUsers++;
+            //userID = User.numUsers++;
 
             if (validLogin(username, password)) {
                 System.out.println("Logging in: " + username);
                 frame.dispose();
-                String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
                 try {
-                    out.writeUTF(createUserLine);
-                    homePage();
+                    File f = new File( "users.ser");
+                    BufferedReader bfr = new BufferedReader(new FileReader(f));
+                    String line;
+                    while ((line = bfr.readLine()) != null) {
+                        if (line.split(",")[1].equals(username) && line.split(",")[2].equals(password)) {
+                            userID = Integer.parseInt(line.split(",")[0]);
+                            displayName = line.split(",")[3];
+                        }
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+               thisUser = new User(userID, username, password, displayName);
+                //String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
+                homePage();
+                /*try {
+                    //out.writeUTF(createUserLine);
                 } catch (IOException ex) {
                     ex.printStackTrace();
                 }
+                */
             }
         });
         panel.add(confirmSULI, gbc);
@@ -391,9 +406,9 @@ public class Client extends Thread implements Runnable {
         JPanel profilePanel = new JPanel();
         profilePanel.setLayout(new GridLayout(4, 1));
 
-        JLabel followersLabel = new JLabel("Followers: 10"); // Placeholder
-        JLabel followingLabel = new JLabel("Following: 5");
-        JLabel postsLabel = new JLabel("Posts: 2");
+        JLabel followersLabel = new JLabel("Followers: " + thisUser.getFollowers().size()); // Placeholder
+        JLabel followingLabel = new JLabel("Following: " + thisUser.getFollowing().size());
+        JLabel postsLabel = new JLabel("Posts: " + Post.getUserPostCount(thisUser));
 
         profilePanel.add(followersLabel);
         profilePanel.add(followingLabel);
@@ -485,7 +500,7 @@ public class Client extends Thread implements Runnable {
 
                 // Post meta (likes/dislikes)
                 JLabel metaLabel = new JLabel(
-                        "Likes: " + post.getLikes() + " | Dislikes: " + post.getDislikes(),
+                        "Likes: " + post.getLikes().size() + " | Dislikes: " + post.getDislikes().size(),
                         JLabel.RIGHT
                 );
                 metaLabel.setFont(new Font("Arial", Font.ITALIC, 12));
@@ -541,16 +556,14 @@ public class Client extends Thread implements Runnable {
                 JOptionPane.showMessageDialog(createPostFrame, "Post content cannot be empty!", "Error", JOptionPane.ERROR_MESSAGE);
             } else {
                 System.out.println("New Post: " + postContent);
-                Post newPost = new Post(thisUser.getUserID(), postContent, thisUser);
-                try {
-                    out.writeUTF("createPost##" + thisUser.getUserID() + "," + postContent);
-                    newsFeed.addPost(newPost);
+                Post newPost = new Post(userID, postContent, thisUser);
+
+                    Post.getPosts().add(newPost);
+                    Post.writePostToFile(userID, newPost);
+                    //out.writeUTF("createPost##" + thisUser.getUserID() + "," + postContent);
+                    thisUser.getNewsFeed().addPost(newPost);
                     JOptionPane.showMessageDialog(createPostFrame, "Post created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
                     createPostFrame.dispose();
-                } catch (IOException ex) {
-                    ex.printStackTrace();
-                    JOptionPane.showMessageDialog(createPostFrame, "Failed to create post!", "Error", JOptionPane.ERROR_MESSAGE);
-                }
             }
         });
 
