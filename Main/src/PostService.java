@@ -23,7 +23,7 @@ public class PostService implements Serializable {
 
     public void addPost(int ID, String content, User user) {
         // Create new User object
-        Post post = new Post(ID, content, user);
+        Post post = new Post(ID, content, user, 0, 0);
         // Store the User object in the database
         database.storePost(post);
 

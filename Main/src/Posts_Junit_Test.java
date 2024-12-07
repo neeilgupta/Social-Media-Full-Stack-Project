@@ -53,7 +53,7 @@ class Posts_Junit_Test {
     @Test
     void testSearchPost() {
         User user = new User(User.numUsers++, "user2","pass123","twoy");
-        Post post = new Post(10, "this is the second post", user);
+        Post post = new Post(10, "this is the second post", user, 0, 0);
 
         database.storePost(post);
 
@@ -69,7 +69,7 @@ class Posts_Junit_Test {
     @Test
     void testViewPost() {
         User user = new User(User.numUsers++,"user3", "pass123", "threey");
-        Post post = new Post(64, "this is the third post", user);
+        Post post = new Post(64, "this is the third post", user, 0, 0);
         database.storePost(post);
 
         Post viewedPost = postService.viewPost(64);

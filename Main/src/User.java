@@ -20,6 +20,7 @@ public class User extends Client implements Serializable { //changed extension f
     private ArrayList<Post> hiddenPosts;
     //Sameer's instance variables
     private List<User> followers;
+    private List<User> following;
     private List<User> blockedUsers;
     //Emerson's instance variables
     static File users = new File("users/");
@@ -151,7 +152,8 @@ public class User extends Client implements Serializable { //changed extension f
     public void follow(User otherUser) {
         // If otherUser is not blocked and otherUser is not in followers
         if (!blockedUsers.contains(otherUser) && !followers.contains(otherUser)) {
-            followers.add(otherUser);
+            following.add(otherUser);
+            otherUser.getFollowers().add(currentUser);
         }
     }
 
@@ -196,6 +198,6 @@ public class User extends Client implements Serializable { //changed extension f
     }
 
     public List<User> getFollowing() {
-        return followers;
+        return following;
     }
 }

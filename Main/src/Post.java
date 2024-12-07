@@ -25,7 +25,7 @@ public class Post implements PostInterface, Serializable{
     private ArrayList<User> dislikes;
     private static List<Post> posts = new ArrayList<>();
 
-    public Post(int ID, String content, User user){
+    public Post(int ID, String content, User user, int postLikes, int postDislikes){
         this.ID = ID;
         this.content = content;
         this.user = user;
@@ -62,11 +62,11 @@ public class Post implements PostInterface, Serializable{
         String line = read.readLine();
         User thisUser = null;
         while ((line = read.readLine()) != null) {
-            if (line.substring(0, line.indexOf(",")).equals(parts[2])) {
+            if (line.substring(0, line.indexOf(",")).equals(parts[5])) {
                 thisUser = User.deserialize(line);
             }
         }
-        return new Post(Integer.parseInt(parts[0]), parts[1], thisUser);
+        return new Post(Integer.parseInt(parts[0]), parts[1], thisUser, Integer.parseInt(parts[3]), Integer.parseInt(parts[3]));
     }
 
     @Override
@@ -186,7 +186,7 @@ public class Post implements PostInterface, Serializable{
     // Write posts to post.ser
     public static void writePostToFile(int userID, Post post) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("post.ser", true))) {
-            oos.writeObject("\n" + userID + "," + post.getContent() + "\n");
+            oos.writeObject("\n" + userID + "," + post.getContent() + "," + post.getDateTime() + "," + post.getLikes().size() + "," + post.getDislikes().size() + "\n");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -212,13 +212,16 @@ public class Post implements PostInterface, Serializable{
             boolean processLine = false; // Start skipping the first line
             while ((line = reader.readLine()) != null) {
                 if (processLine) {
-                    String[] parts = line.split(",", 2); // Split into 2 parts: ID and content
-                    if (parts.length == 2) {
+                    String[] parts = line.split(",", 5); // Split into 2 parts: ID and content
+                    if (parts.length == 5) {
                         int lineUserId = Integer.parseInt(parts[0].trim());
                         String content = parts[1].trim();
+                        String time = parts[2].trim();
+                        int postLikes = Integer.parseInt(parts[3].trim());
+                        int postDislikes = Integer.parseInt(parts[4].trim());
                         if (lineUserId == userId) {
                             // Create a new Post object and add it to the list
-                            Post post = new Post(userId, content, User.getCurrentUser());
+                            Post post = new Post(userId, content, User.getCurrentUser(), postLikes, postDislikes);
                             userPosts.add(post);
                         }
                     }
