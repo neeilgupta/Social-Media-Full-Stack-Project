@@ -391,9 +391,9 @@ public class Client extends Thread implements Runnable {
         JPanel profilePanel = new JPanel();
         profilePanel.setLayout(new GridLayout(4, 1));
 
-        JLabel followersLabel = new JLabel("Followers: " + thisUser.getFollowers().size()); // Placeholder
-        JLabel followingLabel = new JLabel("Following: " + thisUser.getFollowing().size());
-        JLabel postsLabel = new JLabel("Posts: " + Post.getUserPostCount(thisUser));
+        JLabel followersLabel = new JLabel("Followers: 10"); // Placeholder
+        JLabel followingLabel = new JLabel("Following: 5");
+        JLabel postsLabel = new JLabel("Posts: 2");
 
         profilePanel.add(followersLabel);
         profilePanel.add(followingLabel);
