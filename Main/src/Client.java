@@ -359,7 +359,7 @@ public class Client extends Thread implements Runnable {
             password = passwordField.getText();
             userID = User.numUsers++;
 
-            if (validUsernameLI(username) && validPasswordLI(password)) {
+            if (validLogin(username, password)) {
                 System.out.println("Logging in: " + username);
                 frame.dispose();
                 String createUserLine = "createUser##" + userID + "," + username + "," + password + "," + displayName;
@@ -866,28 +866,28 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    public boolean validPasswordLI(String password) {
-        try {
-            File f = new File(username + ".ser");
-            FileReader fr = new FileReader(f);
-            BufferedReader bfr = new BufferedReader(fr);
-            String line;
-            while ((line = bfr.readLine()) != null) {
-                if (line.contains(password)) {
-                    return true;
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (password == null) {
-            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error",
-                    JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-        return false;
-    }
+//    public boolean validPasswordLI(String password) {
+//        try {
+//            File f = new File(username + ".ser");
+//            FileReader fr = new FileReader(f);
+//            BufferedReader bfr = new BufferedReader(fr);
+//            String line;
+//            while ((line = bfr.readLine()) != null) {
+//                if (line.contains(password)) {
+//                    return true;
+//                }
+//            }
+//        } catch (IOException e) {
+//            throw new RuntimeException(e);
+//        }
+//
+//        if (password == null) {
+//            JOptionPane.showMessageDialog(mainFrame, "Invalid password", "Error",
+//                    JOptionPane.ERROR_MESSAGE);
+//            return false;
+//        }
+//        return false;
+//    }
 
     public boolean validUsernameSU(String username) {
         if (username == null) {
@@ -909,20 +909,29 @@ public class Client extends Thread implements Runnable {
         }
     }
 
-    private boolean validUsernameLI(String username) {
+    private boolean validLogin(String username, String password) {
         if (username == null) {
             JOptionPane.showMessageDialog(mainFrame, "Username not found", "Error",
                     JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
-        File f = new File(username + ".ser");
-        if (!f.exists()) {
-            JOptionPane.showMessageDialog(mainFrame, "Username does not exist");
+        File f = new File( "users.ser");
+        try {
+            BufferedReader bfr = new BufferedReader(new FileReader(f));
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                if (line.split(",")[1].equals(username) && line.split(",")[2].equals(password)) {
+                    return true;
+                }
+            }
+            JOptionPane.showMessageDialog(mainFrame, "Username or password incorrect", "Errpr",
+                    JOptionPane.ERROR_MESSAGE );
             return false;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
 
-        return true;
     }
 
     private boolean isUsernameTaken() {
