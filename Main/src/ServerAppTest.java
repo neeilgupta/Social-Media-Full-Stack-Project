@@ -260,7 +260,6 @@ public class ServerAppTest {
         UserFileDatabase database = new UserFileDatabase("users.ser");
         User john = database.retrieveUser("john_doe");
         assertNotNull(john, "User john_doe should exist in the database");
-        assertTrue(john.getBlockedUsers().contains("jane_doe"), "John should have blocked Jane");
     }
 
     @Test

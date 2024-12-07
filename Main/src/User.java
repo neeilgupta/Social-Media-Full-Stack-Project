@@ -21,7 +21,6 @@ public class User extends Client implements Serializable { //changed extension f
     //Sameer's instance variables
     private List<User> followers;
     private List<User> following;
-    private List<User> blockedUsers;
     //Emerson's instance variables
     static File users = new File("users/");
     public static int numUsers = getNumUsers();
@@ -144,14 +143,14 @@ public class User extends Client implements Serializable { //changed extension f
     public User(String username, String password) {
         // Properties:
         this.followers = new ArrayList<>();
-        this.blockedUsers = new ArrayList<>();
+        this.following = new ArrayList<>();
         this.hiddenPosts = new ArrayList<>();
     }
 
     // Method follow(otherUser: User)
     public void follow(User otherUser) {
         // If otherUser is not blocked and otherUser is not in followers
-        if (!blockedUsers.contains(otherUser) && !followers.contains(otherUser)) {
+        if (!followers.contains(otherUser)) {
             following.add(otherUser);
             otherUser.getFollowers().add(currentUser);
         }
@@ -164,21 +163,6 @@ public class User extends Client implements Serializable { //changed extension f
         followers.remove(otherUser);
     }
 
-    // Method block(otherUser: User)
-    public void block(User otherUser) {
-        // If otherUser is in followers
-        followers.remove(otherUser);
-        // If otherUser is not in blockedUsers
-        if (!blockedUsers.contains(otherUser)) {
-            blockedUsers.add(otherUser);
-        }
-    }
-
-    // Method unblock(otherUser: User)
-    public void unblock(User otherUser) {
-        // If otherUser is in blockedUsers
-        blockedUsers.remove(otherUser);
-    }
 
 
     public Collection<User> getFollowers() { //Additions by Sameer for Junit
@@ -189,15 +173,14 @@ public class User extends Client implements Serializable { //changed extension f
 
     }
 
-    public Collection<User>getBlockedUsers() { //Additions by Sameer for Junit
-        return blockedUsers;
-    }
-
     public String serialize() {
         return userID + "," + username + "," + password + "," + displayName;
     }
 
     public List<User> getFollowing() {
+        if(following == null) {
+            following = new ArrayList<>();
+        }
         return following;
     }
 }

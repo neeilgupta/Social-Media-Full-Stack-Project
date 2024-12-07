@@ -24,7 +24,7 @@ public class NewsFeed {
     }
 
     // Retrieves a feed for the user, filtering by followers and sorted by likes and timestamp
-    public static ArrayList<Post> getFeedForUser(int userId) {
+    public static ArrayList<Post> getFeedForUser(User user) {
         ArrayList<Post> userFeed = new ArrayList<>();
 
         try (BufferedReader reader = new BufferedReader(new FileReader("post.ser"))) {
@@ -41,8 +41,8 @@ public class NewsFeed {
                             int postLikes = Integer.parseInt(parts[3].trim());
                             int postDislikes = Integer.parseInt(parts[4].trim());
 
-                            Post post = new Post(userId, content, User.getCurrentUser(), postLikes, postDislikes);
-                            if ((post.getID() == lineUserId || isFollowing(User.getCurrentUser(), post.getUser()))) {
+                            Post post = new Post(lineUserId, content, User.getCurrentUser(), postLikes, postDislikes);
+                            if ((post.getID() == lineUserId || isFollowing(user, post.getUser()))) {
                                 insertInOrder(userFeed, post);
                             }
                         } catch (NumberFormatException | DateTimeParseException e) {
@@ -89,7 +89,7 @@ public class NewsFeed {
 
     // Helper method to check if a user follows another user
     private static boolean isFollowing(User user, User postUser) {
-        if(user.getFollowers().contains(postUser)) {
+        if(user.getFollowing().contains(postUser)) {
             return true;
         }
         return false;

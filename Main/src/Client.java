@@ -416,7 +416,7 @@ public class Client extends Thread implements Runnable {
 
         homeFrame.add(profilePanel, BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel();
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 2, 10, 10));
         JButton createPostButton = new JButton("Create Post");
         JButton viewPostsButton = new JButton("View Posts");
         JButton newsFeedButton = new JButton("News Feed");
@@ -451,6 +451,7 @@ public class Client extends Thread implements Runnable {
         searchUsersButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 createSearchUsersGUI(thisUser);// Open the search GUI
             }
         });
@@ -478,8 +479,10 @@ public class Client extends Thread implements Runnable {
     private void createSearchUsersGUI(User thisUser) {
         JFrame searchFrame = new JFrame("Search for Users");
         searchFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        searchFrame.setSize(400, 200);
+        searchFrame.setSize(400, 300); // Adjusted size for better visibility
+        searchFrame.setLayout(new BoxLayout(searchFrame.getContentPane(), BoxLayout.Y_AXIS)); // Use BoxLayout
 
+        // Create components
         JLabel searchLabel = new JLabel("Enter Username:");
         JTextField usernameField = new JTextField(20);
         JButton searchButton = new JButton("Search");
@@ -487,29 +490,59 @@ public class Client extends Thread implements Runnable {
         JButton followButton = new JButton("Follow");
         followButton.setVisible(false); // Initially hidden
 
+        // Add components to the frame
+        searchFrame.add(searchLabel);
+        searchFrame.add(Box.createVerticalStrut(10)); // Add spacing
+        searchFrame.add(usernameField);
+        searchFrame.add(Box.createVerticalStrut(10)); // Add spacing
+        searchFrame.add(searchButton);
+        searchFrame.add(Box.createVerticalStrut(10)); // Add spacing
+        searchFrame.add(resultLabel);
+        searchFrame.add(Box.createVerticalStrut(10)); // Add spacing
+        searchFrame.add(followButton);
+
+        // Add action listener for the search button
         searchButton.addActionListener(e -> {
             String username = usernameField.getText().trim();
-            try (BufferedReader reader = new BufferedReader(new FileReader("user.ser"))) {
+            boolean userFound = false;
+
+            try (BufferedReader reader = new BufferedReader(new FileReader("users.ser"))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
-                    User potentialUser = new User(Integer.parseInt(line.split(",")[0]), line.split(",")[1],line.split(",")[2], line.split(",")[3]);
-                    if (line.split(",")[1].equals(username)) {
-                        resultLabel.setText("User found: " + potentialUser);
-                        followButton.setVisible(true);
-                        followButton.addActionListener(followEvent -> {
-                            thisUser.follow(potentialUser);
-                            JOptionPane.showMessageDialog(searchFrame, "You are now following " + potentialUser.getUsername());
-                            followButton.setVisible(false); // Hide the button after following
-                        });
+                    String[] parts = line.split(",");
+                    if (parts.length >= 4) {
+                        int userId = Integer.parseInt(parts[0].trim());
+                        String foundUsername = parts[1].trim();
+                        String password = parts[2].trim();
+                        String displayName = parts[3].trim();
+
+                        if (foundUsername.equals(username)) {
+                            User potentialUser = new User(userId, foundUsername, password, displayName);
+                            resultLabel.setText("User found: " + displayName);
+                            followButton.setVisible(true);
+                            followButton.addActionListener(followEvent -> {
+                                thisUser.follow(potentialUser);
+                                JOptionPane.showMessageDialog(searchFrame, "You are now following " + potentialUser.getUsername());
+                                followButton.setVisible(false); // Hide the button after following
+                            });
+                            userFound = true;
+                            break;
+                        }
                     }
                 }
+
+                if (!userFound) {
+                    resultLabel.setText("User not found.");
+                    followButton.setVisible(false);
+                }
             } catch (FileNotFoundException ex) {
-                throw new RuntimeException(ex);
+                JOptionPane.showMessageDialog(searchFrame, "User data file not found.", "Error", JOptionPane.ERROR_MESSAGE);
             } catch (IOException ex) {
-                throw new RuntimeException(ex);
+                JOptionPane.showMessageDialog(searchFrame, "Error reading user data file.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
+        searchFrame.setVisible(true);
     }
 
     private void viewUserPostsPage(User currentUser) {
@@ -636,7 +669,7 @@ public class Client extends Thread implements Runnable {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         newsFeedFrame.add(scrollPane, BorderLayout.CENTER);
 
-        ArrayList<Post> userFeed = newsFeed.getFeedForUser(thisUser.getUserID());
+        ArrayList<Post> userFeed = newsFeed.getFeedForUser(thisUser);
         for (Post post : userFeed) {
             JPanel postPanel = new JPanel();
             postPanel.setLayout(new BoxLayout(postPanel, BoxLayout.Y_AXIS));

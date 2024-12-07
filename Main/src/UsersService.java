@@ -61,20 +61,6 @@ public class UsersService implements UserServiceInterface {
         database.updateUser(currentUser);
     }
 
-    @Override
-    public void blockUser(User currentUser, User otherUser) {
-        // Call currentUser.block(otherUser)
-        currentUser.block(otherUser);
-        // Update blocked list in the database
-        database.updateUser(currentUser);
-    }
 
-    @Override
-    public void unblockUser(User currentUser, User otherUser) {
-        // Call currentUser.unblock(otherUser)
-        currentUser.unblock(otherUser);
-        // Update blocked list in the database
-        database.updateUser(currentUser);
-    }
 
 }

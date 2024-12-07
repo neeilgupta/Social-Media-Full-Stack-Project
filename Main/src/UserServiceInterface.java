@@ -23,12 +23,6 @@ public interface UserServiceInterface {
 
         // Method to remove a follower from a user
         void removeFollower(User currentUser, User otherUser);
-
-        // Method to block a user
-        void blockUser(User currentUser, User otherUser);
-
-        // Method to unblock a user
-        void unblockUser(User currentUser, User otherUser);
-    }
+ }
 
 

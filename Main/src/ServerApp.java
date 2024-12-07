@@ -326,7 +326,6 @@ public class ServerApp extends Thread {
             }
             UserFileDatabase database = new UserFileDatabase("users.ser");
             UsersService userService = new UsersService(database);
-            userService.blockUser(currentUser, otherUser);
         } catch (FileNotFoundException ex) {
             ex.printStackTrace();
         } catch (IOException ex) {
