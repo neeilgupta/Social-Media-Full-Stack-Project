@@ -44,7 +44,7 @@ public class NewsFeedTest {
         newsFeed.addPost(newPost);
 
         // Check if the post is added correctly
-        List<Post> userFeed = newsFeed.getFeedForUser(user1);
+        List<Post> userFeed = newsFeed.getFeedForUser(user1.getUserID());
         assertTrue(userFeed.contains(newPost), "New post should be in the user's feed");
     }
 
@@ -84,7 +84,7 @@ public class NewsFeedTest {
         newsFeed.likePost(post2, user1);
 
         // Get user feed for user1
-        List<Post> userFeed = newsFeed.getFeedForUser(user1);
+        List<Post> userFeed = newsFeed.getFeedForUser(user1.getUserID());
 
         // Debugging output
         System.out.println("User feed size: " + userFeed.size());
@@ -106,7 +106,7 @@ public class NewsFeedTest {
         Post post4 = new Post(6,"Newest post content", user1, 0, 0);
         newsFeed.addPost(post4);
 
-        List<Post> userFeed = newsFeed.getFeedForUser(user1);
+        List<Post> userFeed = newsFeed.getFeedForUser(user1.getUserID());
 
         // Check that the newest post appears first if likes are equal
         assertEquals(post4, userFeed.get(0), "Newest post should appear first in the feed");
