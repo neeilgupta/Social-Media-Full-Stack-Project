@@ -482,12 +482,12 @@ public class Client extends Thread implements Runnable {
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         viewUserPostsFrame.add(scrollPane, BorderLayout.CENTER);
 
-        ArrayList<Post> userPosts = Post.getUserPosts(currentUser);
-
+        ArrayList<Post> userPosts = Post.getPostsByUserFromFile(userID);
         if (userPosts.isEmpty()) {
             JLabel noPostsLabel = new JLabel("You haven't made any posts yet!", JLabel.CENTER);
             noPostsLabel.setFont(new Font("Arial", Font.ITALIC, 16));
             postsPanel.add(noPostsLabel);
+
         } else {
             for (Post post : userPosts) {
                 JPanel postPanel = new JPanel();

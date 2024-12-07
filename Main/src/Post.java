@@ -157,14 +157,32 @@ public class Post implements PostInterface, Serializable{
 
     public static int getUserPostCount(User user) {
         int count = 0;
-        for (Post post : posts) {
-            if (post.getUser().getUserID() == user.getUserID()) {
-                count++;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("post.ser"))) {
+            String line;
+            boolean processLine = false;
+            while ((line = reader.readLine()) != null) {
+                if (processLine) {
+                    String[] parts = line.split(",", 2);
+                    if (parts.length == 2) {
+                        int userId = Integer.parseInt(parts[0].trim());
+                        if (userId == user.getUserID()) {
+                            count++;
+                        }
+                    }
+                }
+                processLine = !processLine;
             }
+        } catch (FileNotFoundException e) {
+            System.out.println("post.ser not found. Returning a count of 0.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid userId format in file.");
         }
+
         return count;
     }
-
     // Write posts to post.ser
     public static void writePostToFile(int userID, Post post) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("post.ser", true))) {
@@ -186,25 +204,39 @@ public class Post implements PostInterface, Serializable{
         }
     }
 
-    public static ArrayList<Post> getPostsByUser(int userId) {
+    public static ArrayList<Post> getPostsByUserFromFile(int userId) {
         ArrayList<Post> userPosts = new ArrayList<>();
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("post.ser"))) {
-            // Read the posts list from the file
-            List<Post> allPosts = (List<Post>) ois.readObject();
 
-            // Filter posts by userId
-            for (Post post : allPosts) {
-                if (post.getUser().getUserID() == userId) {
-                    userPosts.add(post);
+        try (BufferedReader reader = new BufferedReader(new FileReader("post.ser"))) {
+            String line;
+            boolean processLine = false; // Start skipping the first line
+            while ((line = reader.readLine()) != null) {
+                if (processLine) {
+                    String[] parts = line.split(",", 2); // Split into 2 parts: ID and content
+                    if (parts.length == 2) {
+                        int lineUserId = Integer.parseInt(parts[0].trim());
+                        String content = parts[1].trim();
+                        if (lineUserId == userId) {
+                            // Create a new Post object and add it to the list
+                            Post post = new Post(userId, content, User.getCurrentUser());
+                            userPosts.add(post);
+                        }
+                    }
                 }
+                // Toggle processLine to skip every other line
+                processLine = !processLine;
             }
         } catch (FileNotFoundException e) {
             System.out.println("post.ser not found. Returning an empty list.");
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid userId format in file.");
         }
+
         return userPosts;
     }
+
 
 
 
