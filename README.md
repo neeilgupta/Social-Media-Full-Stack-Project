@@ -1,3 +1,14 @@
+## Attribution
+
+This project is based on a group project originally developed for CS 180.
+
+Original repository:
+https://github.com/emerson1203/group-project-cs180
+
+This repository exists to showcase my personal contributions,
+extensions, and refactoring for portfolio purposes.
+
+
 # Emerson Barrett
 ## Compiling and Running the Project:
 Clone the repository and open the project in your preferred IDE. Compile and run the Junit Test classes to test the functionality of various portions of the code. 
